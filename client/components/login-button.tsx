@@ -13,8 +13,8 @@ export default function LoginButton() {
 
   return (
     <>
-      <h2>Home</h2>
-      <button onClick={() => handleLogin('google')}>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <button className="btn" onClick={() => handleLogin('google')}>
         구글 계정 {data ? '로그아웃' : '로그인'}
       </button>
       <button onClick={() => handleLogin('kakao')}>
@@ -23,7 +23,7 @@ export default function LoginButton() {
 
       {data?.user ? (
         <>
-          <h5>구글 로그인 정보</h5>
+          <h5>로그인 정보</h5>
           <div>{data.user.name}</div>
           <img src={data.user.image!} alt="user img" />
           <div>{data.user.email}</div>
