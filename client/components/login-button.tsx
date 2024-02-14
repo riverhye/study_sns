@@ -17,9 +17,7 @@ export default function LoginButton() {
       <button className="btn" onClick={() => handleLogin('google')}>
         구글 계정 {data ? '로그아웃' : '로그인'}
       </button>
-      <button onClick={() => handleLogin('kakao')}>
-        카카오 계정 {data ? '로그아웃' : '로그인'}
-      </button>
+      <button onClick={() => handleLogin('kakao')}>카카오 계정 {data ? '로그아웃' : '로그인'}</button>
 
       {data?.user ? (
         <>
