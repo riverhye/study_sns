@@ -15,11 +15,7 @@ export const metadata: Metadata = {
   description: '타임라인 공부 SNS',
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={inter.className}>
