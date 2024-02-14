@@ -4,6 +4,6 @@ module.exports = {
   theme: {
     extend: {},
   },
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  purge: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   plugins: [require('tailwindcss'), require('autoprefixer')],
 };
