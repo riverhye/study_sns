@@ -10,6 +10,11 @@ TODO:업적,랭킹  정보 가져오기
 'use client';
 import React, { useEffect } from 'react';
 import '../../../type/type';
+import axios from 'axios';
+import StudyUser from '@/components/studyComponents/studyUser';
+import StudyTable from '@/components/studyComponents/studyTable';
+import StudyTodo from '@/components/studyComponents/studyTodo';
+import StudyMyRank from '@/components/studyComponents/studyMyRank';
 
 // 컴포넌트 : 유저 , 타이머 , 달력 , todo, 랭킹(시간, 업적)
 
@@ -17,16 +22,34 @@ import '../../../type/type';
 interface propsType {
   params: { nickname: string };
   searchParams: {};
+  //추가 예정
 }
 export default function Study(props: propsType) {
   console.log(props);
   const nickname = props.params.nickname;
   useEffect(() => {
     //api요청: 페이지 렌더됐을경우
+    async function fetchData() {
+      try {
+        const studyPageData = await axios.get(`http://localhost:8080/study/${nickname}`);
+      } catch (error) {
+        console.error('스터디페이지 데이터 가져오기 실패:', error);
+      }
+    }
+
+    fetchData();
   }, []);
+
+  //TODO:studyPageData안에 데이터가 담길예정 -> 나눠서 props에 담아 각각의 컴포넌트에게 전달
   return (
     <>
+      {/* 테스트 */}
       <div>{nickname}test</div>
+      {/* 실제 */}
+      <StudyUser />
+      <StudyTable />
+      <StudyTodo />
+      <StudyMyRank />
     </>
   );
 }
