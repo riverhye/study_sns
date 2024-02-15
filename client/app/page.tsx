@@ -1,17 +1,15 @@
 'use client';
 
-import LoginButton from '@/components/login-button';
-import TestComponent from '@/components/test';
+import SignIn from "@/components/sign/SignIn";
 
-// export const metadata = {
-//   title: 'Home',
-// };
+export const metadata = {
+  title: 'Home',
+};
 
 const HomePage = () => {
   return (
     <>
-      <TestComponent />
-      <LoginButton />
+      <SignIn />
     </>
   );
 };
