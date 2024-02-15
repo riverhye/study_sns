@@ -34,8 +34,7 @@ public class UserEntity {
     private LoginType loginType;
 
     public enum LoginType{
-        SNS, GOOGLE, NAVER, KAKAO
+        SNS, GOOGLE, KAKAO
     }
-
 
 }
