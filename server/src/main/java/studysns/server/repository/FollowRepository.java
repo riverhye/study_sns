@@ -1,4 +1,7 @@
 package studysns.server.repository;
 
-public interface FollowRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import studysns.server.entity.FollowEntity;
+
+public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
 }
