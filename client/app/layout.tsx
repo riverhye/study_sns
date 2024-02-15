@@ -27,9 +27,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* <SocketProvider /> */}
         <header className="flex">
           <HeaderLeft />
-          <div className="flex flex-col flex-grow">
+          <div className="flex flex-col flex-grow overflow-y-auto">
             <HeaderTop />
-            <div className="flex-grow bg-gray-100 p-4 overflow-y-auto">
+            <div className="flex-grow p-4 bg-gray-100">
               <AuthProvider>{children}</AuthProvider>
             </div>
           </div>

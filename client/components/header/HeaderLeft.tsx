@@ -1,10 +1,17 @@
 import Category from './Category';
+import Timer from './Timer';
+import TodoHeader from './TodoHeader';
 
 const HeaderLeft = () => {
   return (
-    <div className="h-screen w-1/5 border-2 min-w-72 p-9">
-      <Category />
-    </div>
+    <>
+      <div className="flex flex-grow flex-col h-auto w-1/12 border-2 min-w-72 p-9">
+        <Category />
+        <TodoHeader />
+        <Timer />
+        <div className="w-32"></div>
+      </div>
+    </>
   );
 };
 
