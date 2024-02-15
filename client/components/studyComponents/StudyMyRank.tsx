@@ -1,6 +1,9 @@
 import React from 'react';
-
-const StudyMyRank = () => {
+interface StudyMyRankProps {
+  myRankData?: { rankingDate: string; rankingTinme: number };
+  badgeData?: { badgeName: string }[];
+}
+const StudyMyRank = (props: StudyMyRankProps) => {
   return <div>studyMyRank</div>;
 };
 
