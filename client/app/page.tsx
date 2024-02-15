@@ -1,4 +1,6 @@
-import LoginButton from '@/components/login-button';
+import SignIn from "@/components/sign/SignIn";
+
+
 
 export const metadata = {
   title: 'Home',
@@ -7,7 +9,7 @@ export const metadata = {
 const HomePage = () => {
   return (
     <>
-      <LoginButton />
+      <SignIn />
     </>
   );
 };
