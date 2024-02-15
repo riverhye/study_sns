@@ -1,6 +1,11 @@
 import React from 'react';
-
-const StudyTodo = () => {
+interface StudyTodoProps {
+  todoData?: {
+    todoDate: string;
+    todoContent: string;
+  }[];
+}
+const StudyTodo = (props: StudyTodoProps) => {
   return <div>studyTodo</div>;
 };
 
