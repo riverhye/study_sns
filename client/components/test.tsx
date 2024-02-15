@@ -17,7 +17,7 @@ const TestComponent = () => {
     fetchData();
   }, []);
 
-  return <div>{data ? <p>Response from server: {data}</p> : <p>Loading...</p>}</div>;
+  return <div>{data ? <p>localhost:8080/test 에서 받아온 요청: {data}</p> : <p>Loading...</p>}</div>;
 };
 
 export default TestComponent;
