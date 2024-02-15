@@ -24,7 +24,7 @@ public class FeedEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "studyId", nullable = false)
-    private UserEntity study;
+    private StudyEntity study;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

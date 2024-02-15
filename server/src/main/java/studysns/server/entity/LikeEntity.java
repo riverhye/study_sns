@@ -26,11 +26,11 @@ public class LikeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "feedId", nullable = false)
-    private UserEntity feed;
+    private FeedEntity feed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "studyId", nullable = false)
-    private UserEntity study;
+    private FeedEntity study;
 
 }
