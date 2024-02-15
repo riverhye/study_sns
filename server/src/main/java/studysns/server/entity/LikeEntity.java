@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name = "like")
+@Table(name = "likeTable")
 public class LikeEntity {
 
     @Id

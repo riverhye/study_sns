@@ -21,13 +21,14 @@ public class TodoEntity {
     @Column(name = "todoId", nullable = false)
     private long todoId;
 
-    @Column(name = "todoContent")
+    @Column(name = "todoContent", nullable = false)
     private String todoContent;
 
-    @Column(name = "todoDate")
+    @Column(name = "todoDate", nullable = false)
     private LocalDateTime todoDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "userId") // 외래키를 지정. 여기서는 user_id가 외래키가 됨
     private UserEntity userEntity;
 }
