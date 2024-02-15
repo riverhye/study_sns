@@ -51,12 +51,14 @@ export default function Study(props: propsType) {
   const nickname = props.params.nickname;
 
   const [studyPageData, setStudyPageData] = useState<StudyPageData>({
-    user: { nickname: '', email: '', folling: 0, follower: 0 },
+    user: { nickname: 'tNickname', email: 'tEmail@dot.com', folling: 0, follower: 0 },
     studyTable: [],
     todo: [],
     myRanking: { rankingDate: '', rankingTinme: 0 },
     badge: [],
   });
+
+  //url(=유저닉네임)이 바뀔때마다 새로 요청
   useEffect(() => {
     //api요청: 페이지 렌더됐을경우
     async function fetchData() {
@@ -75,7 +77,7 @@ export default function Study(props: propsType) {
   return (
     <>
       {/* 테스트 */}
-      <div>{nickname}test</div>
+      <div>url/{nickname}의 공부 페이지</div>
       {/* 실제 */}
       <StudyUser userData={studyPageData.user} />
       <StudyTable tableData={studyPageData.studyTable} />
