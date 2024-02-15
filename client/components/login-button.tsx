@@ -56,8 +56,6 @@ export default function LoginButton() {
       </section>
 
 
-
-
       {data?.user ? (
         <>
           <h5>로그인 정보</h5>
