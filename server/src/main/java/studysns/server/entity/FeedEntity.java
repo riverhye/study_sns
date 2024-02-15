@@ -28,7 +28,7 @@ public class FeedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JoinColumn(name = "userid", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private UserEntity user;
 
     @Column(name = "studyContent", nullable = false)
