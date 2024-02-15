@@ -1,6 +1,6 @@
+'use client';
+
 import SignIn from "@/components/sign/SignIn";
-
-
 
 export const metadata = {
   title: 'Home',
