@@ -2,7 +2,7 @@ import SignUp from "@/components/sign/SignUp";
 
 
 export const metadata = {
-  title: 'UserSignUp',
+  title: '회원가입',
 };
 
 const UserSignUp = () => {
