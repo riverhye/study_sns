@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
+import axios from 'axios';
 
 export default function SignIn() {
   const { data } = useSession();
@@ -11,8 +12,21 @@ export default function SignIn() {
     else await signIn(type, { redirect: true, callbackUrl: '/' });
   };
 
+
   return (
     <>
+
+    {data?.user ? (
+        <>
+          <h5>로그인 정보</h5>
+          <div>{data.user.name}</div>
+          <img src={data.user.image!} alt="user img" />
+          <div>{data.user.email}</div>
+        </>
+      ) : (
+        ''
+      )}
+
 
       <section>
         <div className="flex flex-col items-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -47,26 +61,13 @@ export default function SignIn() {
                 </button>
               </div>
 
-              <button>
+              <button onClick={() => location.href='/user/signup'}>
                 회원가입
               </button>
             </div>
           </div>
         </div>
       </section>
-
-
-      {data?.user ? (
-        <>
-          <h5>로그인 정보</h5>
-          <div>{data.user.name}</div>
-          <img src={data.user.image!} alt="user img" />
-          <div>{data.user.email}</div>
-        </>
-      ) : (
-        ''
-      )}
-
 
     </>
   );
