@@ -1,4 +1,4 @@
-import UpdateFeed from './UpdateFeed';
+import React from 'react';
 // import { UserFeedProps } from '@/type/type';
 
 interface UserFeedProps {
@@ -26,11 +26,11 @@ const FeedContent = (props: UserFeedProps) => {
     <section>
       <div className="p-10 to-red-500">
         {feeds.map((feed, index) => (
-          <>
-            <div key={index} className="p-4 border-2 my-10">
+          <React.Fragment key={index}>
+            <div className="p-4 border-2 my-10">
               <div className="flex items-center">
                 <div className="w-14 h-14  rounded-full border-2">
-                  <img src={feed.image} alt="img" />
+                  <img src="" alt={feed.image} />
                 </div>
                 <div className="ml-2">{feed.nickname}</div>
               </div>
@@ -38,7 +38,7 @@ const FeedContent = (props: UserFeedProps) => {
                 {feed.nickname}님이 {feed.content} 공부를 {feed.type}
               </div>
             </div>
-          </>
+          </React.Fragment>
         ))}
       </div>
     </section>
