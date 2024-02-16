@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-const socket: Socket = io(`${process.env.NEXT_PUBLIC_LOCAL_URL}`);
+const socket: Socket = io(`${process.env.NEXT_PUBLIC_URL}`);
 const socketConnection: React.FC = () => {
   useEffect(() => {
     socket.on('connect', () => {
@@ -29,7 +29,7 @@ const handleStop = () => {
 };
 
 const handleLike = () => {
-  // TODO: [Nav 타이머]
+  // TODO: [알림] 피드 좋아요 클릭
   socket.emit('like');
 };
 

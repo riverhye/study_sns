@@ -1,7 +1,11 @@
-const UpdateFeed = () => {
+export interface UpdateFeedProps {
+  handleUpdateFeed: () => Promise<void>;
+}
+
+const UpdateFeed: React.FC<UpdateFeedProps> = ({ handleUpdateFeed }) => {
   return (
     <>
-      <div className="flex items-center justify-center mt-5 w-full">
+      <div onClick={handleUpdateFeed} className="flex items-center justify-center mt-5 w-full hover:cursor-pointer">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
