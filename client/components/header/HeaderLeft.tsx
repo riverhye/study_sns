@@ -38,7 +38,7 @@ const HeaderLeft = () => {
         });
         setTodos(res.data);
       } catch (err) {
-        console.error('투두 header 데이터 로드 실패', err);
+        console.error('투두 header 데이터 로드 실패(미연결)', err);
       }
     };
 
