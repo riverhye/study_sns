@@ -15,7 +15,7 @@ export interface UserFeedData {
 
 const HomeFeed = () => {
   const initialFeedData: UserFeedData[] = [
-    { nickname: '테스트', image: 'profile1.jpg', content: '작성 내용', type: '시작했습니다.' },
+    { nickname: '테스트', image: 'image', content: '작성 내용', type: '시작했습니다.' },
     {
       nickname: '어쩌고',
       content: '리액트',
@@ -30,7 +30,7 @@ const HomeFeed = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_LOCAL_URL}/feed`);
+        const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`);
         setFeedData(res.data);
       } catch (err) {
         console.error('메인 데이터 로드 실패', err);
