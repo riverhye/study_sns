@@ -12,4 +12,5 @@ public class UserDTO {
     private String nickname;
     private String password;
     private UserEntity.LoginType loginType;
+    private String profileImage;
 }
