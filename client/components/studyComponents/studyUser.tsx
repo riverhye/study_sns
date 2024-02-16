@@ -1,4 +1,3 @@
-// !나중에 버튼 지금 접속한 사람이랑 id같은지 비교후 버튼 생성
 import '@/styles/tailwind.css';
 interface StudyUserProps {
   userData?: {
