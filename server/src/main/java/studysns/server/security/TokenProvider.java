@@ -23,7 +23,7 @@ public class TokenProvider {
 
         return Jwts.builder()
             .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()) // 암호화 방식을 설정한다, secretKey
-            .setSubject(String.valueOf(userEntity.getId())) // 페이로드에 들어갈 정보
+            .setSubject(String.valueOf(userEntity.getUserId())) // 페이로드에 들어갈 정보
             .setIssuer(jwtProperties.getIssuer())
             .setIssuedAt(new Date()) // 언제 토큰이 발급이 되었는지 확인
             .setExpiration(expiredDate) // 언제 만료가 되는지
