@@ -37,6 +37,9 @@ public class UserEntity {
     @Column(name = "profileImage")
     private String profileImage;
 
+    public void setUserId(long userId) {
+    }
+
     public enum LoginType{
         SNS, GOOGLE, KAKAO
     }
