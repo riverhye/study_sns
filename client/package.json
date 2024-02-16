@@ -11,6 +11,10 @@
     "format-ck": "npx prettier --check ./"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.1",
+    "@iconify/react": "^4.1.1",
+    "axios": "^1.6.7",
+    "date-fns": "^3.3.1",
     "next": "14.1.0",
     "next-auth": "^4.24.5",
     "react": "^18",
