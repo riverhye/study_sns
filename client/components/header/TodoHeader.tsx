@@ -1,11 +1,15 @@
-const TodoHeader = () => {
-  const dummies = ['할일1111', '할일b', '할일c', '할일ㄹㄹㄹㄹd'];
+export interface TodoHeaderProps {
+  content: string[];
+}
+
+const TodoHeader = (props: TodoHeaderProps) => {
+  const todoList = props.content;
   return (
     <>
-      <div className="border-2 p-3 rounded-md h-56">
+      <div className="border-2 p-3 rounded-md w-52 h-56 my-10">
         <ul>
-          {dummies.map((dum, index) => (
-            <li key={index}>{dum}</li>
+          {todoList.map((todo, index) => (
+            <li key={index}>{todo}</li>
           ))}
         </ul>
       </div>
