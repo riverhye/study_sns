@@ -16,14 +16,14 @@ public class BadgeEntity {
 
     @Id
     @Column(name = "badgeId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long badgeId;
 
     @Column(name = "badgeName", nullable = false)
     private String badgeName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JoinColumn(name = "userId") // 외래키를 지정. 여기서는 user_id가 외래키가 됨
+    @JoinColumn(name = "userId")
     private UserEntity userEntity;
 
 }

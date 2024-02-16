@@ -22,17 +22,15 @@ public class FeedEntity {
     private long feedId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "studyId", nullable = false)
     private StudyEntity study;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "userId", nullable = false)
     private UserEntity user;
 
     @Column(name = "studyContent", nullable = false)
-    private long studyContent;
+    private String studyContent;
 
     @Column(name = "studyStartPoint", nullable = false)
     private LocalDateTime studyStartPoint;
