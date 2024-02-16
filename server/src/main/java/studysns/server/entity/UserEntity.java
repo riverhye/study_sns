@@ -33,6 +33,7 @@ public class UserEntity {
     @ColumnDefault("'SNS'")
     private LoginType loginType;
 
+    @Lob
     @Column(name = "profileImage")
     private String profileImage;
 
