@@ -1,4 +1,4 @@
-import HomeFeed from '@/components/user/HomeFeed';
+import HomeFeed from '@/components/feed/HomeFeed';
 
 const UserMainPage = () => {
   return (
