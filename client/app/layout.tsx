@@ -7,7 +7,7 @@ import AuthProvider from '@/components/providers/AuthProvider';
 import SocketProvider from '@/components/providers/SocketProvider';
 import HeaderLeft from '@/components/header/HeaderLeft';
 import HeaderTop from '@/components/header/HeaderTop';
-
+import StoreProvider from '@/components/providers/ReduxProvider';
 import React from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -30,7 +30,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="flex flex-col flex-grow overflow-y-auto">
             <HeaderTop />
             <div className="flex-grow p-4 bg-gray-100">
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                <StoreProvider>{children}</StoreProvider>
+              </AuthProvider>
             </div>
           </div>
         </header>

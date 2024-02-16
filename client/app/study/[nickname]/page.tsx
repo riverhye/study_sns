@@ -73,7 +73,7 @@ export default function Study(props: propsType) {
     fetchData();
   }, [nickname]);
 
-  //TODO:studyPageData안에 데이터가 담길예정 -> 나눠서 props에 담아 각각의 컴포넌트에게 전달
+  //TODO:studyPageData안에 데이터가 담길예정 -> 나눠서 props에 담아 각각의 컴포넌트에게 전달(Clear)
   return (
     <>
       {/* 테스트 */}
