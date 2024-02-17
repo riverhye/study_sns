@@ -4,12 +4,14 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 
 interface UserEditProfile {
     UserData?: {
-      image: string;
+      profileImage: string;
       nickname: string;
       email: string;
       password: string;
     }[];
   }
+
+
   
   const EditProfile = () => {
 
@@ -30,13 +32,6 @@ interface UserEditProfile {
                     </div>
                     <div className="">사진 변경</div>
                   </div>
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
-                    <div className="flex">
-                        <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" placeholder="nickname" />
-                        <button>수정</button>
-                    </div> 
-                  </div>
 
                   <div>
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">이메일</label>
@@ -44,6 +39,14 @@ interface UserEditProfile {
                         <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" placeholder="Email"/>
                         <button>수정</button>
                     </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
+                    <div className="flex">
+                        <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" placeholder="Nickname" />
+                        <button>수정</button>
+                    </div> 
                   </div>
 
                   <div>
