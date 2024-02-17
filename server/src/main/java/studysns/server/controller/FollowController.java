@@ -30,8 +30,6 @@ public class FollowController {
 
     @GetMapping("/getfollow/{followerId}")
     // api 명세: followerId(int Pk), followId(int), userId(int)
-//    follow 테이블이 잘 이해가 안됨. get 요청을 userId 로 바꿔야 하나? (그럴시에 UserEntity 에 userId 를 OneToMany 로.
-//    일단 얘도 이대로 보내면 되긴 함.
     public ResponseEntity<List<FollowDTO>> getFollowByFollowerId(@PathVariable long followerId) {
         List<FollowDTO> followList = followService.getFollowByFollowerId(followerId);
         return ResponseEntity.ok(followList);
