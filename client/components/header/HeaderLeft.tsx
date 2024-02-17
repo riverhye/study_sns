@@ -42,11 +42,12 @@ const HeaderLeft = () => {
       }
     };
 
-    getData();
+    // getData();
   }, [todoList]);
+
   return (
     <>
-      <div className="flex flex-grow flex-col h-auto w-1/12 border-2 min-w-72 p-9">
+      <div className="flex flex-col h-auto border-2 p-9 w-1/4 lg:1/5 md:w-4/12">
         <Category />
         <TodoHeader content={todoList} />
         <Timer />
