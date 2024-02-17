@@ -21,13 +21,13 @@ public class TodoEntity {
     @Column(name = "todoId", nullable = false)
     private long todoId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    private UserEntity userEntity;
+
     @Column(name = "todoContent", nullable = false)
     private String todoContent;
 
     @Column(name = "todoDate", nullable = false)
     private LocalDateTime todoDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private UserEntity userEntity;
 }
