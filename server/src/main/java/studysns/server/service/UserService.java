@@ -34,4 +34,13 @@ public class UserService {
         return userRepository.save(userEntity);
 
     }
+//
+//    public UserEntity login(String email, String password) {
+//        UserEntity searchUser = userRepository.findByEmail(email);
+//
+//        if(searchUser != null && passwordEncoder.matches(password, searchUser.getPassword())){
+//            return searchUser;
+//        }
+//        return null;
+//    }
 }

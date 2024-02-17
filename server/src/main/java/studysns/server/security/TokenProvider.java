@@ -19,14 +19,14 @@ public class TokenProvider {
     JwtProperties jwtProperties;
 
     public String createToken(UserEntity userEntity){
-        Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS)); // 만기 기준은 하루로 설정했습니다.
+        Date expireDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS)); // 만기 기준은 하루로 설정했습니다.
 
         return Jwts.builder()
             .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()) // 암호화 방식을 설정한다, secretKey
             .setSubject(String.valueOf(userEntity.getUserId())) // 페이로드에 들어갈 정보
             .setIssuer(jwtProperties.getIssuer())
             .setIssuedAt(new Date()) // 언제 토큰이 발급이 되었는지 확인
-            .setExpiration(expiredDate) // 언제 만료가 되는지
+            .setExpiration(expireDate) // 언제 만료가 되는지
             .compact(); // 로 마무리해야 토큰이 생성이 된다
     }
 
