@@ -3,7 +3,7 @@ export interface TodoHeaderProps {
 }
 
 const TodoHeader = (props: TodoHeaderProps) => {
-  const todoList = props.content;
+  const todoList = props.content || '';
   return (
     <>
       <div className="border-2 p-3 rounded-md w-52 h-56 my-10">

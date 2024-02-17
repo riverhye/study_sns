@@ -10,9 +10,10 @@ import { format, addMonths, subMonths, setDate } from 'date-fns';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import { isSameMonth, isSameDay, addDays, parse } from 'date-fns';
 //리덕스 관련
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+// import { useSelector } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { setReduxDate } from '@/store/module/date';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
 
 // !redux에 버튼을 눌렀을때 달 정보 저장, 페이지 렌더때도 저장
 const RenderHeader = ({ currentMonth, prevMonth, nextMonth }) => {
@@ -102,13 +103,13 @@ const Calender = () => {
   const [retest, setRetest] = useState('none');
 
   // 리덕스
-  const dispatch = useDispatch();
-  const reduxtest = useSelector(state => state.date);
+  const dispatch = useAppDispatch();
+  const reduxtest = useAppSelector(state => state.date);
   function testRedux() {
     dispatch(setReduxDate('hello'));
   }
   function testShow() {
-    // setRetest(reduxtest);
+    setRetest(reduxtest.date);
     console.log('리덕스테스트', reduxtest);
   }
 
