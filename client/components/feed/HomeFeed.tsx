@@ -38,7 +38,7 @@ const HomeFeed = () => {
         console.error('메인 데이터 로드(미연결)', err);
       }
     };
-    getData();
+    // getData();
   }, []);
 
   // 피드 새로고침

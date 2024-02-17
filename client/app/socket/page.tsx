@@ -1,14 +1,41 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 
+// --- 소켓 io ---
+//import { Socket, io } from 'socket.io-client';
+// const [message, setMessage] = useState<string>('');
+// const socket: Socket = io(`${process.env.NEXT_PUBLIC_URL}`);
+// const socketConnection: React.FC = () => {
+//   useEffect(() => {
+//     socket.on('connect', () => {
+//       console.log('소켓 연결');
+//     });
+
+//     return () => {
+//       socket.disconnect();
+//     };
+//   }, []);
+
+//   return null;
+// };
+
+//   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     setMessage(event.target.value);
+//   };
+
+//     const sendMessage = () => {
+//       socket.emit(message);
+//     console.log('전송 완');
+//   };
+
 const SocketTest: React.FC = () => {
-  // 서버에서는 해당 훅을 사용하지 않도록 변경
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
-    // 클라이언트에서만 실행되는 코드
     if (typeof window !== 'undefined') {
-      const websocket = new WebSocket('ws://127.0.0.1:8080/socket');
+      const websocket = new WebSocket('ws://localhost:8080/socket');
       setWs(websocket);
 
       websocket.onopen = function (event) {
@@ -23,6 +50,10 @@ const SocketTest: React.FC = () => {
         console.log('WebSocket Closed.');
       };
 
+      // websocket.onerror = err => {
+      //   console.log('error', err);
+      // };
+
       return () => {
         websocket.close();
       };
@@ -36,6 +67,7 @@ const SocketTest: React.FC = () => {
   const sendMessage = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(message);
+      console.log('전송 완');
     }
   };
 
