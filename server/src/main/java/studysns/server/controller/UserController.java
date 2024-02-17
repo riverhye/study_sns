@@ -76,4 +76,11 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value="Authorization") String token) {
+        token = token.substring(7);
+        userService.blacklistToken(token);
+        return ResponseEntity.ok().body("로그아웃이 성공하였습니다.");
+    }
 }
