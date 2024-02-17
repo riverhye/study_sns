@@ -1,8 +1,11 @@
 package studysns.server.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import studysns.server.dto.UserDTO;
@@ -83,4 +86,12 @@ public class UserController {
         userService.blacklistToken(token);
         return ResponseEntity.ok().body("로그아웃이 성공하였습니다.");
     }
+
+    // Spring Security 설정에 JWT 인증 로직 추가 (JwtTokenProvider, JwtAuthenticationFilter 등을 사용하여 구현)
+
+    @GetMapping("/editprofile")
+    public String getEditProfilePage(@AuthenticationPrincipal String userId) {
+        return "GET /editprofile by user id "+ userId;
+    }
+
 }
