@@ -54,26 +54,26 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/signin/process")
-//    public ResponseEntity<?> loginUser(HttpSession session, @RequestBody UserDTO userDTO){
-//        try{
-//            UserEntity userEntity = userService.login(userDTO.getEmail(), userDTO.getPassword());
-//            if(userEntity == null){
-//                throw new RuntimeException("로그인 실패");
-//            }
-//
-//            String token = tokenProvider.createToken(userEntity);
-//
-//            UserDTO responseUserDTO = UserDTO.builder()
-//                    .email(userEntity.getEmail())
-//                    .nickname(userEntity.getNickname())
-//                    .userId(userEntity.getUserId())
-//                    .token(token)
-//                    .build();
-//
-//            return ResponseEntity.ok().body(responseUserDTO);
-//        } catch (Exception e){
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    @PostMapping("/signin/process")
+    public ResponseEntity<?> loginUser(HttpSession session, @RequestBody UserDTO userDTO){
+        try{
+            UserEntity userEntity = userService.login(userDTO.getEmail(), userDTO.getPassword());
+            if(userEntity == null){
+                throw new RuntimeException("로그인 실패");
+            }
+
+            String token = tokenProvider.createToken(userEntity);
+
+            UserDTO responseUserDTO = UserDTO.builder()
+                    .email(userEntity.getEmail())
+                    .nickname(userEntity.getNickname())
+                    .userId(userEntity.getUserId())
+                    .token(token)
+                    .build();
+
+            return ResponseEntity.ok().body(responseUserDTO);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
