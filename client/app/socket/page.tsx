@@ -8,7 +8,7 @@ const SocketTest: React.FC = () => {
   useEffect(() => {
     // 클라이언트에서만 실행되는 코드
     if (typeof window !== 'undefined') {
-      const websocket = new WebSocket('ws://127.0.0.1:8080/socket');
+      const websocket = new WebSocket('ws://localhost:8080/socket');
       setWs(websocket);
 
       websocket.onopen = function (event) {
