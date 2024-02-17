@@ -29,7 +29,6 @@ public class LikeController {
 
     @GetMapping("/getlike/{userId}")
 //    api 명세: likeId(int Pk), feedId(int), studyId(int), userId(int)
-//    likeTable 은 그냥 이 데이터 그대로 넘겨주면 될듯?
     public ResponseEntity<List<LikeDTO>> getLikesByUserId(@PathVariable long userId) {
         List<LikeDTO> likeList = likeService.getLikesByUserId(userId);
         return ResponseEntity.ok(likeList);

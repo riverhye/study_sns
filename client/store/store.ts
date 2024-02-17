@@ -1,15 +1,29 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
 import dateReducer from './module/date';
 
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+const rootReducer = combineReducers({
+  // date: setReduxDate,
+  date: dateReducer,
+  // timer: timerReducer,
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 export const store = () => {
   return configureStore({
-    reducer: {
-      // date: setReduxDate,
-      date: dateReducer,
-    },
+    reducer: persistedReducer,
   });
 };
+
+// setupListeners(store.dispatch)
 
 // Infer the type of makeStore
 export type AppStore = ReturnType<typeof store>;
