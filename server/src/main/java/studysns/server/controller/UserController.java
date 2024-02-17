@@ -87,8 +87,6 @@ public class UserController {
         return ResponseEntity.ok().body("로그아웃이 성공하였습니다.");
     }
 
-    // Spring Security 설정에 JWT 인증 로직 추가 (JwtTokenProvider, JwtAuthenticationFilter 등을 사용하여 구현)
-
     @GetMapping("/editprofile")
     public String getEditProfilePage(@AuthenticationPrincipal String userId) {
         return "GET /editprofile by user id "+ userId;
