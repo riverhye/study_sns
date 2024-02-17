@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Builder
@@ -29,5 +29,5 @@ public class TodoEntity {
     private String todoContent;
 
     @Column(name = "todoDate", nullable = false)
-    private LocalDateTime todoDate;
+    private LocalDate todoDate;
 }

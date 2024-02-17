@@ -1,6 +1,8 @@
 package studysns.server.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import studysns.server.dto.TodoDTO;
 import studysns.server.entity.TodoEntity;
@@ -8,10 +10,11 @@ import studysns.server.entity.UserEntity;
 import studysns.server.repository.TodoRepository;
 import studysns.server.repository.UserRepository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class TodoService {
 
@@ -35,14 +38,16 @@ public class TodoService {
                 .build();
 
         todoRepository.save(todoEntity);
+
     }
-    public List<TodoDTO> getTodoByNicknameAndTodoDate(String nickname, LocalDateTime tododate) {
+    public List<TodoDTO> getTodoByNicknameAndTodoDate(String nickname, LocalDate tododate) {
 
         UserEntity user = userRepository.findByNickname(nickname);
         if(user == null) {
             //yser 가  null일 경우
             throw new IllegalArgumentException("User not found");
         }
+        log.warn("TodoDate: " + tododate.toString()); // LocalDateTime 값을 문자열로 변환하여 출력
 
         List<TodoEntity> todoEntities = todoRepository.findByTodoDateAndUserEntity_UserId(tododate, user.getUserId());
         List<TodoDTO> todoDTOList = new ArrayList<>();
