@@ -66,16 +66,30 @@ public class UserService {
     }
 
     public UserEntity updateUser(UserEntity userEntity) {
-        // 사용자 정보를 데이터베이스에 업데이트하고, 업데이트된 사용자 정보를 반환
-        if (userEntity != null && userEntity.getUserId() != 0) {
-            // 이미 존재하는 사용자인지 확인 (옵셔널)
-            if (userRepository.existsById(userEntity.getUserId())) {
-                return userRepository.save(userEntity);
-            } else {
-                throw new RuntimeException("업데이트 할 사용자를 찾을 수 없습니다.");
-            }
-        } else {
+        if (userEntity == null || userEntity.getUserId() == 0) {
             throw new RuntimeException("업데이트할 사용자 정보가 유효하지 않습니다.");
+        }
+
+        // 현재 업데이트하려는 사용자와 동일한 ID를 가진 사용자를 제외하고 동일한 nickname 또는 email을 사용하는 사용자가 있는지 확인
+        String nickname = userEntity.getNickname();
+        String email = userEntity.getEmail();
+        Long userId = userEntity.getUserId();
+
+        boolean nicknameExists = userRepository.existsByNicknameAndUserIdNot(nickname, userId);
+        if (nicknameExists) {
+            throw new RuntimeException("이미 존재하는 닉네임입니다.");
+        }
+
+        boolean emailExists = userRepository.existsByEmailAndUserIdNot(email, userId);
+        if (emailExists) {
+            throw new RuntimeException("이미 존재하는 이메일입니다.");
+        }
+
+        // 사용자 정보 업데이트
+        if (userRepository.existsById(userId)) {
+            return userRepository.save(userEntity);
+        } else {
+            throw new RuntimeException("업데이트 할 사용자를 찾을 수 없습니다.");
         }
     }
 
