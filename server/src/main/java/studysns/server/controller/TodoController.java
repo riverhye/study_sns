@@ -25,7 +25,9 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Todo 작성 성공");
     }
     @GetMapping("/gettodo/{nickname}/{todoDate}")
+
     public ResponseEntity<List<TodoDTO>> getTodoByNicknameAndTodoDate(@PathVariable String nickname, @PathVariable LocalDate tododate) {
+
         List<TodoDTO> todoList = todoService.getTodoByNicknameAndTodoDate(nickname, tododate);
         return ResponseEntity.ok(todoList);
     }

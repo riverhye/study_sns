@@ -25,17 +25,18 @@ export default function SignUp() {
                   회원가입
               </h1>
               <form className="space-y-4 md:space-y-6" action="#">
-                  <div className=' '>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">아이디</label>
-                    <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" placeholder="ID" />
-                    <button>중복확인</button>
-                  </div>
-
                   <div>
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">이메일</label>
                     <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" placeholder="Email"/>
                     <button>중복확인</button>
                   </div>
+
+                  <div className=' '>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
+                    <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" placeholder="Nickname" />
+                    <button>중복확인</button>
+                  </div>
+
 
                   <div>
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">비밀번호</label>

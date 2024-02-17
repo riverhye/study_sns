@@ -36,10 +36,10 @@ public class FollowService {
         followRepository.save(followEntity);
     }
 
-    public List<FollowDTO> getFollowByFollowerId(long followerId){
+    public List<FollowDTO> getFollowByFollowerId(long followerId) {
         List<FollowEntity> followEntities = followRepository.findByFollowerId(followerId);
         List<FollowDTO> followDTOList = new ArrayList<>();
-        for(FollowEntity entity : followEntities){
+        for (FollowEntity entity : followEntities) {
             FollowDTO dto = FollowDTO.builder()
                     .followerId(entity.getFollowerId())
                     .followId(entity.getFollowId())
@@ -49,5 +49,4 @@ public class FollowService {
         }
         return followDTOList;
     }
-
 }
