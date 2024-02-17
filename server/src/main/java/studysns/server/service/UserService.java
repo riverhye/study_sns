@@ -61,6 +61,24 @@ public class UserService {
         tokenBlacklist.add(token);
     }
 
+    public UserEntity findUserById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    public UserEntity updateUser(UserEntity userEntity) {
+        // 사용자 정보를 데이터베이스에 업데이트하고, 업데이트된 사용자 정보를 반환
+        if (userEntity != null && userEntity.getUserId() != 0) {
+            // 이미 존재하는 사용자인지 확인 (옵셔널)
+            if (userRepository.existsById(userEntity.getUserId())) {
+                return userRepository.save(userEntity);
+            } else {
+                throw new RuntimeException("업데이트 할 사용자를 찾을 수 없습니다.");
+            }
+        } else {
+            throw new RuntimeException("업데이트할 사용자 정보가 유효하지 않습니다.");
+        }
+    }
+
 //    public boolean isTokenBlacklisted(String token) {
 //        return tokenBlacklist.contains(token);
 //    }
