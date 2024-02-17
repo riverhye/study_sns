@@ -1,6 +1,7 @@
 package studysns.server.dto;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateKeyDeserializer;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,11 +9,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 public class TodoDTO {
     private long todoId;
     private long userId;
     private String todoContent;
     private LocalDateTime todoDate;
+    // user테이블과 Join하려는 값
 
     public long getTodoId() {
         return todoId;
