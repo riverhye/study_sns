@@ -2,9 +2,11 @@ package studysns.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import studysns.server.dto.UserDTO;
 import studysns.server.entity.UserEntity;
+import studysns.server.security.TokenProvider;
 import studysns.server.service.UserService;
 
 @RestController
@@ -13,6 +15,12 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    TokenProvider tokenProvider;
 
     @GetMapping("/signup")
     public String getSignIn(){
@@ -25,7 +33,7 @@ public class UserController {
             UserEntity userEntity = UserEntity.builder()
                     .email(userDTO.getEmail())
                     .nickname(userDTO.getNickname())
-                    .password(userDTO.getPassword())
+                    .password(passwordEncoder.encode(userDTO.getPassword()))
                     .loginType(userDTO.getLoginType())
                     .build();
 
