@@ -10,8 +10,7 @@ import { format, addMonths, subMonths, setDate } from 'date-fns';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import { isSameMonth, isSameDay, addDays, parse } from 'date-fns';
 //리덕스 관련
-// import { useSelector } from 'react-redux';
-// import { useDispatch } from 'react-redux';
+import { formatDate } from './timeStamp';
 import { setReduxDate } from '@/store/module/date';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 
@@ -79,7 +78,10 @@ const RenderCells = ({ currentMonth, selectedDate, onDateClick }) => {
                   : 'valid'
           }`}
           key={day}
-          onClick={() => cloneDay && onDateClick(parse(cloneDay))}>
+          onClick={() => {
+            // onDateClick(parse(cloneDay));
+            onDateClick(cloneDay);
+          }}>
           <span className={format(currentMonth, 'M') !== format(day, 'M') ? 'text not-valid' : ''}>
             {formattedDate}
           </span>
@@ -98,20 +100,9 @@ const RenderCells = ({ currentMonth, selectedDate, onDateClick }) => {
 };
 
 const Calender = () => {
+  const dispatch = useAppDispatch();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [retest, setRetest] = useState('none');
-
-  // 리덕스
-  const dispatch = useAppDispatch();
-  const reduxtest = useAppSelector(state => state.date);
-  function testRedux() {
-    dispatch(setReduxDate('hello'));
-  }
-  function testShow() {
-    setRetest(reduxtest.date);
-    console.log('리덕스테스트', reduxtest);
-  }
 
   const prevMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1));
@@ -121,16 +112,18 @@ const Calender = () => {
   };
   const onDateClick = day => {
     setSelectedDate(day);
+    dispatch(setReduxDate(formatDate(day))); //리덕스에 누른 날짜 담기
   };
+
   return (
-    <div className="calendar flex-col">
-      <button onClick={testRedux}>리덕스에 hello올리기</button>
-      <button onClick={testShow}>보여지기</button>
-      <div>{retest}</div>
-      <RenderHeader currentMonth={currentMonth} prevMonth={prevMonth} nextMonth={nextMonth} />
-      <RenderDays />
-      <RenderCells currentMonth={currentMonth} selectedDate={selectedDate} onDateClick={onDateClick} />
-    </div>
+    <>
+      {' '}
+      <div className="calendar flex-col">
+        <RenderHeader currentMonth={currentMonth} prevMonth={prevMonth} nextMonth={nextMonth} />
+        <RenderDays />
+        <RenderCells currentMonth={currentMonth} selectedDate={selectedDate} onDateClick={onDateClick} />
+      </div>
+    </>
   );
 };
 export default Calender;
