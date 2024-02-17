@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public class TodoDTO {
     private long todoId;
     private long userId;
     private String todoContent;
-    private LocalDateTime todoDate;
+    private LocalDate todoDate;
     // user테이블과 Join하려는 값
 
     public long getTodoId() {
@@ -41,11 +42,11 @@ public class TodoDTO {
         this.todoContent = todoContent;
     }
 
-    public LocalDateTime getTodoDate() {
+    public LocalDate getTodoDate() {
         return todoDate;
     }
 
-    public void setTodoDate(LocalDateTime todoDate) {
+    public void setTodoDate(LocalDate todoDate) {
         this.todoDate = todoDate;
     }
 }

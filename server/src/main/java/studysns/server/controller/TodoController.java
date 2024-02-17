@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import studysns.server.dto.TodoDTO;
 import studysns.server.service.TodoService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,7 +25,9 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Todo 작성 성공");
     }
     @GetMapping("/gettodo/{nickname}/{todoDate}")
-    public ResponseEntity<List<TodoDTO>> getTodgetoByNicknameAndTodoDate(@PathVariable String nickname, @PathVariable LocalDateTime tododate) {
+
+    public ResponseEntity<List<TodoDTO>> getTodoByNicknameAndTodoDate(@PathVariable String nickname, @PathVariable LocalDate tododate) {
+
         List<TodoDTO> todoList = todoService.getTodoByNicknameAndTodoDate(nickname, tododate);
         return ResponseEntity.ok(todoList);
     }
