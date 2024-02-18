@@ -3,16 +3,18 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
 import dateReducer from './module/date';
+import timerReducer from './module/timer';
 
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['dateReducer'],
 };
 
 const rootReducer = combineReducers({
   // date: setReduxDate,
   date: dateReducer,
-  // timer: timerReducer,
+  timer: timerReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -8,7 +8,20 @@ export interface User {
 export interface studyPageData {}
 
 // 유저 메인피드
-export interface UserFeedData {}
+export interface UserFeedData {
+  nickname: string;
+  image: string;
+  content: string;
+  type: string;
+  date: Date;
+}
+[];
 
 // 유저 메인피드 props
 export interface UserFeedProps {}
+
+export interface TimerState {
+  studyStatus?: string;
+  startPoint?: number;
+  savedStudyTime?: number;
+}
