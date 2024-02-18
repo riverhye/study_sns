@@ -26,15 +26,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={inter.className}>
         {/* <SocketProvider /> */}
         <header className="flex">
-          <HeaderLeft />
-          <div className="flex flex-col flex-grow overflow-y-auto">
-            <HeaderTop />
-            <div className="flex-grow p-4 bg-gray-100">
-              <AuthProvider>
-                <StoreProvider>{children}</StoreProvider>
-              </AuthProvider>
+          <StoreProvider>
+            <HeaderLeft />
+            <div className="flex flex-col flex-grow overflow-y-auto">
+              <HeaderTop />
+              <div className="flex-grow p-4 bg-gray-100">
+                <AuthProvider>{children}</AuthProvider>
+              </div>
             </div>
-          </div>
+          </StoreProvider>
         </header>
       </body>
     </html>
