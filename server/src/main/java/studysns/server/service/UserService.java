@@ -8,6 +8,7 @@ import studysns.server.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -91,6 +92,17 @@ public class UserService {
         } else {
             throw new RuntimeException("업데이트 할 사용자를 찾을 수 없습니다.");
         }
+    }
+
+    public void deleteUser(Long userId) {
+        // 사용자 존재 여부 확인
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
+            throw new RuntimeException("사용자를 찾을 수 없습니다");
+        }
+
+        // 사용자 삭제
+        userRepository.deleteById(userId);
     }
 
 //    public boolean isTokenBlacklisted(String token) {

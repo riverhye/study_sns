@@ -10,6 +10,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     // user의 nickname을 받아오기 위해 추가
     UserEntity findByNickname(String nickname);
+
     UserEntity findByEmail(String email);
 
     boolean existsByNicknameAndUserIdNot(String nickname, Long userId);

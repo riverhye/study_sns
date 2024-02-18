@@ -128,4 +128,21 @@ public class UserController {
         }
     }
 
+    @PostMapping("/editprofile/delete/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            // 사용자 존재 여부 확인
+            UserEntity user = userService.findUserById(userId);
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // 사용자 삭제
+            userService.deleteUser(userId);
+            return ResponseEntity.ok().body("ID " + userId + "인 사용자가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
