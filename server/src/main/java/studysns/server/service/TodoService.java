@@ -64,5 +64,12 @@ public class TodoService {
 
 
     public void deleteTodoById(long todoId) {
-    }
+        try {
+            // todoRepository를 사용하여 Todo를 삭제
+            todoRepository.deleteById(todoId);
+            System.out.println("Todo 삭제가 완료되었습니다.");
+        } catch (Exception e) {
+            System.out.println("Todo 삭제 중 오류가 발생하였습니다: " + e.getMessage());
+        }
+}
 }
