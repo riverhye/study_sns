@@ -14,14 +14,13 @@ public class JwtProperties {
     private String issuer;
     private String secretKey;
 
-    private String secret;
+    private long expirationMs;
 
-    // tokenProvider 사용을 위해 추가
-    public String getSecret(){
-        return secret;
+    public String getSecretKey(){
+        return secretKey;
     }
-    private long expirationMs; // 토큰 만료 시간
-    public void setSecret(String secret) {
-        this.secret = secret;
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

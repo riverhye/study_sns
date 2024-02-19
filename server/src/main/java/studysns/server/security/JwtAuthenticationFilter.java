@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e){
-            log.error("로그인 인증 에러가 발생하였습니다. {}" , e.getMessage());
+            log.error("error while login try: {}" , e.getMessage());
         }
         filterChain.doFilter(request, response);
     }
