@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TimerState } from '@/type/type';
-import { resetReduxTimer, setReduxTimer } from '@/store/module/timer';
-import { format } from 'date-fns';
+import { resetReduxTimer } from '@/store/module/timer';
 
 const Timer = () => {
   const dispatch = useDispatch();
-  const { startPoint, studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
+  const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
 
   // 실시간
   const [time, setTime] = useState(0);
@@ -14,17 +13,18 @@ const Timer = () => {
   const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const formatTime = (seconds: number) => {
-    const date = new Date(0);
-    date.setSeconds(seconds);
-    return format(date, 'HH:mm:ss');
+    const hours = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, '0');
+    const minutes = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, '0');
+    const secondsPart = (seconds % 60).toString().padStart(2, '0');
 
-    // date.setUTCSeconds(second);
-    // const hours = date.getUTCHours().toString().padStart(2, '0');
-    // const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-    // const seconds = date.getUTCSeconds().toString().padStart(2, '0');
-
-    // return `${hours}:${minutes}:${seconds}`;
+    return { hours, minutes, seconds: secondsPart };
   };
+
+  const { hours, minutes, seconds } = formatTime(time);
 
   useEffect(() => {
     const timerTrigger = () => {
@@ -52,7 +52,9 @@ const Timer = () => {
         </div>
         <div className="flex flex-col justify-center ml-6">
           <span>닉네임</span>
-          <div className="text-2xl">{formatTime(time)}</div>
+          <div className="text-2xl">
+            {hours}:{minutes}:{seconds}
+          </div>
         </div>
       </div>
     </>
