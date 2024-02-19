@@ -17,7 +17,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId", nullable = false)
-    private long userId;
+    private Long userId;
 
     @Column(name = "email", length = 50, nullable = false)
     private String email;
@@ -32,8 +32,7 @@ public class UserEntity {
     @Column(name = "loginType", nullable = false)
     private LoginType loginType = LoginType.SNS;
 
-    @Lob
-    @Column(name = "profileImage")
+    @Column(name = "profileImage", length = 255)
     private String profileImage;
 
     @PrePersist
