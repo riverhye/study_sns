@@ -22,11 +22,5 @@ public class FollowEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    private UserEntity userEntity;
-
-    public void setFollowId(long followId)
-    {
-        this.followId = followId;
-    }
-
+    private UserEntity user;
 }

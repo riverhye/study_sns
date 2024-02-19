@@ -28,10 +28,10 @@ public class FollowController {
         return ResponseEntity.status(HttpStatus.CREATED).body("follow added successfully");
     }
 
-    @GetMapping("/getfollow/{followerId}")
+    @GetMapping("/getfollow/{userId}")
     // api 명세: followerId(int Pk), followId(int), userId(int)
-    public ResponseEntity<List<FollowDTO>> getFollowByFollowerId(@PathVariable long followerId) {
-        List<FollowDTO> followList = followService.getFollowByFollowerId(followerId);
+    public ResponseEntity<List<FollowDTO>> getFollowByUserId(@PathVariable long userId) {
+        List<FollowDTO> followList = followService.getFollowByUserId(userId);
         return ResponseEntity.ok(followList);
     }
 

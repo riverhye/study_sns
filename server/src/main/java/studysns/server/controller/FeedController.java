@@ -28,10 +28,10 @@ public class FeedController {
         return ResponseEntity.status(HttpStatus.CREATED).body("feed added successfully");
     }
     
-    @GetMapping("/getfeed/{feedId}")
+    @GetMapping("/getfeed/{userId}")
 //    api 명세: feedId(int Pk), studyContent(string), studyId(int), userId(int), studyStartPoint(timestamp), studyEndPoint(timestamp)
-    public ResponseEntity<List<FeedDTO>> getFeedByFeedId(@PathVariable long feedId) {
-        List<FeedDTO> feedList = feedService.getFeedByFeedId(feedId);
+    public ResponseEntity<List<FeedDTO>> getFeedByUserId(@PathVariable long userId) {
+        List<FeedDTO> feedList = feedService.getFeedByUserId(userId);
         return ResponseEntity.ok(feedList);
     }
 

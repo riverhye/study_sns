@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.multipart.MultipartFile;
 import studysns.server.dto.UserDTO;
 import studysns.server.entity.UserEntity;
 import studysns.server.security.TokenProvider;
 import studysns.server.service.UserService;
+import studysns.server.socket.WebSocketHandler;
 
 @RestController
 @RequestMapping("/user")
@@ -26,6 +28,12 @@ public class UserController {
 
     @Autowired
     TokenProvider tokenProvider;
+
+    @Autowired
+    private WebSocketHandler webSocketHandler; // 소켓 추가 코드(임시)
+
+//    @Value("${file.upload-dir}")
+//    private String uploadDir;
 
     @GetMapping("/signup")
     public String getSignIn(){
@@ -68,7 +76,8 @@ public class UserController {
     @PostMapping("/signin/process")
     public ResponseEntity<?> loginUser(HttpSession session, @RequestBody UserDTO userDTO){
         try{
-            UserEntity userEntity = userService.login(userDTO.getEmail(), userDTO.getPassword());
+            WebSocketSession webSocketSession = (WebSocketSession) session.getAttribute("webSocketSession"); //소켓 추가 코드(임시)
+            UserEntity userEntity = userService.login(webSocketSession, userDTO.getEmail(), userDTO.getPassword()); //webSocketSession 추가 (임시)
             if(userEntity == null){
                 throw new RuntimeException("로그인 실패");
             }

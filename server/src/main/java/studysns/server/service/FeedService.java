@@ -48,8 +48,8 @@ public class FeedService {
         feedRepository.save(feedEntity);
     }
 
-    public List<FeedDTO> getFeedByFeedId(long feedId) {
-        List<FeedEntity> feedEntities = feedRepository.findByFeedId(feedId);
+    public List<FeedDTO> getFeedByUserId(long userId) {
+        List<FeedEntity> feedEntities = feedRepository.findByUserUserId(userId);
         List<FeedDTO> feedDTOList = new ArrayList<>();
         for (FeedEntity entity : feedEntities) {
             FeedDTO dto = FeedDTO.builder()
