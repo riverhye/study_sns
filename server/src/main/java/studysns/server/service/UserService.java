@@ -1,19 +1,21 @@
 package studysns.server.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.multipart.MultipartFile;
 import studysns.server.entity.UserEntity;
 import studysns.server.repository.UserRepository;
 import studysns.server.socket.WebSocketHandler;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.io.File;
+import java.util.*;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Autowired
@@ -21,6 +23,30 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+//    @Value("${file.upload-dir}")
+//    private String uploadDir;
+//
+//    public String saveProfileImage(MultipartFile profileImageFile) {
+//        if (profileImageFile == null || profileImageFile.isEmpty()) {
+//            return null;
+//        }
+//        try {
+//            String originalFilename = profileImageFile.getOriginalFilename();
+//            String newFilename = UUID.randomUUID().toString();
+//            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+//            String storageFilename = newFilename + fileExtension;
+//
+//            // 파일 저장 위치 지정
+//            String storagePath = uploadDir + "/" + storageFilename; // 경로 수정
+//            profileImageFile.transferTo(new File(storagePath));
+//
+//            return storageFilename; // UUID로 변환된 파일명 저장
+//        } catch (Exception e) {
+//            log.error("Failed to save profile image", e);
+//            return null;
+//        }
+//    }
 
     // 토큰 블랙리스트 관리를 위한 필드 추가
     private final Set<String> tokenBlacklist = Collections.synchronizedSet(new HashSet<>());
