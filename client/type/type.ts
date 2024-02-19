@@ -14,6 +14,7 @@ export interface UserFeedData {
   content: string;
   type: string;
   date: Date;
+  isLike: boolean;
 }
 [];
 

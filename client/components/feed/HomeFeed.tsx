@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import { UserFeedData, TimerState } from '@/type/type';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setReduxTimer } from '@/store/module/timer';
 import UpdateFeed from './UpdateFeed';
@@ -10,13 +10,14 @@ import FeedContent from './FeedContent';
 
 const HomeFeed = () => {
   const initialFeedData: UserFeedData[] = [
-    { nickname: '테스트', image: 'image', content: '작성 내용', type: '시작했습니다.', date: new Date() },
+    { nickname: '테스트', image: 'image', content: '작성 내용', type: '시작했습니다.', date: new Date(), isLike: true },
     {
       nickname: '어쩌고',
       content: '리액트',
       type: '시작했습니다.',
       image: 'image',
       date: new Date('2024-02-18T12:34:56'),
+      isLike: true,
     },
     {
       nickname: '맞는데요',
@@ -24,9 +25,11 @@ const HomeFeed = () => {
       content: '게임',
       type: '마쳤습니다.',
       date: new Date('2024-02-14T12:34:56'),
+      isLike: false,
     },
   ];
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
+  const [likeFeed, setLikeFeed] = useState<boolean[]>([]);
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
   useEffect(() => {
@@ -112,7 +115,13 @@ const HomeFeed = () => {
   const handleLike = async (index: number) => {
     try {
       // TODO : socket emit, UI 변경
-      await axios.post(`${process.env.NEXT_PUBLIC_URL}/feed`);
+      setLikeFeed(() => {
+        const newLike = [...likeFeed];
+        newLike[index] = !newLike[index];
+        return newLike;
+      });
+      console.log(likeFeed);
+      // await axios.post(`${process.env.NEXT_PUBLIC_URL}/feed`);
     } catch (error) {
       console.error('피드 좋아요', error);
     }
@@ -130,7 +139,12 @@ const HomeFeed = () => {
           <button onClick={endStudy}>(임시)끝</button>
         </div>
         <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
-        <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
+        <FeedContent
+          initialFeedData={initialFeedData}
+          feedData={feedData}
+          handleLike={handleLike}
+          likeFeed={likeFeed}
+        />
       </section>
     </>
   );
