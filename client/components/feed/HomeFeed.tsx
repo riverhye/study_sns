@@ -3,10 +3,9 @@
 import axios from 'axios';
 import { UserFeedData, TimerState } from '@/type/type';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setReduxTimer } from '@/store/module/timer';
 import UpdateFeed from './UpdateFeed';
 import FeedContent from './FeedContent';
+import useTimerFunc from '../hooks/useTimerFunc';
 
 const HomeFeed = () => {
   const initialFeedData: UserFeedData[] = [
@@ -16,7 +15,7 @@ const HomeFeed = () => {
       content: '리액트',
       type: '시작했습니다.',
       image: 'image',
-      date: new Date('2024-02-18T12:34:56'),
+      date: new Date('2024-02-19T12:34:56'),
       isLike: true,
     },
     {
@@ -30,6 +29,7 @@ const HomeFeed = () => {
   ];
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
   const [likeFeed, setLikeFeed] = useState<boolean[]>([]);
+  const { startStudy, pauseStudy, endStudy } = useTimerFunc();
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
   useEffect(() => {
@@ -58,59 +58,6 @@ const HomeFeed = () => {
     }
   };
 
-  // 타이머
-  const dispatch = useDispatch();
-  const {
-    studyStatus,
-    startPoint = 0,
-    savedStudyTime = 0,
-  } = useSelector((state: { timer: TimerState }) => state.timer);
-
-  // 시작
-  const startStudy = () => {
-    const startPointTime = new Date().getTime();
-    dispatch(setReduxTimer({ studyStatus: 'start', startPoint: startPointTime }));
-
-    // 첫 시작일 때에만 요청
-    if (!startPoint) {
-      const sendData = async () => {
-        try {
-          // ADD: userid 추가해서 보내기
-          await axios.post(`${process.env.NEXT_PUBLIC_URL}/home/start`, { startPoint: new Date() });
-        } catch (error) {
-          console.error('타이머 시작', error);
-        }
-      };
-
-      // sendData();
-    }
-  };
-
-  // [내 공부] 일시정지
-  const pauseStudy = () => {
-    const pausePoint = new Date().getTime();
-    let timeDiff = pausePoint - startPoint;
-    dispatch(setReduxTimer({ studyStatus: 'pause', savedStudyTime: savedStudyTime + timeDiff }));
-  };
-
-  // [내 공부] 정지
-  const endStudy = () => {
-    dispatch(setReduxTimer({ studyStatus: 'end' }));
-    const endPoint = new Date().getTime();
-    const totalTime = Math.floor((savedStudyTime + endPoint - startPoint) / 60000);
-
-    // ADD: userid 추가해서 보내기
-    const sendData = async () => {
-      try {
-        await axios.post(`${process.env.NEXT_PUBLIC_URL}/home/end`, { endPoint: new Date(), totalTime });
-      } catch (error) {
-        console.error('타이머 끝', error);
-      }
-
-      // sendData();
-    };
-  };
-
   // 피드 좋아요
   const handleLike = async (index: number) => {
     try {
@@ -136,15 +83,10 @@ const HomeFeed = () => {
             시작
           </button>
           <button onClick={pauseStudy}>(임시)일시정지</button>
-          <button onClick={endStudy}>(임시)끝</button>
+          <button onClick={() => endStudy(true)}>(임시)끝</button>
         </div>
         <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
-        <FeedContent
-          initialFeedData={initialFeedData}
-          feedData={feedData}
-          handleLike={handleLike}
-          likeFeed={likeFeed}
-        />
+        <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
       </section>
     </>
   );
