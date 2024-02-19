@@ -1,18 +1,25 @@
 package studysns.server.controller;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import studysns.server.dto.UserDTO;
 import studysns.server.entity.UserEntity;
 import studysns.server.security.TokenProvider;
 import studysns.server.service.UserService;
 
+import java.io.File;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -24,18 +31,29 @@ public class UserController {
     @Autowired
     TokenProvider tokenProvider;
 
+//    @Value("${file.upload-dir}")
+//    private String uploadDir;
+
     @GetMapping("/signup")
     public String getSignIn(){
         return "GET: user";
     }
 
     @PostMapping("/signup/process")
-    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> registerUser( //@ModelAttribute UserDTO userDTO,
+                                          // @RequestParam("profileImageFile") MultipartFile profileImageFile,
+                                          @RequestBody UserDTO userDTO) {
         try {
+            // 프로필 이미지 파일 저장
+//            String profileImage = saveProfileImage(profileImageFile);
+//
+//            log.warn("파일 이름 {} ", profileImage);
+
             UserEntity userEntity = UserEntity.builder()
                     .email(userDTO.getEmail())
                     .nickname(userDTO.getNickname())
                     .password(passwordEncoder.encode(userDTO.getPassword()))
+                    .profileImage(userDTO.getProfileImage())
                     .loginType(userDTO.getLoginType())
                     .build();
 
@@ -54,6 +72,27 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+//    public String saveProfileImage(MultipartFile profileImageFile) {
+//        if (profileImageFile == null || profileImageFile.isEmpty()) {
+//            return null;
+//        }
+//        try {
+//            String originalFilename = profileImageFile.getOriginalFilename();
+//            String newFilename = UUID.randomUUID().toString();
+//            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+//            String storageFilename = newFilename + fileExtension;
+//
+//            // 파일 저장 위치 지정
+//            String storagePath = uploadDir + "/" + storageFilename; // 경로 수정
+//            profileImageFile.transferTo(new File(storagePath));
+//
+//            return storageFilename; // UUID로 변환된 파일명 저장
+//        } catch (Exception e) {
+//            log.error("Failed to save profile image", e);
+//            return null;
+//        }
+//    }
 
     @PostMapping("/signin/process")
     public ResponseEntity<?> loginUser(HttpSession session, @RequestBody UserDTO userDTO){
