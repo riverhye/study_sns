@@ -34,29 +34,52 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // --------------소켓 연결
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String userId = extractUserIdFromToken(session);
-
-        addUserToRoom(session, userId);
+        try {
+            String userId = extractUserIdFromSession(session);
+            if (userId != null) {
+                addUserToRoom(session, userId);
+            } else {
+                log.error("Cannot find userId in session");
+                session.close();
+            }
+        } catch (Exception e) {
+            log.error("Error while opening socket: {}", e.getMessage(), e);
+            session.close();
+        }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        try{
         removeUserFromRoom(session);
+        }catch (Exception e) {
+            log.error("error while closing socket: {}", e.getMessage(), e);
+        }
     }
 
     // ---------------- 룸 추가 및 삭제
 
     private void addUserToRoom(WebSocketSession session, String userId) {
+        try{
         ROOMS.putIfAbsent(userId, new HashSet<>());
         ROOMS.get(userId).add(session);
+    }catch (Exception e) {
+        log.error("error while creating socket room: {}", e.getMessage(), e);
+    }
     }
 
     private void removeUserFromRoom(WebSocketSession session) {
-        String userId = extractUserIdFromToken(session);
+        try{
+        String userId = extractUserIdFromSession(session);
         if (ROOMS.containsKey(userId)) {
             ROOMS.get(userId).remove(session);
         }
+    }catch (Exception e) {
+        log.error("error while removing user from room: {}", e.getMessage(), e);
+        }
     }
+
+
 
     public void removeRoomByUserId(String userId) {
         Set<WebSocketSession> userSession = ROOMS.remove(userId); // 해당 유조의 소켓 룸 삭제
@@ -65,29 +88,42 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 try {
                     session.close(); // 해당 사용자의 모든 세션을 닫음(웹소켓 세션)
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("error while deleting room: {}", e.getMessage(), e);
                 }
             }
         }
     }
 
-    // ----------로그인 때 생성된 토큰에서 유저 아이디 추출하기
-    private String extractUserIdFromToken(WebSocketSession session) {
-        String token = session.getAttributes().get("token").toString(); // 로그인 할 때 저장된 토큰 가져오기(세션에서)
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtProperties.getSecret()) // jwtProperties에서 secretKey 가져오기
-                .parseClaimsJws(token)
-                .getBody(); // 토큰의 정보가 담겨있는 바디(클레임 이라고 함)
-        return claims.getSubject(); // 유저의 ID 리턴. TokenProvider 에서 ID 는 페이로드에 담았음.
+    private String extractUserIdFromSession(WebSocketSession session) {
+        String token = session.getHandshakeHeaders().getFirst("Authorization"); // WebSocket 세션의 헤더에서 Authorization 헤더 값을 가져옴
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7); // "Bearer " 부분을 제외하고 실제 토큰 값만 추출
+            try {
+                Claims claims = Jwts.parser()
+                        .setSigningKey(jwtProperties.getSecretKey()) // jwtProperties에서 secretKey 가져오기
+                        .parseClaimsJws(token)
+                        .getBody(); // 토큰의 정보가 담겨있는 바디(클레임 이라고 함)
+                String userId = claims.getSubject();
+                log.info("Extracted userId: {}", userId);
+                return userId; // 유저의 ID 리턴. TokenProvider 에서 ID 는 페이로드에 담았음.
+            } catch (Exception e) {
+                log.error("Failed to parse JWT token: {}", e.getMessage());
+            }
+        }
+        return null;
     }
 
     // -------------클라이언트에 팔로우한 사용자의 목록을 전송
     public void sendFollowInfoToClient(WebSocketSession session, List<FollowDTO> followList) throws IOException {
         // sendFollowInfoToClient 메소드는 WebSocketSession 과 FollowDTO 목록을 매개변수로 받음.
+        try {
         ObjectMapper objectMapper = new ObjectMapper();
         // ObjectMapper 를 사용해 DTO 목록을 JSON 문자열로 변환한 다음, WebSocketSession 을 통해 클라이언트로 전송함.
         String followJson = objectMapper.writeValueAsString(followList);
         session.sendMessage(new TextMessage(followJson));
+        } catch (IOException e) {
+            log.error("failed to send follow information: {}", e.getMessage(), e);
+        }
     }
 
     
@@ -103,7 +139,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     userSession.sendMessage(new TextMessage(notificationJson));
                 }
             } catch (IOException e) {
-                log.error("알림 보내기 실패: {}", e.getMessage());
+                log.error("failed to send follow notification: {}", e.getMessage());
             }
         }
     }
