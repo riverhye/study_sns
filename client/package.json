@@ -11,7 +11,6 @@
     "format-ck": "npx prettier --check ./"
   },
   "dependencies": {
-    "@heroicons/react": "^2.1.1",
     "@iconify/react": "^4.1.1",
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.7",
