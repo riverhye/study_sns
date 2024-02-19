@@ -9,30 +9,6 @@ import lombok.Setter;
 @Builder
 public class FollowDTO {
     private long followerId;
-    private long followId;
-    private long userId;
-
-    public long getFollowerId() {
-        return followerId;
-    }
-
-    public void setFollowerId(long followerId) {
-        this.followerId = followerId;
-    }
-
-    public long getFollowId() {
-        return followId;
-    }
-
-    public void setFollowId(long followId) {
-        this.followId = followId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
+    private long followId; // 기준 유저를 팔로우 하는 유저
+    private long userId; // 기준 유저
 }

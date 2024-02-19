@@ -3,8 +3,10 @@ package studysns.server.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 import studysns.server.entity.UserEntity;
 import studysns.server.repository.UserRepository;
+import studysns.server.socket.WebSocketHandler;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,6 +24,13 @@ public class UserService {
 
     // 토큰 블랙리스트 관리를 위한 필드 추가
     private final Set<String> tokenBlacklist = Collections.synchronizedSet(new HashSet<>());
+
+    private final WebSocketHandler webSocketHandler; // 소켓 추가 코드(임시)
+
+    @Autowired // 소켓 추가 코드(임시)
+    public UserService(WebSocketHandler webSocketHandler) {
+        this.webSocketHandler = webSocketHandler;
+    }
 
     public UserEntity createUser(UserEntity userEntity) {
         if(userEntity == null){
@@ -43,10 +52,12 @@ public class UserService {
 
     }
 
-    public UserEntity login(String email, String password) {
+    public UserEntity login(WebSocketSession session, String email, String password) { // WebSocketSession 추가(임시)
         UserEntity searchUser = userRepository.findByEmail(email);
 
         if(searchUser != null && passwordEncoder.matches(password, searchUser.getPassword())){
+            // 소켓 추가 코드(임시)
+            webSocketHandler.addUserToRoom(session, String.valueOf(searchUser.getUserId()));
             return searchUser;
         }
         return null;
@@ -108,4 +119,5 @@ public class UserService {
 //    public boolean isTokenBlacklisted(String token) {
 //        return tokenBlacklist.contains(token);
 //    }
+
 }

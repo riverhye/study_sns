@@ -30,20 +30,20 @@ public class FollowService {
 
         FollowEntity followEntity = FollowEntity.builder()
                 .followId(followDTO.getFollowId())
-                .userEntity(userEntity)
+                .user(userEntity)
                 .build();
 
         followRepository.save(followEntity);
     }
 
-    public List<FollowDTO> getFollowByFollowerId(long followerId) {
-        List<FollowEntity> followEntities = followRepository.findByFollowerId(followerId);
+    public List<FollowDTO> getFollowByUserId(long userId) {
+        List<FollowEntity> followEntities = followRepository.findByUserUserId(userId);
         List<FollowDTO> followDTOList = new ArrayList<>();
         for (FollowEntity entity : followEntities) {
             FollowDTO dto = FollowDTO.builder()
                     .followerId(entity.getFollowerId())
                     .followId(entity.getFollowId())
-                    .userId(entity.getUserEntity().getUserId())
+                    .userId(entity.getUser().getUserId())
                     .build();
             followDTOList.add(dto);
         }

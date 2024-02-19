@@ -6,5 +6,5 @@ import studysns.server.entity.FeedEntity;
 import java.util.List;
 
 public interface FeedRepository extends JpaRepository<FeedEntity, Long> {
-    List<FeedEntity> findByFeedId(long feedId);
+    List<FeedEntity> findByUserUserId(long userId);
 }
