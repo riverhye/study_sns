@@ -1,10 +1,7 @@
 package studysns.server.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -13,9 +10,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Table(name = "todo")
 public class TodoEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "todoId", nullable = false)

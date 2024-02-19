@@ -17,6 +17,8 @@ public class TodoDTO {
     private String todoContent;
     private LocalDate todoDate;
     // user테이블과 Join하려는 값
+    private String nickname; // user 테이블과 join하는 값
+
 
     public long getTodoId() {
         return todoId;
@@ -49,4 +51,6 @@ public class TodoDTO {
     public void setTodoDate(LocalDate todoDate) {
         this.todoDate = todoDate;
     }
+
+
 }
