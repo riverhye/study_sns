@@ -67,7 +67,6 @@ const HomeFeed = () => {
   const startStudy = () => {
     const startPointTime = new Date().getTime();
     dispatch(setReduxTimer({ studyStatus: 'start', startPoint: startPointTime }));
-    console.log('start', startPointTime);
 
     // 첫 시작일 때에만 요청
     if (!startPoint) {
@@ -86,10 +85,9 @@ const HomeFeed = () => {
 
   // [내 공부] 일시정지
   const pauseStudy = () => {
-    dispatch(setReduxTimer({ studyStatus: 'pause' }));
     const pausePoint = new Date().getTime();
     let timeDiff = pausePoint - startPoint;
-    dispatch(setReduxTimer({ savedStudyTime: savedStudyTime + timeDiff }));
+    dispatch(setReduxTimer({ studyStatus: 'pause', savedStudyTime: savedStudyTime + timeDiff }));
   };
 
   // [내 공부] 정지
@@ -97,7 +95,6 @@ const HomeFeed = () => {
     dispatch(setReduxTimer({ studyStatus: 'end' }));
     const endPoint = new Date().getTime();
     const totalTime = Math.floor((savedStudyTime + endPoint - startPoint) / 60000);
-    const paddedTotalTime = String(totalTime).padStart(2, '0');
 
     // ADD: userid 추가해서 보내기
     const sendData = async () => {

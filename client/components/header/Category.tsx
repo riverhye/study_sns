@@ -81,6 +81,7 @@ const Category = () => {
         </svg>
         알림
       </li>
+      <Link href={`/home`}>임시 로그인홈</Link>
     </ul>
   );
 };
