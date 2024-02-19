@@ -18,10 +18,14 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
+    private final NotificationService notificationService;
+
+
     @Autowired
-    public FollowService(FollowRepository followRepository, UserRepository userRepository){
+    public FollowService(FollowRepository followRepository, UserRepository userRepository, NotificationService notificationService){
         this.followRepository = followRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     public void addFollow(FollowDTO followDTO){
@@ -34,10 +38,16 @@ public class FollowService {
                 .build();
 
         followRepository.save(followEntity);
+
+        notificationService.sendFollowNotification(userEntity.getUserId(), followDTO.getFollowId());
+
     }
 
     public List<FollowDTO> getFollowByUserId(long userId) {
+        // userId 기반, 해당 유저의 팔로워 조회
         List<FollowEntity> followEntities = followRepository.findByUserUserId(userId);
+        
+        // 조회한 팔로워 정보를 FollowDTO 로 변환하여 반환
         List<FollowDTO> followDTOList = new ArrayList<>();
         for (FollowEntity entity : followEntities) {
             FollowDTO dto = FollowDTO.builder()

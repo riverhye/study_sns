@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.multipart.MultipartFile;
 import studysns.server.entity.UserEntity;
 import studysns.server.repository.UserRepository;
+import studysns.server.security.TokenProvider;
 import studysns.server.socket.WebSocketHandler;
 
 import java.io.File;
@@ -23,6 +23,17 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
+    @Autowired
+    private WebSocketHandler webSocketHandler;
+
+    // 토큰에서 사용자 ID 추출 메소드
+    private String getUserIdFromToken(String token) {
+        return tokenProvider.validateAndGetUserId(token);
+    }
 
 //    @Value("${file.upload-dir}")
 //    private String uploadDir;
@@ -51,12 +62,6 @@ public class UserService {
     // 토큰 블랙리스트 관리를 위한 필드 추가
     private final Set<String> tokenBlacklist = Collections.synchronizedSet(new HashSet<>());
 
-    private final WebSocketHandler webSocketHandler; // 소켓 추가 코드(임시)
-
-    @Autowired // 소켓 추가 코드(임시)
-    public UserService(WebSocketHandler webSocketHandler) {
-        this.webSocketHandler = webSocketHandler;
-    }
 
     public UserEntity createUser(UserEntity userEntity) {
         if(userEntity == null){
@@ -78,12 +83,10 @@ public class UserService {
 
     }
 
-    public UserEntity login(WebSocketSession session, String email, String password) { // WebSocketSession 추가(임시)
+    public UserEntity login(String email, String password) {
         UserEntity searchUser = userRepository.findByEmail(email);
 
         if(searchUser != null && passwordEncoder.matches(password, searchUser.getPassword())){
-            // 소켓 추가 코드(임시)
-            webSocketHandler.addUserToRoom(session, String.valueOf(searchUser.getUserId()));
             return searchUser;
         }
         return null;
@@ -91,6 +94,10 @@ public class UserService {
 
     // 로그아웃 메소드 내용 업데이트
     public void logout(String token) {
+        String userId = getUserIdFromToken(token);
+        if (userId != null) {
+            webSocketHandler.removeRoomByUserId(userId); // 해당 사용자의 소켓 훔 제거
+        }
         blacklistToken(token); // 로그아웃 시 토큰을 블랙리스트에 추가
     }
 

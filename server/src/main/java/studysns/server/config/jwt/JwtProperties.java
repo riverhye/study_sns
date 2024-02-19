@@ -13,4 +13,15 @@ import org.springframework.stereotype.Component;
 public class JwtProperties {
     private String issuer;
     private String secretKey;
+
+    private String secret;
+
+    // tokenProvider 사용을 위해 추가
+    public String getSecret(){
+        return secret;
+    }
+    private long expirationMs; // 토큰 만료 시간
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 }

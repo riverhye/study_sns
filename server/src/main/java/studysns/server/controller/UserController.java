@@ -30,7 +30,7 @@ public class UserController {
     TokenProvider tokenProvider;
 
     @Autowired
-    private WebSocketHandler webSocketHandler; // 소켓 추가 코드(임시)
+    private WebSocketHandler webSocketHandler;
 
 //    @Value("${file.upload-dir}")
 //    private String uploadDir;
@@ -74,10 +74,9 @@ public class UserController {
     }
 
     @PostMapping("/signin/process")
-    public ResponseEntity<?> loginUser(HttpSession session, @RequestBody UserDTO userDTO){
+    public ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO){
         try{
-            WebSocketSession webSocketSession = (WebSocketSession) session.getAttribute("webSocketSession"); //소켓 추가 코드(임시)
-            UserEntity userEntity = userService.login(webSocketSession, userDTO.getEmail(), userDTO.getPassword()); //webSocketSession 추가 (임시)
+            UserEntity userEntity = userService.login(userDTO.getEmail(), userDTO.getPassword());
             if(userEntity == null){
                 throw new RuntimeException("로그인 실패");
             }
