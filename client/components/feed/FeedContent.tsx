@@ -7,7 +7,6 @@ interface UserFeedProps {
   feedData?: UserFeedData[];
   initialFeedData: UserFeedData[]; // temp
   handleLike: (index: number) => void;
-  likeFeed: boolean[];
 }
 
 const FeedContent = (props: UserFeedProps) => {
@@ -48,7 +47,7 @@ const FeedContent = (props: UserFeedProps) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className={`w-6 h-6 absolute right-6 bottom-3 text-red-400 ${props.likeFeed[index] ? 'bg-red-300' : 'fill-gray-500'}`}
+                className={`w-6 h-6 absolute right-6 bottom-3 ${feed.isLike && 'fill-red-500'}`}
                 onClick={() => props.handleLike(index)}>
                 <path
                   strokeLinecap="round"

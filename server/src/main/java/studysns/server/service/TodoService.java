@@ -41,19 +41,22 @@ public class TodoService {
 
     }
     public List<TodoDTO> getTodoByNicknameAndTodoDate(String nickname, LocalDate tododate) {
+        List<TodoDTO> todoDTOList = new ArrayList<>();
 
+        // 사용자 조회
         UserEntity user = userRepository.findByNickname(nickname);
-        if(user == null) {
-            //yser 가  null일 경우
+        if (user == null) {
             throw new IllegalArgumentException("User not found");
         }
-        log.warn("TodoDate: " + tododate.toString()); // LocalDateTime 값을 문자열로 변환하여 출력
 
-        List<TodoEntity> todoEntities = todoRepository.findByTodoDateAndUserEntity_UserId(tododate, user.getUserId());
-        List<TodoDTO> todoDTOList = new ArrayList<>();
+        // 할 일 목록 조회
+        List<TodoEntity> todoEntities = todoRepository.findByTodoDateAndUserEntity_Nickname(tododate, nickname);
         for (TodoEntity entity : todoEntities) {
             TodoDTO dto = TodoDTO.builder()
+                    .todoId(entity.getTodoId())
                     .userId(entity.getUserEntity().getUserId())
+                    .nickname(entity.getUserEntity().getNickname())
+                   .todoContent(entity.getTodoContent())
                     .todoDate(entity.getTodoDate())
                     .build();
             todoDTOList.add(dto);
