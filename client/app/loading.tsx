@@ -1,3 +1,5 @@
+import LoadingCom from '@/components/Loading';
+
 export default function Loading() {
-  return <h3>Loading...</h3>;
+  return <LoadingCom />;
 }
