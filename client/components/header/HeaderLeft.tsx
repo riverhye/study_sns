@@ -47,7 +47,7 @@ const HeaderLeft = () => {
 
   return (
     <>
-      <div className="flex flex-col h-auto p-9 w-1/6 md:w-1/4 bg-main-blue">
+      <div className="flex flex-col h-auto w-2/12 px-4 bg-main-blue p-0">
         <Category />
         <TodoHeader content={todoList} />
         <Timer />
