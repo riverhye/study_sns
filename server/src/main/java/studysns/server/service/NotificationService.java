@@ -21,10 +21,10 @@ public class NotificationService {
     public void sendFollowNotification(long userId, long followId) {
         // followId로 유저의 닉네임 찾기
         UserEntity follower = userRepository.findById(followId)
-                .orElseThrow(() -> new EntityNotFoundException("팔로워를 찾지 못함"));
+                .orElseThrow(() -> new EntityNotFoundException("cannot find user"));
 
         // 닉네임 + 메세지를 클라이언트로 전송
-        String message = follower.getNickname() + "님이 회원님을 팔로우 했습니다.";
+        String message = follower.getNickname() + " is following you now.";
         System.out.println(message);
     } // 클라이언트에서 받는 데이터는 JSON.parse() 로 사용가능하다고 함. 소켓 연결 확인 후 테스트 해볼예정.
 
