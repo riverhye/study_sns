@@ -38,8 +38,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String userId = extractUserIdFromSession(session);
             if (userId != null) {
                 addUserToRoom(session, userId);
+                log.info("added user to room");
             } else {
-                log.error("Cannot find userId in session");
+                log.error("failed to add user to room");
                 session.close();
             }
         } catch (Exception e) {
@@ -52,6 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         try{
         removeUserFromRoom(session);
+        log.info("failed to remove user from room");
         }catch (Exception e) {
             log.error("error while closing socket: {}", e.getMessage(), e);
         }
@@ -63,6 +65,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         try{
         ROOMS.putIfAbsent(userId, new HashSet<>());
         ROOMS.get(userId).add(session);
+        log.info("new room has been created by userId: {}", userId);
     }catch (Exception e) {
         log.error("error while creating socket room: {}", e.getMessage(), e);
     }
@@ -73,6 +76,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String userId = extractUserIdFromSession(session);
         if (ROOMS.containsKey(userId)) {
             ROOMS.get(userId).remove(session);
+            log.info("user has been removed from room");
         }
     }catch (Exception e) {
         log.error("error while removing user from room: {}", e.getMessage(), e);
@@ -87,6 +91,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             for (WebSocketSession session : userSession) {
                 try {
                     session.close(); // 해당 사용자의 모든 세션을 닫음(웹소켓 세션)
+                    log.info("room has been successfully closed");
                 } catch (IOException e) {
                     log.error("error while deleting room: {}", e.getMessage(), e);
                 }
@@ -94,6 +99,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    // ------------클라이언트에서 반환받은 토큰에서 유저아이디 추출
     private String extractUserIdFromSession(WebSocketSession session) {
         String token = session.getHandshakeHeaders().getFirst("Authorization"); // WebSocket 세션의 헤더에서 Authorization 헤더 값을 가져옴
         if (token != null && token.startsWith("Bearer ")) {
@@ -104,7 +110,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         .parseClaimsJws(token)
                         .getBody(); // 토큰의 정보가 담겨있는 바디(클레임 이라고 함)
                 String userId = claims.getSubject();
-                log.info("Extracted userId: {}", userId);
+                log.info("Extracted userId from Token got back from client: {}", userId);
                 return userId; // 유저의 ID 리턴. TokenProvider 에서 ID 는 페이로드에 담았음.
             } catch (Exception e) {
                 log.error("Failed to parse JWT token: {}", e.getMessage());
@@ -121,6 +127,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // ObjectMapper 를 사용해 DTO 목록을 JSON 문자열로 변환한 다음, WebSocketSession 을 통해 클라이언트로 전송함.
         String followJson = objectMapper.writeValueAsString(followList);
         session.sendMessage(new TextMessage(followJson));
+        log.info("follow information has been sent to client: {}", followJson);
         } catch (IOException e) {
             log.error("failed to send follow information: {}", e.getMessage(), e);
         }
@@ -137,6 +144,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 notificationJson = objectMapper.writeValueAsString(notificationMessage);
                 for (WebSocketSession userSession : userSessions) {
                     userSession.sendMessage(new TextMessage(notificationJson));
+                    log.info("new follow notification has been sent to client");
                 }
             } catch (IOException e) {
                 log.error("failed to send follow notification: {}", e.getMessage());
@@ -146,22 +154,30 @@ public class WebSocketHandler extends TextWebSocketHandler {
     
     // --------------클라이언트에 피드 리스트 전송
     public void sendFeedListToClient(WebSocketSession session, List<FeedDTO> feedList) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String feedJson = objectMapper.writeValueAsString(feedList);
-        session.sendMessage(new TextMessage(feedJson));
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String feedJson = objectMapper.writeValueAsString(feedList);
+            session.sendMessage(new TextMessage(feedJson));
+            log.info("feed list has been sent to client");
+        } catch (IOException e) {
+            log.error("failed to send feed list: {}", e.getMessage());
+        }
     }
 
     // ------------------클라이언트에 실시간 피드 알림 보내기
 
-    public void sendFeedNotification(){
 
-    }
-    
+
     // ----------------클라이언트에 좋아요 리스트 전송
     public void senLikeListToClient(WebSocketSession session, List<LikeDTO> likeList) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String likeJson = objectMapper.writeValueAsString(likeList);
-        session.sendMessage(new TextMessage(likeJson));
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String likeJson = objectMapper.writeValueAsString(likeList);
+            session.sendMessage(new TextMessage(likeJson));
+            log.info("like list has been sent to client");
+        } catch (IOException e) {
+            log.error("failed to send like list: {}", e.getMessage());
+        }
     }
 
     // ------------------클라이언트에 실시간 좋아요 알림 보내기
