@@ -47,7 +47,7 @@ const FeedContent = (props: UserFeedProps) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className={`w-6 h-6 absolute right-6 bottom-3 ${feed.isLike && 'fill-red-500'}`}
+                className={`w-6 h-6 absolute right-6 bottom-3 ${feed.isLike && 'fill-red-500'} cursor-pointer`}
                 onClick={() => props.handleLike(index)}>
                 <path
                   strokeLinecap="round"
