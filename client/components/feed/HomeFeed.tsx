@@ -47,7 +47,8 @@ const HomeFeed = () => {
   // 피드 새로고침
   const handleUpdateFeed = async () => {
     try {
-      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed/new`);
+      // Add: userId
+      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`);
       // 내림차순 정렬
       const sortedFeedData = res.data.slice().sort((a, b) => {
         return b.date.getTime() - a.date.getTime();
@@ -62,13 +63,14 @@ const HomeFeed = () => {
   const handleLike = async (index: number) => {
     try {
       // TODO : socket emit, UI 변경
+      // 백에 넘길 거 : userid, content,
+      // 받을 거 : nickname, profileImage, isLike, date(startPoint or endPoint or followPoint)
       setLikeFeed(() => {
         const newLike = [...likeFeed];
         newLike[index] = !newLike[index];
         return newLike;
       });
-      console.log(likeFeed);
-      // await axios.post(`${process.env.NEXT_PUBLIC_URL}/feed`);
+      await axios.post(`${process.env.NEXT_PUBLIC_URL}/like/addlike`);
     } catch (error) {
       console.error('피드 좋아요', error);
     }

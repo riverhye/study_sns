@@ -19,7 +19,7 @@ const useTimerFunc = () => {
       const sendData = async () => {
         try {
           // ADD: userid 추가해서 보내기
-          await axios.post(`${process.env.NEXT_PUBLIC_URL}/home/start`, { startPoint: new Date() });
+          await axios.post(`${process.env.NEXT_PUBLIC_URL}/feed/addfeed`, { startPoint: new Date() });
         } catch (error) {
           console.error('타이머 시작', error);
         }
