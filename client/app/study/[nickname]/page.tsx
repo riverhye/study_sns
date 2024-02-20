@@ -19,11 +19,7 @@ import StudyMyRank from '@/components/studyComponents/StudyMyRank';
 // 컴포넌트 : 유저 , 타이머 , 달력 , todo, 랭킹(시간, 업적)
 
 //props 타입
-interface propsType {
-  params: { nickname: string };
-  searchParams: {};
-  //추가 가능성있음
-}
+import { NicknamePropsType } from '../../../type/type';
 //Study페이지 조회 데이터 타입
 interface StudyPageData {
   user: {
@@ -46,7 +42,7 @@ interface StudyPageData {
   };
   badge: { badgeName: string }[];
 }
-export default function Study(props: propsType) {
+export default function Study(props: NicknamePropsType) {
   console.log(props);
   const nickname = props.params.nickname;
 
@@ -81,7 +77,7 @@ export default function Study(props: propsType) {
       {/* 실제 */}
       <StudyUser userData={studyPageData.user} />
       <StudyTable tableData={studyPageData.studyTable} />
-      <StudyTodo todoData={studyPageData.todo} />
+      <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
       <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
     </>
   );

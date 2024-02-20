@@ -26,3 +26,11 @@ export interface TimerState {
   startPoint?: number;
   savedStudyTime?: number;
 }
+
+//내공부페이지 쿼리값가져올때 props
+
+export interface NicknamePropsType {
+  params: { nickname: string };
+  searchParams: {};
+  //추가 가능성있음
+}
