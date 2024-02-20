@@ -35,33 +35,11 @@ public class UserService {
         return tokenProvider.validateAndGetUserId(token);
     }
 
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-//
-//    public String saveProfileImage(MultipartFile profileImageFile) {
-//        if (profileImageFile == null || profileImageFile.isEmpty()) {
-//            return null;
-//        }
-//        try {
-//            String originalFilename = profileImageFile.getOriginalFilename();
-//            String newFilename = UUID.randomUUID().toString();
-//            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-//            String storageFilename = newFilename + fileExtension;
-//
-//            // 파일 저장 위치 지정
-//            String storagePath = uploadDir + "/" + storageFilename; // 경로 수정
-//            profileImageFile.transferTo(new File(storagePath));
-//
-//            return storageFilename; // UUID로 변환된 파일명 저장
-//        } catch (Exception e) {
-//            log.error("Failed to save profile image", e);
-//            return null;
-//        }
-//    }
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     // 토큰 블랙리스트 관리를 위한 필드 추가
     private final Set<String> tokenBlacklist = Collections.synchronizedSet(new HashSet<>());
-
 
     public UserEntity createUser(UserEntity userEntity) {
         if(userEntity == null){
@@ -136,6 +114,45 @@ public class UserService {
         } else {
             throw new RuntimeException("업데이트 할 사용자를 찾을 수 없습니다.");
         }
+    }
+
+    public String saveProfileImage(MultipartFile profileImageFile) {
+        if (profileImageFile == null || profileImageFile.isEmpty()) {
+            return null;
+        }
+        try {
+            String originalFilename = profileImageFile.getOriginalFilename();
+            String newFilename = UUID.randomUUID().toString();
+            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String storageFilename = newFilename + fileExtension;
+
+            // 파일 저장 위치 지정
+            String storagePath = uploadDir + "/" + storageFilename;
+
+            // 디렉토리 생성
+            File directory = new File(uploadDir);
+            if (!directory.exists()) {
+                directory.mkdirs(); // 디렉토리가 없으면 생성
+            }
+
+            File destinationFile = new File(storagePath);
+            profileImageFile.transferTo(destinationFile);
+
+            return storageFilename; // UUID로 변환된 파일명 저장
+        } catch (Exception e) {
+            log.error("Failed to save profile image", e);
+            return null;
+        }
+    }
+
+    public UserEntity updateUserProfileImage(Long userId, String profileImagePath) {
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            user.setProfileImage(profileImagePath);
+            return userRepository.save(user); // 업데이트된 사용자 정보 저장
+        }
+        return null; // 사용자를 찾지 못한 경우
     }
 
     public void deleteUser(Long userId) {

@@ -87,6 +87,7 @@ public class UserController {
                     .email(userEntity.getEmail())
                     .nickname(userEntity.getNickname())
                     .userId(userEntity.getUserId())
+                    .profileImage(userEntity.getProfileImage())
                     .token(token)
                     .build();
 
@@ -134,7 +135,7 @@ public class UserController {
             UserDTO responseUserDTO = UserDTO.builder()
                     .email(updatedUser.getEmail())
                     .nickname(updatedUser.getNickname())
-                    .password(null) // 응답에 비밀번호 포함을 피함
+                    .password(updatedUser.getPassword()) // 응답에 비밀번호 포함을 피함
                     .loginType(updatedUser.getLoginType())
                     .profileImage(updatedUser.getProfileImage())
                     .userId(updatedUser.getUserId())
@@ -143,6 +144,29 @@ public class UserController {
             return ResponseEntity.ok().body(responseUserDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/editprofile/image/{userId}")
+    public ResponseEntity<?> uploadImage(@RequestParam("profileImageFile") MultipartFile profileImageFile, @PathVariable("userId") Long userId) {
+        try {
+            // 프로필 이미지 파일 저장
+            String profileImage = userService.saveProfileImage(profileImageFile);
+            if (profileImage == null) {
+                // 파일 저장 실패 시
+                return ResponseEntity.badRequest().body("Failed to upload image.");
+            } else {
+                // 파일 저장 성공 시, 사용자 정보에 이미지 경로 업데이트
+                UserEntity user = userService.updateUserProfileImage(userId, profileImage);
+                if (user == null) {
+                    return ResponseEntity.badRequest().body("Failed to update user profile with image.");
+                }
+                log.warn("파일 이름: {}", profileImage);
+                return ResponseEntity.ok().body("Image uploaded successfully: " + profileImage);
+            }
+        } catch (Exception e) {
+            log.error("Image upload failed", e);
+            return ResponseEntity.internalServerError().body("Internal server error: " + e.getMessage());
         }
     }
 
