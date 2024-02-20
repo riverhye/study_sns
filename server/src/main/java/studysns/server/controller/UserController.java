@@ -32,23 +32,14 @@ public class UserController {
     @Autowired
     private WebSocketHandler webSocketHandler;
 
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-
     @GetMapping("/signup")
     public String getSignIn(){
         return "GET: user";
     }
 
     @PostMapping("/signup/process")
-    public ResponseEntity<?> registerUser( //@ModelAttribute UserDTO userDTO,
-                                          // @RequestParam("profileImageFile") MultipartFile profileImageFile,
-                                          @RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
-            // 프로필 이미지 파일 저장
-//            String profileImage = userService.saveProfileImage(MultipartFile profileImageFile);
-//            log.warn("파일 이름 {} ", profileImage);
-
             UserEntity userEntity = UserEntity.builder()
                     .email(userDTO.getEmail())
                     .nickname(userDTO.getNickname())
