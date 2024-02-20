@@ -8,12 +8,12 @@ const Timer = () => {
 
   return (
     <>
-      <div className="flex">
-        <div className="w-18 h-18 rounded-full border-2 md:w-10 md:h-10">
+      <div className="flex items-center">
+        <div className="w-20 h-20 rounded-full border-2 md:w-10 md:h-10">
           <img src="" alt="" />
         </div>
         <div className="flex flex-col justify-center ml-3">
-          <span className="text-white">닉네임</span>
+          <span className="text-white text-sm">닉네임</span>
           <div className="text-white text-2xl">
             {hours}:{minutes}:{seconds}
           </div>

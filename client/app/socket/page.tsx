@@ -29,6 +29,12 @@ import React, { useEffect, useState } from 'react';
 //     console.log('전송 완');
 //   };
 
+// const ws = new Websocket(url, {
+//  headers: {
+//    Authorization: `Bearer ${token}`
+//  }
+// })
+
 const SocketTest: React.FC = () => {
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [message, setMessage] = useState<string>('');

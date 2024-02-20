@@ -19,7 +19,7 @@ const FeedContent = (props: UserFeedProps) => {
     if (timeDiff < 60) return '방금 전';
     else if (timeDiff < 60 * 60 * 24 * 3) return formatDistanceToNow(d, { addSuffix: true, locale: ko });
     // now와 feedDate 차이 : 방금 전 / 3일 미만 시 몇 분~시간 전 / 3일 전 / 전체 날짜
-    return format(d, 'PPP EEE', { locale: ko });
+    return format(d, 'PPP', { locale: ko });
   };
 
   const feeds = props.feedData || props.initialFeedData;
@@ -32,7 +32,7 @@ const FeedContent = (props: UserFeedProps) => {
             <div className="p-4 border-2 my-10 relative">
               <div className="flex justify-between">
                 <div className="flex items-center">
-                  <div className="w-14 h-14  rounded-full border-2">
+                  <div className="w-14 h-14 rounded-full border-2">
                     <img src="" alt={feed.image} />
                   </div>
                   <div className="ml-2">{feed.nickname}</div>
@@ -45,7 +45,7 @@ const FeedContent = (props: UserFeedProps) => {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                strokeWidth={1.5}
+                strokeWidth={1.1}
                 stroke="currentColor"
                 className={`w-6 h-6 absolute right-6 bottom-3 ${feed.isLike && 'fill-red-500'} cursor-pointer`}
                 onClick={() => props.handleLike(index)}>

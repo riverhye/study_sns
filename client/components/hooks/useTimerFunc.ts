@@ -34,6 +34,17 @@ const useTimerFunc = () => {
     const pausePoint = new Date().getTime();
     let timeDiff = pausePoint - startPoint;
     dispatch(setReduxTimer({ studyStatus: 'pause', savedStudyTime: savedStudyTime + timeDiff }));
+    const sendData = async () => {
+      try {
+        const res = axios.post(`${process.env.NEXT_PUBLIC_URL}/home/pause`, {
+          savedStudyTime: savedStudyTime + timeDiff,
+        });
+      } catch (error) {
+        console.error('타이머 일시정지', error);
+      }
+    };
+
+    // sendData();
   };
 
   // [내 공부] 정지

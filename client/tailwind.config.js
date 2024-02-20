@@ -8,6 +8,12 @@ module.exports = {
         'strong-yellow': '#FFE34F',
         'subtle-yellow': '#FEF521',
       },
+      keyframes: {
+        wave: {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(10px)' },
+        },
+      },
     },
   },
   content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
