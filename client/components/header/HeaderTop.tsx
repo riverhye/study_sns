@@ -9,6 +9,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import Image from 'next/image';
 
 SwiperCore.use([Navigation]);
 
@@ -67,8 +68,8 @@ const HeaderTop: React.FC = () => {
           )}
           <div className="has-tooltip">
             <Link href={`/`}>
-              <div className="border-x-strong-yellow border-y-subtle-yellow	border-2 rounded-full w-20 h-20">
-                <img src="" alt={follower.image} />
+              <div className="border-x-strong-yellow border-y-subtle-yellow	border-2 rounded-full w-20 h-20 overflow-hidden">
+                <Image src="/blank-profile.png" alt="user profile" width={300} height={300} />
               </div>
             </Link>
             <div className="tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center">

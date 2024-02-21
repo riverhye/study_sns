@@ -1,4 +1,4 @@
-import Icons from '@/public/assets/HeaderIcons';
+import Icons from '@/public/images/HeaderIcons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
