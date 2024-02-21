@@ -24,8 +24,8 @@ const Category = () => {
         <Link href={item.href}>
           {item.text === '알림' && (
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute top-3 left-10 inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
-              <span className="relative inline-flex top-3 left-10 rounded-full h-2 w-2 bg-red-500"></span>
+              <span className="animate-ping absolute top-4 left-11 inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
+              <span className="relative inline-flex top-4 left-11 rounded-full h-2 w-2 bg-red-500"></span>
             </span>
           )}
           <li

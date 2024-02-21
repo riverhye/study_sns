@@ -9,8 +9,17 @@ import useTimerFunc from '../hooks/useTimerFunc';
 
 const HomeFeed = () => {
   const initialFeedData: UserFeedData[] = [
-    { nickname: '테스트', image: 'image', content: '작성 내용', type: '시작했습니다.', date: new Date(), isLike: true },
     {
+      feedId: 62,
+      nickname: '테스트',
+      image: 'image',
+      content: '작성 내용',
+      type: '시작했습니다.',
+      date: new Date(),
+      isLike: true,
+    },
+    {
+      feedId: 65,
       nickname: '어쩌고',
       content: '리액트',
       type: '시작했습니다.',
@@ -19,6 +28,7 @@ const HomeFeed = () => {
       isLike: true,
     },
     {
+      feedId: 67,
       nickname: '맞는데요',
       image: 'image2',
       content: '게임',
@@ -28,7 +38,6 @@ const HomeFeed = () => {
     },
   ];
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
-  const [likeFeed, setLikeFeed] = useState<boolean[]>([]);
   const { startStudy, pauseStudy, endStudy } = useTimerFunc();
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
@@ -63,14 +72,16 @@ const HomeFeed = () => {
   const handleLike = async (index: number) => {
     try {
       // TODO : socket emit, UI 변경
-      // 백에 넘길 거 : userid, content,
-      // 받을 거 : nickname, profileImage, isLike, date(startPoint or endPoint or followPoint)
-      setLikeFeed(() => {
-        const newLike = [...likeFeed];
-        newLike[index] = !newLike[index];
-        return newLike;
+      const userId = '임시';
+      const updatedFeedData = [...feedData];
+      updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
+      setFeedData(updatedFeedData);
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/like/addlike`, {
+        feedId: feedData[index].feedId,
+        userId,
+        isLike: updatedFeedData[index].isLike,
       });
-      await axios.post(`${process.env.NEXT_PUBLIC_URL}/like/addlike`);
+      console.log('피드 좋아요 전송');
     } catch (error) {
       console.error('피드 좋아요', error);
     }
@@ -79,16 +90,19 @@ const HomeFeed = () => {
   return (
     <>
       <section>
-        <div className="flex justify-center h-12 w-full">
+        <div className="flex justify-center h-12 w-full mt-10">
           <input
             placeholder="오늘 할 공부는?"
-            className="w-1/2 outline-none rounded-md shadow-sm block indent-3 focus:outline-none focus:ring-sky-500 focus:border-sky-500  placeholder:text-slate-400"
+            className="w-1/3 outline-none rounded-md border-l-black indent-3 focus:outline-none placeholder:text-zinc-500"
           />
-          <button onClick={startStudy} type="button" className="w-32 border-2 rounded-full">
+          <button
+            onClick={startStudy}
+            type="button"
+            className="w-20 rounded-full bg-[#BBE2EC] drop-shadow-md active:filter-none">
             시작
           </button>
-          <button onClick={pauseStudy}>(임시)일시정지</button>
-          <button onClick={() => endStudy(true)}>(임시)끝</button>
+          {/* <button onClick={pauseStudy}>(임시)일시정지</button>
+          <button onClick={() => endStudy(true)}>(임시)끝</button> */}
         </div>
         <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
         <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
