@@ -35,5 +35,18 @@ public class FeedController {
         return ResponseEntity.ok(feedList);
     }
 
+//    @PostMapping("/play/{feedId}")
+//    public ResponseEntity<String> playStudy(@PathVariable long feedId) {
+//        return ResponseEntity.ok("study started");
+//    }
+//    @PostMapping("/pause/{feedId}")
+//    public ResponseEntity<String> pauseStudy(@PathVariable long feedId) {
+//        return ResponseEntity.ok("study paused");
+//    }
+//    @PostMapping("/stop/{feedId}")
+//    public ResponseEntity<String> stopStudy(@PathVariable long feedId) {
+//        return ResponseEntity.ok("study stopped");
+//    }
+
 
 }

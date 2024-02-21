@@ -14,8 +14,11 @@ import studysns.server.config.jwt.JwtProperties;
 import studysns.server.dto.FeedDTO;
 import studysns.server.dto.FollowDTO;
 import studysns.server.dto.LikeDTO;
+import studysns.server.dto.StudyDTO;
+import studysns.server.service.FeedService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
@@ -28,6 +31,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private JwtProperties jwtProperties;
+
+    @Autowired
+    private FeedService feedService;
 
     private static final ConcurrentHashMap<String, Set<WebSocketSession>> ROOMS = new ConcurrentHashMap<>();
 
@@ -166,7 +172,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // ------------------클라이언트에 실시간 피드 알림 보내기
 
-
+    public void sendFeedNotification(WebSocketSession session, String userId, String notificationMessage) {
+        Set<WebSocketSession> userSessions = ROOMS.get(userId);
+        if (userSessions != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String notificationJson;
+            try {
+                notificationJson = objectMapper.writeValueAsString(notificationMessage);
+                for (WebSocketSession userSession : userSessions) {
+                    userSession.sendMessage(new TextMessage(notificationJson));
+                    log.info("new feed notification has been sent to client");
+                }
+            } catch (IOException e) {
+                log.error("failed to send feed notification: {}", e.getMessage());
+            }
+        }
+    }
 
     // ----------------클라이언트에 좋아요 리스트 전송
     public void senLikeListToClient(WebSocketSession session, List<LikeDTO> likeList) throws IOException {
@@ -184,5 +205,48 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void sendLikeNotification(){
 
     }
+
+    public void handlePlayRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
+        // "pause" 메서드 호출
+        StudyDTO updatedStudyDTO = feedService.playStudy(feedDTO, studyDTO);
+
+        if (updatedStudyDTO != null) {
+            String responseMessage = "Pause request success";
+            sendFeedNotification(session, userId, responseMessage);
+        } else {
+            String errorMessage = "Failed pause request";
+            sendFeedNotification(session, userId, errorMessage);
+        }
+    }
+
+
+    // 클라이언트로부터의 stop 메시지를 처리하는 메서드
+    public void handleStopRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
+        // "stop" 메서드 호출
+        StudyDTO updatedStudyDTO = feedService.stopStudy(feedDTO, studyDTO);
+
+        if (updatedStudyDTO != null) {
+            String responseMessage = "Stop request processed successfully";
+            sendFeedNotification(session, userId, responseMessage);
+        } else {
+            String errorMessage = "Failed to process stop request";
+            sendFeedNotification(session, userId, errorMessage);
+        }
+    }
+
+    // 클라이언트로부터의 pause 메시지를 처리하는 메서드
+    public void handlePauseRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
+        // "pause" 메서드 호출
+        StudyDTO updatedStudyDTO = feedService.pauseStudy(feedDTO, studyDTO);
+
+        if (updatedStudyDTO != null) {
+            String responseMessage = "Pause request processed successfully";
+            sendFeedNotification(session, userId, responseMessage);
+        } else {
+            String errorMessage = "Failed to process pause request";
+            sendFeedNotification(session, userId, errorMessage);
+        }
+    }
+
 
 }
