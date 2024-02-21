@@ -10,7 +10,7 @@ const useTimerFunc = () => {
   const { startPoint = 0, savedStudyTime = 0 } = useSelector((state: { timer: TimerState }) => state.timer);
 
   // 타이머 시작
-  const startStudy = () => {
+  const startStudy = (content: string) => {
     const startPointTime = new Date().getTime();
     dispatch(setReduxTimer({ studyStatus: 'start', startPoint: startPointTime }));
 
@@ -19,7 +19,7 @@ const useTimerFunc = () => {
       const sendData = async () => {
         try {
           // ADD: userid 추가해서 보내기
-          await axios.post(`${process.env.NEXT_PUBLIC_URL}/feed/addfeed`, { startPoint: new Date() });
+          await axios.post(`${process.env.NEXT_PUBLIC_URL}/feed/addfeed`, { startPoint: new Date(), content });
         } catch (error) {
           console.error('타이머 시작', error);
         }
