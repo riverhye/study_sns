@@ -7,7 +7,13 @@ import UpdateFeed from './UpdateFeed';
 import FeedContent from './FeedContent';
 import useTimerFunc from '../hooks/useTimerFunc';
 
+interface stateValue {
+  content: string;
+  error: string;
+}
+
 const HomeFeed = () => {
+  const [value, setValue] = useState<stateValue>({ content: '', error: '' });
   const initialFeedData: UserFeedData[] = [
     {
       feedId: 62,
@@ -87,23 +93,46 @@ const HomeFeed = () => {
     }
   };
 
+  // 빈값 아닐 때에만 타이머 시작 (1) 엔터키
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // 엔터 키의 기본 동작인 줄바꿈을 막음
+      value.content.trim() !== ''
+        ? startStudy(value.content)
+        : setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
+    }
+  };
+
+  // 빈값 아닐 때에만 타이머 시작 (2) 클릭
+  const handleContent = () => {
+    if (value.content.trim() !== '') startStudy(value.content);
+    else setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
+  };
+
   return (
     <>
       <section>
         <div className="flex justify-center h-12 w-full mt-10">
           <input
-            placeholder="오늘 할 공부는?"
-            className="w-1/3 outline-none rounded-md border-l-black indent-3 focus:outline-none placeholder:text-zinc-500"
+            onChange={e => setValue({ ...value, content: e.target.value })}
+            onKeyDown={handleEnter}
+            placeholder="무엇을 공부할까요?"
+            className="w-1/4 outline-none border-b-2 border-b-main-blue indent-3 focus:outline-none placeholder:text-zinc-500"
           />
           <button
-            onClick={startStudy}
+            onClick={handleContent}
             type="button"
-            className="w-20 rounded-full bg-[#BBE2EC] drop-shadow-md active:filter-none">
-            시작
+            className="w-20 ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
+            START
           </button>
           {/* <button onClick={pauseStudy}>(임시)일시정지</button>
           <button onClick={() => endStudy(true)}>(임시)끝</button> */}
         </div>
+        {value.error && (
+          <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center">
+            {value.error}
+          </div>
+        )}
         <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
         <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
       </section>
