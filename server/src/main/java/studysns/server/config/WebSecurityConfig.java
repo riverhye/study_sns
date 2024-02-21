@@ -37,11 +37,11 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .oauth2Login(oauth2 -> oauth2
-                    .loginPage("/user/login/oauth2/code/google") // 커스텀 로그인 페이지 URL
-                    .defaultSuccessUrl("/", true) // 로그인 성공 후 리다이렉트 URL
-                    .failureUrl("/user/login/oauth2/code/google") // 로그인 실패 시 리다이렉트 URL
-            )
+//            .oauth2Login(oauth2 -> oauth2
+//                    .loginPage("/user/login/oauth2/code/google") // 커스텀 로그인 페이지 URL
+//                    .defaultSuccessUrl("/", true) // 로그인 성공 후 리다이렉트 URL
+//                    .failureUrl("/user/login/oauth2/code/google") // 로그인 실패 시 리다이렉트 URL
+//            )
             .authorizeHttpRequests(authorize ->  authorize
                     .requestMatchers("/", "/user/signin/process", "/user/signup", "/user/signup/process", "/test", "/follow/**", "/feed/**", "/like/**", "/socket/**", "/study/**" ).permitAll() // 권한이 필요하지 않다
                     .anyRequest().authenticated() // 위의 주소 외에는 권한이 필요하다
