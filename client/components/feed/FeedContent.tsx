@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { UserFeedData } from '@/type/type';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import Image from 'next/image';
 
 interface UserFeedProps {
   feedData?: UserFeedData[];
@@ -32,8 +33,8 @@ const FeedContent = (props: UserFeedProps) => {
             <div className="p-4 border-2 my-10 relative rounded-md shadow-md">
               <div className="flex justify-between">
                 <div className="flex items-center">
-                  <div className="w-14 h-14 rounded-full border-2">
-                    <img src="" alt={feed.image} />
+                  <div className="w-14 h-14 rounded-full border-2 overflow-hidden">
+                    <Image src="/blank-profile.png" alt="user profile" width={300} height={300} />
                   </div>
                   <div className="ml-2 cursor-default">{feed.nickname}</div>
                 </div>
