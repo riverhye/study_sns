@@ -38,3 +38,4 @@ out/
 .vscode/
 
 /profileImages
+/src/main/resources/application-oauth-google.properties

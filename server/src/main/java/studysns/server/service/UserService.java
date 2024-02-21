@@ -3,6 +3,7 @@ package studysns.server.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,9 +63,10 @@ public class UserService {
     }
 
     public UserEntity login(String email, String password) {
-        UserEntity searchUser = userRepository.findByEmail(email);
+        UserEntity searchUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        if(searchUser != null && passwordEncoder.matches(password, searchUser.getPassword())){
+        if(passwordEncoder.matches(password, searchUser.getPassword())){
             return searchUser;
         }
         return null;
