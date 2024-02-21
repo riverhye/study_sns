@@ -120,7 +120,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         .parseClaimsJws(token)
                         .getBody(); // 토큰의 정보가 담겨있는 바디(클레임 이라고 함)
                 String userId = claims.getSubject();
+                String nickname = claims.get("nickname", String.class);
                 log.info("Extracted userId from Token got back from client: {}", userId);
+                log.info("Extracted nickname from Token got back from client: {}", nickname);
                 return userId; // 유저의 ID 리턴. TokenProvider 에서 ID 는 페이로드에 담았음.
             } catch (Exception e) {
                 log.error("Failed to parse JWT token: {}", e.getMessage());
@@ -222,14 +224,29 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 클라이언트로부터의 play 메시지를 처리하는 메서드
     // 클라이언트가 feedDTO 요청을 보낼때 studyContent 가 null 이 아니여야 함. 기존에 등록한 콘텐츠가 존재 한다던지 play 요청을 보낼때 새롭게 등록을 해줘야 함.
     public void handlePlayRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO, String studyContent) {
-        String studyMessage = playStudy(feedDTO, studyDTO, userId, studyContent);
+        String studyMessage = playStudy(session, feedDTO, studyDTO, userId, studyContent);
 
         // 반환된 메시지를 사용하여 클라이언트로 메시지 전송
         if (studyMessage != null) {
             sendFeedNotification(session, userId, studyMessage);
         } else {
             // 실패한 경우에 대한 처리
+            String errorMessage = "공부 시작 실패";
+            try {
+                sendErrorMessageToClient(session, errorMessage);
+            } catch (IOException e) {
+                // 클라이언트에게 에러 메시지를 보낼 수 없는 경우에 대한 예외 처리
+                log.error("Failed to send error message to client: {}", e.getMessage(), e);
+            }
         }
+    }
+
+    // 클라이언트에게 에러 메시지를 보내는 메소드
+    private void sendErrorMessageToClient(WebSocketSession session, String errorMessage) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String errorJson = objectMapper.writeValueAsString(errorMessage);
+        session.sendMessage(new TextMessage(errorJson));
+        log.info("Error message has been sent to client: {}", errorMessage);
     }
 
 
@@ -237,31 +254,32 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // 클라이언트로부터의 stop 메시지를 처리하는 메서드
     public void handleStopRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
-        StudyDTO updatedStudyDTO = stopStudy(feedDTO, studyDTO);
-
-        if (updatedStudyDTO != null) {
-            String responseMessage = "Stop request processed successfully";
-            sendFeedNotification(session, userId, responseMessage);
-        } else {
-            String errorMessage = "Failed to process stop request";
-            sendFeedNotification(session, userId, errorMessage);
-        }
+        stopStudy(session, userId, feedDTO, studyDTO);
     }
 
     // 클라이언트로부터의 pause 메시지를 처리하는 메서드
     public void handlePauseRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
-        StudyDTO updatedStudyDTO = pauseStudy(feedDTO, studyDTO);
-
-        if (updatedStudyDTO != null) {
-            String responseMessage = "Pause request processed successfully";
-            sendFeedNotification(session, userId, responseMessage);
-        } else {
-            String errorMessage = "Failed to process pause request";
-            sendFeedNotification(session, userId, errorMessage);
-        }
+        pauseStudy(session, userId, feedDTO, studyDTO);
     }
-    public String playStudy(FeedDTO feedDTO, StudyDTO studyDTO, String userId, String studyContent) {
+    public String playStudy(WebSocketSession session, FeedDTO feedDTO, StudyDTO studyDTO, String userId, String studyContent) {
         LocalDateTime now = LocalDateTime.now(); // 현재 시간
+
+        String nickname = null;
+
+        // 클레임에서 닉네임을 추출
+        String token = session.getHandshakeHeaders().getFirst("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            try {
+                Claims claims = Jwts.parser()
+                        .setSigningKey(jwtProperties.getSecretKey())
+                        .parseClaimsJws(token)
+                        .getBody();
+                nickname = claims.get("nickname", String.class);
+            } catch (Exception e) {
+                log.error("Failed to parse JWT token: {}", e.getMessage());
+            }
+        }
 
         // 일시 정지 했다가 다시 시작하는 경우
         if (feedDTO.getStudyStartPoint() != null) {
@@ -276,7 +294,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 feedDTO.setStudyEndPoint(studyEndPoint);
             }, 0, 5, TimeUnit.SECONDS); // 5초마다 추가된 시간이 EndPoint로 업데이트 | 테스트 과정에서 확인하기 편하도록 초로 설정했음. ***********배포시 꼭 변경***************
 
-            return userId + " 님이 다시 " + studyContent + "공부를 시작했습니다."; // 클라이언트에게 전송할 메시지 반환
+            return nickname + " 님이 다시 " + studyContent + "공부를 시작했습니다."; // 클라이언트에게 전송할 메시지 반환
 
         } else {
             // 정지 또는 처음 시작을 하는 경우
@@ -289,14 +307,31 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 feedDTO.setStudyEndPoint(studyEndPoint);
             }, 0, 5, TimeUnit.SECONDS);
 
-            return userId + " 님이 " + studyContent + "공부를 시작했습니다."; // 클라이언트에게 전송할 메시지 반환
+            return nickname + " 님이 " + studyContent + "공부를 시작했습니다."; // 클라이언트에게 전송할 메시지 반환
         }
     }
 
 
-    public StudyDTO stopStudy(FeedDTO feedDTO, StudyDTO studyDTO) {
+    public void stopStudy(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
         LocalDateTime studyStartPoint = feedDTO.getStudyStartPoint();
         LocalDateTime studyEndPoint = LocalDateTime.now();
+
+        String nickname = null;
+
+        // 클레임에서 닉네임을 추출
+        String token = session.getHandshakeHeaders().getFirst("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            try {
+                Claims claims = Jwts.parser()
+                        .setSigningKey(jwtProperties.getSecretKey())
+                        .parseClaimsJws(token)
+                        .getBody();
+                nickname = claims.get("nickname", String.class);
+            } catch (Exception e) {
+                log.error("Failed to parse JWT token: {}", e.getMessage());
+            }
+        }
 
         if (studyStartPoint != null) {
             // Calculate study duration in seconds
@@ -314,15 +349,37 @@ public class WebSocketHandler extends TextWebSocketHandler {
             feedDTO.setStudyStartPoint(null);
             feedDTO.setStudyEndPoint(null);
 
-            return studyDTO;
-        }
+            // 전송할 메시지 생성
+            String message = nickname + "님이 공부를 마쳤습니다.";
 
-        return null; // Or handle the case where studyStartPoint is null
+            // 클라이언트에게 메시지 전송
+            sendFeedNotification(session, userId, message);
+        } else {
+            String errorMessage = "Failed to process stop request";
+            sendFeedNotification(session, userId, errorMessage);
+        }
     }
 
-    public StudyDTO pauseStudy(FeedDTO feedDTO, StudyDTO studyDTO) {
+    public void pauseStudy(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO) {
         LocalDateTime studyStartPoint = feedDTO.getStudyStartPoint();
         LocalDateTime studyEndPoint = LocalDateTime.now();
+
+        String nickname = null;
+
+        // 클레임에서 닉네임을 추출
+        String token = session.getHandshakeHeaders().getFirst("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            try {
+                Claims claims = Jwts.parser()
+                        .setSigningKey(jwtProperties.getSecretKey())
+                        .parseClaimsJws(token)
+                        .getBody();
+                nickname = claims.get("nickname", String.class);
+            } catch (Exception e) {
+                log.error("Failed to parse JWT token: {}", e.getMessage());
+            }
+        }
 
         if (studyStartPoint != null) {
             Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
@@ -333,7 +390,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             long updatedStudyTime = studyDTO.getTodayStudyTime() + studyMinutes;
             studyDTO.setTodayStudyTime(updatedStudyTime);
 
-            // 여기에서 의미는 일단 휴식중인 시간이 기록됨
+            // 여기에서는 일단 휴식중인 시간이 기록됨
             if (studyStartPoint != null) {
                 feedDTO.setStudyStartPoint(null);
                 feedDTO.setStudyEndPoint(null);
@@ -341,7 +398,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 LocalDateTime now = LocalDateTime.now();
 
                 feedDTO.setStudyStartPoint(now);
-
                 feedDTO.setStudyEndPoint(now);
 
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -350,7 +406,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     feedDTO.setStudyEndPoint(newStudyEndPoint);
                 }, 0, 5, TimeUnit.SECONDS); // *********************배포시 변경**************************
             }
+
+            // 전송할 메시지 생성
+            String message = nickname + "님이 잠시 휴식 중입니다.";
+
+            // 클라이언트에게 메시지 전송
+            sendFeedNotification(session, userId, message);
+        } else {
+            String errorMessage = "Failed to process pause request";
+            sendFeedNotification(session, userId, errorMessage);
         }
-        return studyDTO;
     }
+
 }

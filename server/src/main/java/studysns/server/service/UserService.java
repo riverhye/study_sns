@@ -172,13 +172,13 @@ public class UserService {
 //        return tokenBlacklist.contains(token);
 //    }
 
-//    public String getNicknameFromUserId(String userId) {
-//        UserEntity userEntity = userRepository.findByUserId(userId);
-//        if (userEntity != null) {
-//            return userEntity.getNickname();
-//        } else {
-//            return null;
-//        }
-//    }
+    public String getNicknameFromUserId(Long userId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        if (userEntity != null) {
+            return userEntity.getNickname();
+        } else {
+            return null;
+        }
+    }
 
 }
