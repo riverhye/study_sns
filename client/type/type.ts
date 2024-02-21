@@ -9,6 +9,7 @@ export interface studyPageData {}
 
 // 유저 메인피드
 export interface UserFeedData {
+  feedId: number;
   nickname: string;
   image: string;
   content: string;
