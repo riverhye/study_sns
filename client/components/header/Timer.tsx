@@ -9,13 +9,14 @@ const Timer = () => {
   return (
     <>
       <div className="flex items-center">
-        <div className="w-20 h-20 rounded-full border-2 md:w-10 md:h-10">
+        <div className="w-20 h-20 rounded-full border-2">
           <img src="" alt="" />
         </div>
         <div className="flex flex-col justify-center ml-3">
-          <span className="text-white text-sm">닉네임</span>
-          <div className="text-white text-2xl">
-            {hours}:{minutes}:{seconds}
+          <span className="text-white text-sm ml-2 cursor-default">닉네임</span>
+          <div className="text-white text-2xl w-28 text-center cursor-default">
+            <span className="w-8 inline-block">{hours}</span>:<span className="w-8 inline-block">{minutes}</span>:
+            <span className="w-8 inline-block">{seconds}</span>
           </div>
         </div>
       </div>
