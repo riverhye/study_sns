@@ -14,7 +14,7 @@ export default function SignIn() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/user/signin/process", 
+      const res = await axios.post("/user/signin/process",
         { email: email,
           password: password });
       if (res.data.result === true) {
