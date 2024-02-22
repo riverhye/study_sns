@@ -15,6 +15,8 @@ import studysns.server.security.TokenProvider;
 import studysns.server.service.UserService;
 import studysns.server.socket.WebSocketHandler;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 @Slf4j
@@ -175,6 +177,22 @@ public class UserController {
             // 사용자 삭제
             userService.deleteUser(userId);
             return ResponseEntity.ok().body("ID " + userId + "인 사용자가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/social/login")
+    public ResponseEntity<?> snsSignIn(@RequestBody Map<String, String> snsDetails) {
+        try {
+            String email = snsDetails.get("email");
+            String nickname = snsDetails.get("nickname");
+            String profileImage = snsDetails.get("profileImage");
+            UserEntity.LoginType loginType = UserEntity.LoginType.valueOf(snsDetails.get("loginType"));
+
+            UserDTO userDTO = userService.snsLoginOrCreateUser(email, nickname, loginType, profileImage);
+
+            return ResponseEntity.ok().body(userDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
