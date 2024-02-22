@@ -17,38 +17,41 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 // !redux에 버튼을 눌렀을때 달 정보 저장, 페이지 렌더때도 저장
 const RenderHeader = ({ currentMonth, prevMonth, nextMonth }) => {
   return (
-    <div className="header row flex fle">
+    <div className="flex justify-between">
       {/* 여기가 년도,달 */}
-      <div className=" w-11px bg-slate-600">
+      <div className=" w-11px  mx-2">
         <span className="text">
           <span className="text month">{format(currentMonth, 'M')}월</span>
           {format(currentMonth, 'yyyy')}
         </span>
       </div>
       {/* 여기가 이동 버튼 */}
-      <div className="col col-end">
-        <Icon icon="bi:arrow-left-circle-fill" onClick={prevMonth} />
-        <Icon icon="bi:arrow-right-circle-fill" onClick={nextMonth} />
+      <div className="flex my-1">
+        <div className="mx-2">
+          <Icon icon="bi:arrow-left-circle-fill" onClick={prevMonth} />
+        </div>
+        <div className="mx-2">
+          <Icon icon="bi:arrow-right-circle-fill" onClick={nextMonth} />
+        </div>
       </div>
     </div>
   );
 };
 
-//여기가 일
+//여기가 주
 //나중에 호버시에 날짜가 뜨게?
 const RenderDays = () => {
-  const days = [];
   const date = ['Sun', 'Mon', 'Thu', 'Wed', 'Thrs', 'Fri', 'Sat'];
 
-  for (let i = 0; i < 7; i++) {
-    days.push(
-      <div className="col" key={i}>
-        {date[i]}
-      </div>,
-    );
-  }
-
-  return <div className="days row flex">{days}</div>;
+  return (
+    <div className="flex ">
+      {date.map((day, index) => (
+        <div className="font-bold mx-2 w-10 h-8" key={index}>
+          {day}
+        </div>
+      ))}
+    </div>
+  );
 };
 
 const RenderCells = ({ currentMonth, selectedDate, onDateClick }) => {
@@ -76,7 +79,7 @@ const RenderCells = ({ currentMonth, selectedDate, onDateClick }) => {
                 : format(currentMonth, 'M') !== format(day, 'M')
                   ? 'not-valid'
                   : 'valid'
-          }`}
+          } mx-2 w-10 h-8`}
           key={day}
           onClick={() => {
             // onDateClick(parse(cloneDay));
@@ -90,13 +93,13 @@ const RenderCells = ({ currentMonth, selectedDate, onDateClick }) => {
       day = addDays(day, 1);
     }
     rows.push(
-      <div className="row flex" key={day}>
+      <div className=" flex" key={day}>
         {days}
       </div>,
     );
     days = [];
   }
-  return <div className="body">{rows}</div>;
+  return <div className="">{rows}</div>;
 };
 
 const Calender = () => {
@@ -118,7 +121,7 @@ const Calender = () => {
   return (
     <>
       {' '}
-      <div className="calendar flex-col">
+      <div className="flex flex-col  w-[350px] h-[270px] border-[1px] rounded-md border-gray-500 my-2 ">
         <RenderHeader currentMonth={currentMonth} prevMonth={prevMonth} nextMonth={nextMonth} />
         <RenderDays />
         <RenderCells currentMonth={currentMonth} selectedDate={selectedDate} onDateClick={onDateClick} />
