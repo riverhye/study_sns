@@ -1,12 +1,18 @@
 'use client';
 
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { FormEvent, useState } from 'react';
-
 import axios from 'axios';
 
 export default function SignIn() {
+  const { data } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleSign = async (type: string) => {
+    if (data) await signOut();
+    else await signIn(type, { redirect: true, callbackUrl: '/' });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,9 +72,33 @@ export default function SignIn() {
                 </button>
               </form>
 
+              <div>
+                <button onClick={() => handleSign('google')}>
+                  구글 계정 {data ? '로그아웃' : '로그인'}
+                </button>
+              </div>
+
+              <div>
+                <button onClick={() => handleSign('kakao')}>
+                  카카오 계정 {data ? '로그아웃' : '로그인'}
+                </button>
+              </div>
+
               <button onClick={() => (location.href = '/user/signup')}>회원가입</button>
             </div>
           </div>
+
+          {data?.user ? (
+              <>
+                <h5>소셜 로그인 정보</h5>
+                <div>{data.user.name}</div>
+                <img src={data.user.image!} alt="user img" />
+                <div>{data.user.email}</div>
+              </>
+            ) : (
+              ''
+            )}
+
         </div>
       </section>
     </>
