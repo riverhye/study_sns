@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import studysns.server.dto.UserDTO;
 import studysns.server.entity.UserEntity;
 import studysns.server.repository.UserRepository;
 import studysns.server.security.TokenProvider;
@@ -181,4 +182,29 @@ public class UserService {
         }
     }
 
+    public UserDTO snsLoginOrCreateUser(String email, String nickname, UserEntity.LoginType loginType, String profileImage) {
+        UserEntity userEntity = userRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    UserEntity newUser = UserEntity.builder()
+                            .email(email)
+                            .nickname(nickname)
+                            .loginType(loginType)
+                            .profileImage(profileImage)
+                            .build();
+                    // SNS 사용자는 비밀번호가 없을 수 있으므로, 엔티티가 이를 준비해야 합니다.
+                    // 보안 요구사항에 따라 여기에 기본값 또는 null 비밀번호를 설정해야 할 수 있습니다.
+                    return userRepository.save(newUser);
+                });
+
+        String token = tokenProvider.createToken(userEntity);
+
+        return UserDTO.builder()
+                .userId(userEntity.getUserId())
+                .email(userEntity.getEmail())
+                .nickname(userEntity.getNickname())
+                .profileImage(userEntity.getProfileImage())
+                .loginType(userEntity.getLoginType())
+                .token(token)
+                .build();
+    }
 }
