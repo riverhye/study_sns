@@ -27,10 +27,10 @@ const FeedContent = (props: UserFeedProps) => {
 
   return (
     <section>
-      <div className="p-10 to-red-500">
+      <div className=" py-5 px-20 to-red-500">
         {feeds.map((feed, index) => (
           <React.Fragment key={index}>
-            <div className="p-4 border-2 my-10 relative rounded-md shadow-md">
+            <div className="p-4 border-2 my-10 relative rounded-md shadow-md h-36">
               <div className="flex justify-between">
                 <div className="flex items-center">
                   <div className="w-14 h-14 rounded-full border-2 overflow-hidden">
@@ -40,16 +40,14 @@ const FeedContent = (props: UserFeedProps) => {
                 </div>
                 <div className="mx-2 text-sm cursor-default">{dateDistance(feed.date)}</div>
               </div>
-              <div className="mt-2 cursor-default">
+              <div className="pt-4 cursor-default">
                 {feed.nickname}님이 {feed.content} 공부를 {feed.type}
               </div>
               <div className="w-10 h-10">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.1}
-                  stroke="currentColor"
-                  className={`w-6 h-6 absolute right-6 bottom-5 hover:animate-beat ${feed.isLike ? 'fill-red-500' : ''} cursor-pointer`}
+                  className={`w-8 h-8 absolute right-6 bottom-5 hover:animate-beat ${feed.isLike ? 'fill-red-500' : 'fill-neutral-600'} cursor-pointer`}
                   onClick={() => props.handleLike(index)}>
                   <path
                     strokeLinecap="round"
