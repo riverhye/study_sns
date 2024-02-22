@@ -75,11 +75,11 @@ public class UserController {
             String token = tokenProvider.createToken(userEntity);
 
             UserDTO responseUserDTO = UserDTO.builder()
-                    .email(userEntity.getEmail())
-                    .nickname(userEntity.getNickname())
-                    .password(userEntity.getPassword())
-                    .userId(userEntity.getUserId())
-                    .profileImage(userEntity.getProfileImage())
+//                    .email(userEntity.getEmail())
+//                    .nickname(userEntity.getNickname())
+//                    .password(userEntity.getPassword())
+//                    .userId(userEntity.getUserId())
+//                    .profileImage(userEntity.getProfileImage())
                     .token(token)
                     .build();
 
