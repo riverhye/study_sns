@@ -43,7 +43,6 @@ interface StudyPageData {
   badge: { badgeName: string }[];
 }
 export default function Study(props: NicknamePropsType) {
-  console.log(props);
   const nickname = props.params.nickname;
 
   const [studyPageData, setStudyPageData] = useState<StudyPageData>({
@@ -78,7 +77,9 @@ export default function Study(props: NicknamePropsType) {
       <StudyUser userData={studyPageData.user} />
       <StudyTable tableData={studyPageData.studyTable} />
       <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
-      <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
+      <div className="my-5">
+        <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
+      </div>
     </>
   );
 }

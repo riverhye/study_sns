@@ -47,10 +47,10 @@ const StudyUser = (props: StudyUserProps) => {
             <div>팔로잉{userData?.folling}</div>
             <div>팔로워{userData?.follower}</div>{' '}
             <div>
-              <button onClick={pollowController} className="mx-2 bg-black text-white w-[80px] rounded-xl">
+              <button onClick={pollowController} className="mx-2 bg-black text-white w-[80px] rounded-lg">
                 팔로우
               </button>
-              {/* 이미 팔로우한 사람이면 언팔로우가 뜨게 해야함 
+              {/* 이미 팔로우한 사람이면 언팔로우가 뜨게 해야함 (내페이지면 아무것도 안보이게)
                 !트리거를(useState) 하나 만들어서 팔로했는지 안했는지 알아봐야함
               */}
             </div>
