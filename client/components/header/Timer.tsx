@@ -2,6 +2,7 @@ import useTimer from '../hooks/useTimer';
 import { useSelector } from 'react-redux';
 import { TimerState } from '@/type/type';
 import Image from 'next/image';
+import SocketCom from '../socket';
 
 const Timer = () => {
   const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
@@ -10,6 +11,7 @@ const Timer = () => {
   return (
     <>
       <div className="flex items-center">
+        <SocketCom />
         <div className="w-20 h-20 rounded-full border-2 overflow-hidden">
           <Image src="/blank-profile.png" alt="user profile" width={300} height={300} />
         </div>
