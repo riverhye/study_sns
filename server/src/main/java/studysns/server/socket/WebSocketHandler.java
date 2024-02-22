@@ -46,6 +46,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         try {
             String userId = extractUserIdFromSession(session);
+            log.warn("user id : {}",userId);
             if (userId != null) {
                 addUserToRoom(session, userId);
                 log.info("added user to room");
@@ -111,9 +112,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     // ------------클라이언트에서 반환받은 토큰에서 유저아이디 추출
     private String extractUserIdFromSession(WebSocketSession session) {
-        String token = session.getHandshakeHeaders().getFirst("Authorization"); // WebSocket 세션의 헤더에서 Authorization 헤더 값을 가져옴
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7); // "Bearer " 부분을 제외하고 실제 토큰 값만 추출
+        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol"); // <--- 병진님 여기 부분 바뀌었어요 WebSocket 세션 헤더 대신
+        log.warn("log 1: {}",token);
+//        if (token != null && token.startsWith("Bearer ")) { // 기존 코드 주석 처리
+        if (token != null) { // 이걸로 바꿈
+//            token = token.substring(7); // "Bearer " 부분을 제외하고 실제 토큰 값만 추출
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtProperties.getSecretKey()) // jwtProperties에서 secretKey 가져오기

@@ -69,10 +69,19 @@ const SocketCom = () => {
     const token = localStorage.getItem('accessToken');
     console.log('token', token);
 
-    const ws = new w3cwebsocket('ws://localhost:8080/socket', '', '', {
-      Authorization: `Bearer ${token}`,
-      // 'sec-websocket-version': '13',
-    });
+    const ws = new w3cwebsocket('ws://localhost:8080/socket', `${token}`);
+
+    ws.onerror = function (e) {
+      console.log('Connection Error', e);
+    };
+
+    ws.onopen = function () {
+      console.log('W3C WebSocket Client Connected');
+    };
+
+    ws.onclose = function () {
+      console.log('W3C WebSocket Client Disconnected');
+    };
 
     // const token = localStorage.getItem('accessToken');
     // console.log('token', token);
