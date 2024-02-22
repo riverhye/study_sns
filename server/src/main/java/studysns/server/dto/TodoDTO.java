@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class TodoDTO {
-    private long todoId;
-    private long userId;
+    private Long todoId;
+    private Long userId;
     private String todoContent;
     private LocalDate todoDate;
     // user테이블과 Join하려는 값
@@ -24,7 +24,7 @@ public class TodoDTO {
         return todoId;
     }
 
-    public void setTodoId(long todoId) {
+    public void setTodoId(Long todoId) {
         this.todoId = todoId;
     }
 
@@ -32,7 +32,7 @@ public class TodoDTO {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

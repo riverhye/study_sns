@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Entity
 @Builder
@@ -20,7 +21,7 @@ public class StudyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "studyId", nullable = false)
-    private long studyId;
+    private Long studyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
@@ -28,8 +29,8 @@ public class StudyEntity {
 
     @Column(name = "todayStudyTime", nullable = true)
     @ColumnDefault("'0'")
-    private long todayStudyTime;
+    private Long todayStudyTime;
 
     @Column(name = "studyDate", nullable = false)
-    private LocalDateTime studyDate;
+    private LocalDate studyDate;
 }

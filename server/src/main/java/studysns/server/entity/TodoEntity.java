@@ -16,11 +16,11 @@ public class TodoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "todoId", nullable = false)
-    private long todoId;
+    private Long todoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @Column(name = "todoContent", nullable = false)
     private String todoContent;

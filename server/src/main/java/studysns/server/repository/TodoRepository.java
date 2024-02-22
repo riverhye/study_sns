@@ -7,5 +7,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
-    List<TodoEntity> findByTodoDateAndUserEntity_Nickname(LocalDate todoDate, String nickname);
+    List<TodoEntity> findByTodoDateAndUser_Nickname(LocalDate todoDate, String nickname);
+    List<TodoEntity> findByUser_UserId(Long userId);
+
+    List<TodoEntity> findByUser_userId(Long userId);
 }
