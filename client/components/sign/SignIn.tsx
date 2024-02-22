@@ -15,11 +15,11 @@ export default function SignIn() {
         email: email,
         password: password,
       });
-      console.log(res.data);
-      localStorage.setItem('accessToken', res.data.token);
 
       if (res.data.token) {
         alert('로그인 성공');
+        localStorage.setItem('accessToken', res.data.token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         document.location.href = '/';
       } else {
         alert('로그인 실패');
