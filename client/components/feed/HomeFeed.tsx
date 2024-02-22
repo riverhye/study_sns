@@ -128,11 +128,11 @@ const HomeFeed = () => {
           {/* <button onClick={pauseStudy}>(임시)일시정지</button>
           <button onClick={() => endStudy(true)}>(임시)끝</button> */}
         </div>
-        {value.error && (
-          <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center">
-            {value.error}
-          </div>
-        )}
+
+        <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
+          {value.error}
+        </div>
+
         <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
         <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
       </section>
