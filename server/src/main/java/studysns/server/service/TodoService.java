@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+import studysns.server.dto.AllStudyInfoDTO;
 import studysns.server.dto.TodoDTO;
 import studysns.server.entity.TodoEntity;
 import studysns.server.entity.UserEntity;
@@ -32,7 +33,7 @@ public class TodoService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         TodoEntity todoEntity = TodoEntity.builder()
-                .userEntity(userEntity)
+                .user(userEntity)
                 .todoContent(todoDTO.getTodoContent())
                 .todoDate(todoDTO.getTodoDate())
                 .build();
@@ -50,13 +51,34 @@ public class TodoService {
         }
 
         // 할 일 목록 조회
-        List<TodoEntity> todoEntities = todoRepository.findByTodoDateAndUserEntity_Nickname(tododate, nickname);
+        List<TodoEntity> todoEntities = todoRepository.findByTodoDateAndUser_Nickname(tododate, nickname);
         for (TodoEntity entity : todoEntities) {
             TodoDTO dto = TodoDTO.builder()
                     .todoId(entity.getTodoId())
-                    .userId(entity.getUserEntity().getUserId())
-                    .nickname(entity.getUserEntity().getNickname())
-                   .todoContent(entity.getTodoContent())
+                    .userId(entity.getUser().getUserId())
+                    .nickname(entity.getUser().getNickname())
+                    .todoContent(entity.getTodoContent())
+                    .todoDate(entity.getTodoDate())
+                    .build();
+            todoDTOList.add(dto);
+        }
+        return todoDTOList;
+    }
+
+    public List<AllStudyInfoDTO.Todo> getTodoByNickname(String nickname) {
+        List<AllStudyInfoDTO.Todo> todoDTOList = new ArrayList<>();
+
+        // 사용자 조회
+        UserEntity user = userRepository.findByNickname(nickname);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // 할 일 목록 조회
+        List<TodoEntity> todoEntities = todoRepository.findByUser_UserId(user.getUserId());
+        for (TodoEntity entity : todoEntities) {
+            AllStudyInfoDTO.Todo dto = AllStudyInfoDTO.Todo.builder()
+                    .todoContent(entity.getTodoContent())
                     .todoDate(entity.getTodoDate())
                     .build();
             todoDTOList.add(dto);
