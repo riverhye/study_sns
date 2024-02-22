@@ -69,7 +69,7 @@ public class UserController {
         try{
             UserEntity userEntity = userService.login(userDTO.getEmail(), userDTO.getPassword());
             if(userEntity == null){
-                throw new RuntimeException("로그인 실패");
+                return ResponseEntity.badRequest().body("로그인 실패");
             }
 
             String token = tokenProvider.createToken(userEntity);
@@ -80,6 +80,7 @@ public class UserController {
 //                    .password(userEntity.getPassword())
 //                    .userId(userEntity.getUserId())
 //                    .profileImage(userEntity.getProfileImage())
+//                    .loginType(userEntity.getLoginType())
                     .token(token)
                     .build();
 
