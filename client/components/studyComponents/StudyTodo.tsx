@@ -76,8 +76,11 @@ const StudyTodo = (props: StudyTodoProps) => {
         onChange={e => {
           setTodoText(e.target.value);
         }}
+        className="border-b-2 border-b-stone-800 outline-none"
       />
-      <button onClick={todoController}>생성</button>
+      <button onClick={todoController} className=" bg-black text-white w-[100px] rounded-lg">
+        입력
+      </button>
     </>
   );
 };

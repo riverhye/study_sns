@@ -33,25 +33,29 @@ const StudyUser = (props: StudyUserProps) => {
   }
   return (
     <>
-      <div className="flex">
+      <div className="flex items-center my-2">
         <div>
-          <div className="w-10px bg-amber-200 rounded h-10px">
-            <div>사진</div>
+          <div className="w-[100px] bg-amber-200 rounded-full h-[100px] mr-7">
+            <div></div>
           </div>
         </div>
 
         <div>
-          <div>닉네임{userData?.nickname}</div>
-          <div>이메일{userData?.email}</div>
+          <div className=" text-lg">닉네임{userData?.nickname}</div>
+          <div className="text-sm">이메일{userData?.email}</div>
           <div className="flex">
             <div>팔로잉{userData?.folling}</div>
-            <div>팔로워{userData?.follower}</div>
+            <div>팔로워{userData?.follower}</div>{' '}
+            <div>
+              <button onClick={pollowController} className="mx-2 bg-black text-white w-[80px] rounded-lg">
+                팔로우
+              </button>
+              {/* 이미 팔로우한 사람이면 언팔로우가 뜨게 해야함 (내페이지면 아무것도 안보이게)
+                !트리거를(useState) 하나 만들어서 팔로했는지 안했는지 알아봐야함
+              */}
+            </div>
           </div>
         </div>
-      </div>
-      <div>
-        <button onClick={pollowController}>팔로우</button>
-        {/* 이미 팔로우한 사람이면 언팔로우가 뜨게 해야함 */}
       </div>
     </>
   );

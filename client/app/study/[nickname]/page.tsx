@@ -43,7 +43,6 @@ interface StudyPageData {
   badge: { badgeName: string }[];
 }
 export default function Study(props: NicknamePropsType) {
-  console.log(props);
   const nickname = props.params.nickname;
 
   const [studyPageData, setStudyPageData] = useState<StudyPageData>({
@@ -59,7 +58,7 @@ export default function Study(props: NicknamePropsType) {
     //api요청: 페이지 렌더됐을경우
     async function fetchData() {
       try {
-        const res = await axios.get(`http://localhost:8080/study/${nickname}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/${nickname}`);
         setStudyPageData(res.data);
       } catch (error) {
         console.error('스터디페이지 데이터 가져오기 실패:', error);
@@ -78,7 +77,9 @@ export default function Study(props: NicknamePropsType) {
       <StudyUser userData={studyPageData.user} />
       <StudyTable tableData={studyPageData.studyTable} />
       <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
-      <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
+      <div className="my-5">
+        <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
+      </div>
     </>
   );
 }

@@ -10,7 +10,9 @@ const StudyMyRank = (props: StudyMyRankProps) => {
   return (
     <>
       <div>
-        랭킹(젤 공부 많이 한 날):{myRankData?.rankingDate}에{myRankData?.rankingTinme}시간 했습니다
+        랭킹
+        <br />
+        (젤 공부 많이 한 날):{myRankData?.rankingDate}에{myRankData?.rankingTinme}시간 했습니다
       </div>
       <div>
         <ul>{badgeData?.map((badge, index) => <li key={index}>{badge.badgeName}</li>)}</ul>
