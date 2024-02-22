@@ -14,6 +14,7 @@ interface stateValue {
 
 const HomeFeed = () => {
   const [value, setValue] = useState<stateValue>({ content: '', error: '' });
+  const [valid, setValid] = useState<boolean>(false);
   const initialFeedData: UserFeedData[] = [
     {
       feedId: 62,
@@ -97,16 +98,23 @@ const HomeFeed = () => {
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // 엔터 키의 기본 동작인 줄바꿈을 막음
-      value.content.trim() !== ''
-        ? startStudy(value.content)
-        : setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
+      if (value.content.trim() !== '') {
+        startStudy(value.content);
+        setValue({ content: '', error: '' });
+        setValid(true);
+      } else {
+        setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
+      }
     }
   };
 
   // 빈값 아닐 때에만 타이머 시작 (2) 클릭
   const handleContent = () => {
-    if (value.content.trim() !== '') startStudy(value.content);
-    else setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
+    if (value.content.trim() !== '') {
+      startStudy(value.content);
+      setValue({ content: '', error: '' });
+      setValid(true);
+    } else setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
   };
 
   return (
@@ -115,20 +123,22 @@ const HomeFeed = () => {
         <div className="flex justify-center h-12 w-full mt-10">
           <input
             onChange={e => setValue({ ...value, content: e.target.value })}
+            value={value.content}
             onKeyDown={handleEnter}
             placeholder="무엇을 공부할까요?"
-            className="w-1/4 outline-none border-b-2 border-b-main-blue indent-3 focus:outline-none placeholder:text-zinc-500"
+            className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
+            disabled={valid}
           />
           <button
             onClick={handleContent}
             type="button"
-            className="w-20 ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
+            disabled={valid}
+            className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
             START
           </button>
           {/* <button onClick={pauseStudy}>(임시)일시정지</button>
           <button onClick={() => endStudy(true)}>(임시)끝</button> */}
         </div>
-
         <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
           {value.error}
         </div>
