@@ -1,8 +1,10 @@
 interface IconProps {
   color: string;
+  stroke?: string;
+  isSeleted: boolean;
 }
 
-function HomeIcon({ color }: IconProps) {
+function HomeIcon({ color, isSeleted }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 24 24">
       <path
@@ -14,7 +16,7 @@ function HomeIcon({ color }: IconProps) {
   );
 }
 
-function SearchIcon({ color }: IconProps) {
+function SearchIcon({ color, isSeleted }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 24 24">
       <path
@@ -26,7 +28,7 @@ function SearchIcon({ color }: IconProps) {
   );
 }
 
-function StudyIcon({ color }: IconProps) {
+function StudyIcon({ color, isSeleted, stroke }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 512 512">
       <path
@@ -38,7 +40,7 @@ function StudyIcon({ color }: IconProps) {
   );
 }
 
-function RankIcon({ color }: IconProps) {
+function RankIcon({ color, isSeleted }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 640 512">
       <path
@@ -50,7 +52,7 @@ function RankIcon({ color }: IconProps) {
   );
 }
 
-function LikeIcon({ color }: IconProps) {
+function LikeIcon({ color, isSeleted }: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 256 256">
       <path

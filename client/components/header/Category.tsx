@@ -2,33 +2,20 @@ import Icons from '@/public/images/HeaderIcons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-interface Categories {
-  href: string;
-  text: string;
-  svgComponent: React.ReactNode;
-}
-
 const Category = () => {
   const { HomeIcon, SearchIcon, StudyIcon, RankIcon, LikeIcon } = Icons;
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const token = localStorage.getItem('accessToken');
-  // token과 닉네임..
-  const nickname = localStorage.getItem('accessToken');
+  const [selected, setSelected] = useState<number | null>(null);
 
   // TODO : 클릭한 컴포넌트에만 props 넘기기
-  const items: Categories[] = [
-    { href: '/', text: '홈', svgComponent: <HomeIcon color={selectedCategory === 0 ? 'white' : 'none'} /> },
-    { href: '/', text: '검색', svgComponent: <SearchIcon color={selectedCategory === 1 ? 'white' : 'none'} /> },
-    {
-      href: `${token ? `/study/${nickname}` : '/'}`,
-      text: '내 공부',
-      svgComponent: <StudyIcon color={selectedCategory === 2 ? 'white' : 'none'} />,
-    },
-    { href: '/', text: '랭킹', svgComponent: <RankIcon color={selectedCategory === 3 ? 'white' : 'none'} /> },
-    { href: '/', text: '알림', svgComponent: <LikeIcon color={selectedCategory === 4 ? 'white' : 'none'} /> },
+  const items = [
+    { href: '/', text: '홈', svgComponent: <HomeIcon color="none" isSeleted={selected === 0} /> },
+    { href: '/', text: '검색', svgComponent: <SearchIcon color="none" isSeleted={selected === 0} /> },
+    { href: '/', text: '내 공부', svgComponent: <StudyIcon color="none" isSeleted={selected === 0} stroke="blue" /> },
+    { href: '/', text: '랭킹', svgComponent: <RankIcon color="none" isSeleted={selected === 0} /> },
+    { href: '/', text: '알림', svgComponent: <LikeIcon color="none" isSeleted={selected === 0} /> },
   ];
   const handleClick = (index: number) => {
-    setSelectedCategory(prevSelected => (prevSelected === index ? null : index));
+    setSelected(prevSelected => (prevSelected === index ? null : index));
   };
 
   return (
@@ -42,7 +29,7 @@ const Category = () => {
             </span>
           )}
           <li
-            className={`flex items-center rounded-md py-2 mx-0 ${item.text !== '랭킹' && 'mb-1'} ${selectedCategory === index && 'font-bold'} text-lg hover:font-bold hover:bg-opacity-20 hover:bg-slate-50 transition ease-in-out delay-50 `}
+            className={`flex items-center rounded-md py-2 mx-0 ${item.text !== '랭킹' && 'mb-1'} ${selected === index && 'font-bold'} text-lg hover:font-bold hover:bg-opacity-20 hover:bg-slate-50 transition ease-in-out delay-50 `}
             onClick={() => handleClick(index)}>
             <div className="inline-flex pl-3 box-content">{item.svgComponent}</div>
             <span className="text-white ml-5 text-lg">{item.text}</span>
