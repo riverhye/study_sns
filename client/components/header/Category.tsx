@@ -1,16 +1,11 @@
 import Icons from '@/public/images/HeaderIcons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
-interface Categories {
-  href: string;
-  text: string;
-  svgComponent: React.ReactNode;
-}
+import { Categories } from '@/type/type';
 
 const Category = () => {
   const { HomeIcon, SearchIcon, StudyIcon, RankIcon, LikeIcon } = Icons;
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const token = localStorage.getItem('accessToken');
   // token과 닉네임..
   const nickname = localStorage.getItem('accessToken');
@@ -28,13 +23,13 @@ const Category = () => {
     { href: '/', text: '알림', svgComponent: <LikeIcon color={selectedCategory === 4 ? 'white' : 'none'} /> },
   ];
   const handleClick = (index: number) => {
-    setSelectedCategory(prevSelected => (prevSelected === index ? null : index));
+    setSelectedCategory(prevSelected => (prevSelected === index ? 0 : index));
   };
 
   return (
     <ul className="mt-10">
       {items.map((item, index) => (
-        <Link href={item.href}>
+        <Link href={item.href} key={index}>
           {item.text === '알림' && (
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute top-4 left-11 inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>

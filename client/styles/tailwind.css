@@ -9,3 +9,8 @@
 .has-tooltip:hover .tooltip {
   @apply visible z-50;
 }
+
+.swiper-button-prev,
+.swiper-button-next {
+  @apply text-main-blue;
+}
