@@ -5,11 +5,7 @@ import { useEffect, useState } from 'react';
 import Category from './Category';
 import Timer from './Timer';
 import TodoHeader from './TodoHeader';
-
-export interface HeaderLeftData {
-  content: string[];
-  // timer fields
-}
+import { HeaderLeftData } from '@/type/type';
 
 const HeaderLeft = () => {
   const [todoList, setTodos] = useState<HeaderLeftData['content']>([

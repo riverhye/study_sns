@@ -1,6 +1,4 @@
-export interface TodoHeaderProps {
-  content: string[];
-}
+import { TodoHeaderProps } from '@/type/type';
 
 const TodoHeader = (props: TodoHeaderProps) => {
   const todoList = props.content || '';
