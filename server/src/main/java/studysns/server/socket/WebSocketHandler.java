@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 import java.util.List;
@@ -41,79 +42,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, Set<WebSocketSession>> ROOMS = new ConcurrentHashMap<>();
 
-    // --------------소켓 연결
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        try {
-            String userId = extractUserIdFromSession(session);
-            log.warn("user id : {}",userId);
-            if (userId != null) {
-                addUserToRoom(session, userId);
-                log.info("added user to room");
-            } else {
-                log.error("failed to add user to room");
-                session.close();
-            }
-        } catch (Exception e) {
-            log.error("Error while opening socket: {}", e.getMessage(), e);
-            session.close();
-        }
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        try{
-        removeUserFromRoom(session);
-        log.info("failed to remove user from room");
-        }catch (Exception e) {
-            log.error("error while closing socket: {}", e.getMessage(), e);
-        }
-    }
-
-    // ---------------- 룸 추가 및 삭제
-
-    private void addUserToRoom(WebSocketSession session, String userId) {
-        try{
-        ROOMS.putIfAbsent(userId, new HashSet<>());
-        ROOMS.get(userId).add(session);
-        log.info("new room has been created by userId: {}", userId);
-    }catch (Exception e) {
-        log.error("error while creating socket room: {}", e.getMessage(), e);
-    }
-    }
-
-    private void removeUserFromRoom(WebSocketSession session) {
-        try{
-        String userId = extractUserIdFromSession(session);
-        if (ROOMS.containsKey(userId)) {
-            ROOMS.get(userId).remove(session);
-            log.info("user has been removed from room");
-        }
-    }catch (Exception e) {
-        log.error("error while removing user from room: {}", e.getMessage(), e);
-        }
-    }
-
-
-
-    public void removeRoomByUserId(String userId) {
-        Set<WebSocketSession> userSession = ROOMS.remove(userId); // 해당 유조의 소켓 룸 삭제
-        if (userSession != null) {
-            for (WebSocketSession session : userSession) {
-                try {
-                    session.close(); // 해당 사용자의 모든 세션을 닫음(웹소켓 세션)
-                    log.info("room has been successfully closed");
-                } catch (IOException e) {
-                    log.error("error while deleting room: {}", e.getMessage(), e);
-                }
-            }
-        }
-    }
-
     // ------------클라이언트에서 반환받은 토큰에서 유저아이디 추출
     private String extractUserIdFromSession(WebSocketSession session) {
         String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol"); // <--- 병진님 여기 부분 바뀌었어요 WebSocket 세션 헤더 대신
-        log.warn("log 1: {}",token);
+        log.warn("extractUserIdFromSession: token extracted: {}",token);
 //        if (token != null && token.startsWith("Bearer ")) { // 기존 코드 주석 처리
         if (token != null) { // 이걸로 바꿈
 //            token = token.substring(7); // "Bearer " 부분을 제외하고 실제 토큰 값만 추출
@@ -124,8 +56,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         .getBody(); // 토큰의 정보가 담겨있는 바디(클레임 이라고 함)
                 String userId = claims.getSubject();
                 String nickname = claims.get("nickname", String.class);
-                log.info("Extracted userId from Token got back from client: {}", userId);
-                log.info("Extracted nickname from Token got back from client: {}", nickname);
+                log.info("Extracted userId: {}", userId);
+//                log.info("Extracted nickname: {}", nickname);
                 return userId; // 유저의 ID 리턴. TokenProvider 에서 ID 는 페이로드에 담았음.
             } catch (Exception e) {
                 log.error("Failed to parse JWT token: {}", e.getMessage());
@@ -133,6 +65,89 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         return null;
     }
+
+    // --------------소켓 연결
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        try {
+            String userId = extractUserIdFromSession(session);
+            if (userId != null) {
+                addUserToRoom(session, userId);
+                log.info("afterConnectionEstablished: added user to room: {}", userId);
+            } else {
+                log.error("afterConnectionEstablished: failed to add user to room");
+                session.close();
+            }
+        } catch (Exception e) {
+            log.error("afterConnectionEstablished: Error while opening socket: {}", e.getMessage(), e);
+            session.close();
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        try {
+            String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+
+            if (token != null && isValidToken(token)) {
+                log.info("afterConnectionClosed: Token is valid but socket has been closed. Removing room");
+                removeRoomByUserId(extractUserIdFromSession(session));
+            } else {
+                log.info("afterConnectionClosed: Token is invalid or missing. Removing room.");
+                removeRoomByUserId(extractUserIdFromSession(session));
+            }
+        } catch (Exception e) {
+            log.error("afterConnectionClosed: Error while closing socket: {}", e.getMessage(), e);
+        }
+    }
+
+
+
+    // ---------------- 룸 추가 및 삭제
+
+    private void addUserToRoom(WebSocketSession session, String userId) {
+        try{
+        ROOMS.putIfAbsent(userId, new HashSet<>());
+        ROOMS.get(userId).add(session);
+        log.info("addUserToRoom: new room has been created by userId: {}", userId);
+    }catch (Exception e) {
+        log.error("addUserToRoom: error while creating socket room: {}", e.getMessage(), e);
+    }
+    }
+
+    public void removeRoomByUserId(String userId) {
+        Set<WebSocketSession> userSessions = ROOMS.remove(userId); // 해당 유저의 세션 목록을 가져옴
+        if (userSessions != null) {
+            for (WebSocketSession session : userSessions) {
+                try {
+                    session.close(); // 해당 유저의 세션을 닫음
+                    log.info("removeRoomByUserId: WebSocket session has been successfully closed");
+                } catch (IOException e) {
+                    log.error("removeRoomByUserId: Error while closing WebSocket session: {}", e.getMessage(), e);
+                }
+            }
+            log.info("removeRoomByUserId: All users have been removed from the room");
+        } else {
+            log.info("removeRoomByUserId: No users found in the room");
+        }
+    }
+
+
+    // Method to validate the token
+    private boolean isValidToken(String token) {
+        try {
+            // Attempt to parse the token without throwing an exception
+            Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecretKey())
+                    .parseClaimsJws(token);
+            return true; // Token is valid
+        } catch (Exception e) {
+            return false; // Token is invalid
+        }
+    }
+
+
+
 
     // -------------클라이언트에 팔로우한 사용자의 목록을 전송
     public void sendFollowInfoToClient(WebSocketSession session, List<FollowDTO> followList) throws IOException {
@@ -270,9 +285,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String nickname = null;
 
         // 클레임에서 닉네임을 추출
-        String token = session.getHandshakeHeaders().getFirst("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        if (token != null) {
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtProperties.getSecretKey())
@@ -322,9 +336,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String nickname = null;
 
         // 클레임에서 닉네임을 추출
-        String token = session.getHandshakeHeaders().getFirst("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        if (token != null) {
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtProperties.getSecretKey())
@@ -370,9 +383,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String nickname = null;
 
         // 클레임에서 닉네임을 추출
-        String token = session.getHandshakeHeaders().getFirst("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        if (token != null) {
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtProperties.getSecretKey())
