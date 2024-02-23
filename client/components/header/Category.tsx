@@ -10,7 +10,7 @@ interface Categories {
 
 const Category = () => {
   const { HomeIcon, SearchIcon, StudyIcon, RankIcon, LikeIcon } = Icons;
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const token = localStorage.getItem('accessToken');
   // token과 닉네임..
   const nickname = localStorage.getItem('accessToken');
@@ -28,7 +28,7 @@ const Category = () => {
     { href: '/', text: '알림', svgComponent: <LikeIcon color={selectedCategory === 4 ? 'white' : 'none'} /> },
   ];
   const handleClick = (index: number) => {
-    setSelectedCategory(prevSelected => (prevSelected === index ? null : index));
+    setSelectedCategory(prevSelected => (prevSelected === index ? 0 : index));
   };
 
   return (
