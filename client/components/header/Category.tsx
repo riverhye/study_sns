@@ -1,12 +1,7 @@
 import Icons from '@/public/images/HeaderIcons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
-interface Categories {
-  href: string;
-  text: string;
-  svgComponent: React.ReactNode;
-}
+import { Categories } from '@/type/type';
 
 const Category = () => {
   const { HomeIcon, SearchIcon, StudyIcon, RankIcon, LikeIcon } = Icons;
@@ -34,7 +29,7 @@ const Category = () => {
   return (
     <ul className="mt-10">
       {items.map((item, index) => (
-        <Link href={item.href}>
+        <Link href={item.href} key={index}>
           {item.text === '알림' && (
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute top-4 left-11 inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
