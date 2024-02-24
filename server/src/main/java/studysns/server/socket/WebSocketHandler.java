@@ -42,16 +42,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, Set<WebSocketSession>> ROOMS = new ConcurrentHashMap<>();
 
-    // ------------클라이언트에서 반환받은 토큰에서 유저아이디 추출
     private String extractUserIdFromSession(WebSocketSession session) {
-        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol"); // <--- 병진님 여기 부분 바뀌었어요 WebSocket 세션 헤더 대신
-        log.warn("extractUserIdFromSession: token extracted: {}",token);
-//        if (token != null && token.startsWith("Bearer ")) { // 기존 코드 주석 처리
-        if (token != null) { // 이걸로 바꿈
-//            token = token.substring(7); // "Bearer " 부분을 제외하고 실제 토큰 값만 추출
+        String token = session.getUri().getQuery().substring(6);
+//        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        log.warn("extractUserIdFromSession: token extracted: {}", token);
+        if (token != null) {
             try {
                 Claims claims = Jwts.parser()
-                        .setSigningKey(jwtProperties.getSecretKey()) // jwtProperties에서 secretKey 가져오기
+                        .setSigningKey(jwtProperties.getSecretKey())
                         .parseClaimsJws(token)
                         .getBody(); // 토큰의 정보가 담겨있는 바디(클레임 이라고 함)
                 String userId = claims.getSubject();
@@ -66,7 +64,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
         return null;
     }
 
-    // --------------소켓 연결
+
+    private void addUserToRoom(WebSocketSession session, String userId) {
+        try{
+            ROOMS.putIfAbsent(userId, new HashSet<>());
+            ROOMS.get(userId).add(session);
+            log.info("addUserToRoom: new room has been created by userId: {}", userId);
+        }catch (Exception e) {
+            log.error("addUserToRoom: error while creating socket room: {}", e.getMessage(), e);
+        }
+    }
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         try {
@@ -87,7 +94,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         try {
-            String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+//            String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+            String token = session.getUri().getQuery().substring(6);
 
             if (token != null && isValidToken(token)) {
                 log.info("afterConnectionClosed: Token is valid but socket has been closed. Removing room");
@@ -99,20 +107,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         } catch (Exception e) {
             log.error("afterConnectionClosed: Error while closing socket: {}", e.getMessage(), e);
         }
-    }
-
-
-
-    // ---------------- 룸 추가 및 삭제
-
-    private void addUserToRoom(WebSocketSession session, String userId) {
-        try{
-        ROOMS.putIfAbsent(userId, new HashSet<>());
-        ROOMS.get(userId).add(session);
-        log.info("addUserToRoom: new room has been created by userId: {}", userId);
-    }catch (Exception e) {
-        log.error("addUserToRoom: error while creating socket room: {}", e.getMessage(), e);
-    }
     }
 
     public void removeRoomByUserId(String userId) {
@@ -133,7 +127,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
 
-    // Method to validate the token
     private boolean isValidToken(String token) {
         try {
             // Attempt to parse the token without throwing an exception
