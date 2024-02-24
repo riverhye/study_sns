@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -25,26 +25,25 @@ const HeaderTop: React.FC = () => {
     { nickname: '테스트10', image: '이미지' },
   ]);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
-        setFollowerList(res.data);
-      } catch (error) {
-        console.error('팔로워 header', error);
-      }
-    };
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     try {
+  //       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
+  //       setFollowerList(res.data);
+  //     } catch (error) {
+  //       console.error('팔로워 header', error);
+  //     }
+  //   };
 
-    // getData();
-  }, [followerList]);
+  //   // getData();
+  // }, [followerList]);
 
   return (
     <div className="mt-5">
       <Swiper
         modules={[Navigation]}
-        spaceBetween={20}
+        spaceBetween={0}
         slidesPerView={10}
-        slidesPerGroup={5}
         navigation
         breakpoints={{
           320: {
@@ -69,27 +68,29 @@ const HeaderTop: React.FC = () => {
           },
         }}>
         <div className="w-full h-32 p-4 flex items-center">
-          {followerList.map((follower, index) => (
-            <SwiperSlide>
-              <div key={index} className="flex flex-col items-center mx-4 relative">
-                {index < 3 && (
-                  <div className="absolute left-10 top-0 md:left-10 text-2xl text-amber-400 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
-                    {index + 1}
-                  </div>
-                )}
-                <div className="has-tooltip">
-                  <Link href={`/`}>
-                    <div className="border-x-strong-yellow border-y-subtle-yellow	border-2 rounded-full w-20 h-20 overflow-hidden">
+          {followerList.map((follower, idx) => (
+            <React.Fragment key={idx}>
+              <SwiperSlide>
+                <div className="flex flex-col items-center mx-4">
+                  <div className="has-tooltip relative">
+                    {/* <Link href={`/`}> */}
+                    <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
                       <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
                     </div>
-                  </Link>
-                  <div className=" absolute top-4 tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center cursor-default">
-                    {follower.nickname}
-                    <span className="block text-center cursor-default">00:00</span>
+                    {/* </Link> */}
+                    <div className=" absolute top-4 tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center cursor-default">
+                      {follower.nickname}
+                      <span className="block text-center cursor-default">00:00</span>
+                    </div>
                   </div>
+                  {idx < 3 && (
+                    <div className="absolute left-20 top-0 text-2xl text-amber-400 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                      {idx + 1}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </SwiperSlide>
+              </SwiperSlide>
+            </React.Fragment>
           ))}
         </div>
       </Swiper>

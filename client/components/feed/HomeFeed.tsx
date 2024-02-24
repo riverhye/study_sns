@@ -8,10 +8,13 @@ import FeedContent from './FeedContent';
 import useTimerFunc from '../hooks/useTimerFunc';
 import NoFeed from './NoFeed';
 import { StateValue } from '@/type/type';
+import { useSelector } from 'react-redux';
 
 const HomeFeed = () => {
   const [value, setValue] = useState<StateValue>({ content: '', error: '' });
   const [valid, setValid] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
   const initialFeedData: UserFeedData[] = [
     {
       feedId: 62,
@@ -49,7 +52,9 @@ const HomeFeed = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`);
+        const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setFeedData(res.data);
       } catch (err) {
         console.error('피드 데이터', err);
@@ -59,19 +64,21 @@ const HomeFeed = () => {
   }, []);
 
   // 피드 새로고침
-  const handleUpdateFeed = async () => {
-    try {
-      // Add: userId
-      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`);
-      // 내림차순 정렬
-      const sortedFeedData = res.data.slice().sort((a, b) => {
-        return b.date.getTime() - a.date.getTime();
-      });
-      setFeedData(sortedFeedData);
-    } catch (error) {
-      console.error('새 피드', error);
-    }
-  };
+  // const handleUpdateFeed = async () => {
+  //   try {
+  //     // Add: userId
+  //     const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     // 내림차순 정렬
+  //     const sortedFeedData = res.data.slice().sort((a, b) => {
+  //       return b.date.getTime() - a.date.getTime();
+  //     });
+  //     setFeedData(sortedFeedData);
+  //   } catch (error) {
+  //     console.error('새 피드', error);
+  //   }
+  // };
 
   // 피드 좋아요
   const handleLike = async (index: number) => {
@@ -81,18 +88,21 @@ const HomeFeed = () => {
       const updatedFeedData = [...feedData];
       updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
       setFeedData(updatedFeedData);
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/like/addlike`, {
-        feedId: feedData[index].feedId,
-        userId,
-        isLike: updatedFeedData[index].isLike,
-      });
+
+      // const res = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_URL}/like/addlike`,
+      //   {
+      //     feedId: feedData[index].feedId,
+      //     userId,
+      //     isLike: updatedFeedData[index].isLike,
+      //   },
+      //   { headers: { Authorization: `Bearer ${token}` } },
+      // );
       console.log('피드 좋아요 전송');
     } catch (error) {
       console.error('피드 좋아요', error);
     }
   };
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   // 빈값 아닐 때에만 타이머 시작 (1) 엔터키
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -101,7 +111,9 @@ const HomeFeed = () => {
       if (value.content.trim() !== '') {
         startStudy(value.content);
         setValue({ content: '', error: '' });
-        setValid(true);
+        if (studyStatus === 'end') {
+          setValid(true);
+        }
       } else {
         setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
         inputRef.current!.focus();
