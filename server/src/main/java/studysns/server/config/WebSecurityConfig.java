@@ -43,7 +43,7 @@ public class WebSecurityConfig {
 //                    .failureUrl("/login/oauth2/code/google") // 로그인 실패 시 리다이렉트 URL
 //            )
             .authorizeHttpRequests(authorize ->  authorize
-                    .requestMatchers("/", "/user/signin/process", "/user/signup", "/user/signup/process", "/user/social/login", "/test", "/follow/**", "/feed/**", "/like/**", "/socket/**", "/study/**" ).permitAll() // 권한이 필요하지 않다
+                    .requestMatchers("/", "/user/signin/process", "/user/signup", "/user/signup/process", "/user/social/login", "/api/auth/signin?callbackUrl=%2F", "/test", "/follow/**", "/feed/**", "/like/**", "/socket/**", "/study/**" ).permitAll() // 권한이 필요하지 않다
                     .anyRequest().authenticated() // 위의 주소 외에는 권한이 필요하다
             );
 

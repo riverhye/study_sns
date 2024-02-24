@@ -3,11 +3,15 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { FormEvent, useState } from 'react';
 import axios from 'axios';
+import { link } from 'fs';
+import Link from 'next/link';
 
 export default function SignIn() {
   const { data } = useSession();
+  const [userId, setUserId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [redirectUrl, setRedirectUrl] = useState('');
 
   const handleSign = async (type: string) => {
     if (data) await signOut();
@@ -18,6 +22,7 @@ export default function SignIn() {
     e.preventDefault();
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signin/process`, {
+        userId: userId,
         email: email,
         password: password,
       });
@@ -25,8 +30,9 @@ export default function SignIn() {
       if (res.data.token) {
         alert('로그인 성공');
         localStorage.setItem('accessToken', res.data.token);
+        localStorage.setItem('nickname', res.data.nickname);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-        document.location.href = '/home';
+        setRedirectUrl('/home');
       } else {
         alert('로그인 실패');
       }
@@ -84,17 +90,17 @@ export default function SignIn() {
                 </button>
               </div>
 
-              <button onClick={() => (location.href = '/user/signup')}>회원가입</button>
+              <Link href={"/user/signup"}><button>회원가입</button></Link>
             </div>
           </div>
 
           {data?.user ? (
               <>
                 <h5>소셜 로그인 정보</h5>
-                {/* <div>{data.user.name}</div> 랜덤닉네임 */}
-                {/* <img src={data.user.image!} alt="user img" /> */}
+                <div>{data.user.name}</div> 
                 <div>{data.user.email}</div>
-                {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오  */}
+                {/* <img src={data.user.image!} alt="user img" /> */}
+                {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오 , 랜덤닉네임*/}
               </>
             ) : (
               ''
