@@ -64,21 +64,21 @@ const HomeFeed = () => {
   }, []);
 
   // 피드 새로고침
-  // const handleUpdateFeed = async () => {
-  //   try {
-  //     // Add: userId
-  //     const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     // 내림차순 정렬
-  //     const sortedFeedData = res.data.slice().sort((a, b) => {
-  //       return b.date.getTime() - a.date.getTime();
-  //     });
-  //     setFeedData(sortedFeedData);
-  //   } catch (error) {
-  //     console.error('새 피드', error);
-  //   }
-  // };
+  const handleUpdateFeed = async () => {
+    try {
+      // Add: userId
+      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // 내림차순 정렬
+      const sortedFeedData = res.data.slice().sort((a, b) => {
+        return b.date.getTime() - a.date.getTime();
+      });
+      setFeedData(sortedFeedData);
+    } catch (error) {
+      console.error('새 피드', error);
+    }
+  };
 
   // 피드 좋아요
   const handleLike = async (index: number) => {
