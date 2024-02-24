@@ -1,37 +1,48 @@
-import { TodoHeaderProps } from '@/type/type';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { timeStamp } from '../studyComponents/timeStamp';
 
-interface TodoContent {
+export interface TodoContent {
   todoId: number;
   todoContent: string;
   todoDate: string;
   nickname: string;
   userId: number;
 }
+[];
 
 const TodoHeader = () => {
-  // const todoList = props.content || '';
-  const [todoList, setTodoList] = useState([]);
+  const initialTodo: TodoContent[] = [
+    {
+      todoId: 1,
+      todoContent: '등록된 할 일이 없어요.',
+      todoDate: '2024-02-23',
+      nickname: '',
+      userId: 1,
+    },
+  ];
+  const [prevTodo, setPrevTodo] = useState<TodoContent[]>(initialTodo);
   const nickname = localStorage.getItem('nickname');
 
-  // TODO : 리스트 안 나옴
   useEffect(() => {
-    if (todoList !== todoList) {
-      getTodo();
-    }
-  }, [todoList]);
+    const getTodo = async () => {
+      try {
+        const date = timeStamp();
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${date}`);
+        if (!compareArrays(res.data, prevTodo)) {
+          setPrevTodo(res.data);
+        }
+      } catch (error) {
+        console.error('Todo데이터 가져오기에 실패 했습니다.', error);
+      }
+    };
 
-  const getTodo = async () => {
-    try {
-      const date = timeStamp();
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/dd/${date}`);
-      console.log(res.data);
-      setTodoList(res.data);
-    } catch (error) {
-      console.error('Todo데이터 가져오기에 실패 했습니다.', error);
-    }
+    getTodo();
+  }, [prevTodo]);
+
+  // Todo 배열 비교
+  const compareArrays = (arr1: TodoContent[], arr2: TodoContent[]): boolean => {
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
   };
 
   return (
@@ -39,8 +50,8 @@ const TodoHeader = () => {
       <div className="border-2 p-1 rounded-md w-48 min-h-56 h-auto my-10 bg-gray-100 m-auto">
         <h2 className=" text-center bg-subtle-blue py-1 rounded-md mb-3 cursor-default">TO DO</h2>
         <ul>
-          {todoList.map((todo, todoIdx) => (
-            <li key={todoIdx + 1} className="text-sm my-1 flex items-center cursor-default">
+          {prevTodo.map(todo => (
+            <li key={todo.nickname} className="text-sm my-1 flex items-center cursor-default">
               <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 256 256">
                 <g fill="#7EC7D9">
                   <path d="M152 128a24 24 0 1 1-24-24a24 24 0 0 1 24 24" fill="cyan" opacity={0.3}></path>

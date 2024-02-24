@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface User {
   name: string;
   image?: string;
@@ -71,7 +73,12 @@ export interface Categories {
   svgComponent: React.ReactNode;
 }
 
-// [Nav] 투두 props
-export interface TodoHeaderProps {
-  content: string[];
+// [Nav] 투두
+export interface TodoContent {
+  todoId: number;
+  todoContent: string;
+  todoDate: string;
+  nickname: string;
+  userId: number;
 }
+[];
