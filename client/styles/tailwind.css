@@ -14,3 +14,18 @@
 .swiper-button-next {
   @apply text-main-blue;
 }
+
+@font-face {
+  font-family: 'SansBold';
+  src: url('./fonts/IBMPlexSansKR-bold.ttf');
+}
+
+@font-face {
+  font-family: 'SansRegular';
+  src: url('./fonts/IBMPlexSansKR-regular.ttf');
+}
+
+@font-face {
+  font-family: 'SansThin';
+  src: url('./fonts/IBMPlexSansKR-thin.ttf');
+}
