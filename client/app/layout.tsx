@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className={inter.className}>
         {/* <SocketProvider /> */}
-        <header className="flex">
+        <header className="flex font-['SansRegular']">
           <StoreProvider>
             <HeaderLeft />
             <div className="flex flex-col overflow-y-auto">
