@@ -8,9 +8,9 @@ const TodoHeader = () => {
   const [todoList, setTodoList] = useState([]);
   const nickname = localStorage.getItem('nickname');
 
-  useEffect(() => {
-    getTodo();
-  }, [todoList]);
+  // useEffect(() => {
+  //   getTodo();
+  // }, [todoList]);
 
   async function getTodo() {
     try {
