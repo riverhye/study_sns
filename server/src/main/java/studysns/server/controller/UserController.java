@@ -78,7 +78,7 @@ public class UserController {
 
             UserDTO responseUserDTO = UserDTO.builder()
 //                    .email(userEntity.getEmail())
-//                    .nickname(userEntity.getNickname())
+                    .nickname(userEntity.getNickname())
 //                    .password(userEntity.getPassword())
 //                    .userId(userEntity.getUserId())
 //                    .profileImage(userEntity.getProfileImage())
