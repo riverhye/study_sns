@@ -26,7 +26,7 @@ export default function SignIn() {
         alert('로그인 성공');
         localStorage.setItem('accessToken', res.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-        document.location.href = '/';
+        document.location.href = '/home';
       } else {
         alert('로그인 실패');
       }
@@ -73,13 +73,13 @@ export default function SignIn() {
               </form>
 
               <div>
-                <button onClick={() => handleSign('google')}>
+                <button onClick={() => handleSign('GOOGLE')}>
                   구글 계정 {data ? '로그아웃' : '로그인'}
                 </button>
               </div>
 
               <div>
-                <button onClick={() => handleSign('kakao')}>
+                <button onClick={() => handleSign('KAKAO')}>
                   카카오 계정 {data ? '로그아웃' : '로그인'}
                 </button>
               </div>
@@ -91,9 +91,10 @@ export default function SignIn() {
           {data?.user ? (
               <>
                 <h5>소셜 로그인 정보</h5>
-                <div>{data.user.name}</div>
-                <img src={data.user.image!} alt="user img" />
+                {/* <div>{data.user.name}</div> 랜덤닉네임 */}
+                {/* <img src={data.user.image!} alt="user img" /> */}
                 <div>{data.user.email}</div>
+                {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오  */}
               </>
             ) : (
               ''
