@@ -20,7 +20,7 @@ const SignUp = () => {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signupcheck`, {
         email: newEmail
       });
-      setEmailAvailable(res.data.email);
+      setEmailAvailable(res.data.emailAvailable);
     } catch (error) {
       console.error('Error checking email:', error);
       setEmailAvailable(false);
