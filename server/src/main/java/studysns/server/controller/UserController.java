@@ -15,7 +15,9 @@ import studysns.server.security.TokenProvider;
 import studysns.server.service.UserService;
 import studysns.server.socket.WebSocketHandler;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -39,12 +41,21 @@ public class UserController {
         return "GET: user";
     }
 
+    @PostMapping("/signupcheck")
+    public ResponseEntity<?> checkEmailAvailability(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok().body(Collections.singletonMap("emailAvailable", !exists));
+    }
+
     @PostMapping("/signup/process")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
+            String randomNickname = generateRandomNickname(); // 랜덤 닉네임 생성
+
             UserEntity userEntity = UserEntity.builder()
                     .email(userDTO.getEmail())
-                    .nickname(userDTO.getNickname())
+                    .nickname(randomNickname)
                     .password(passwordEncoder.encode(userDTO.getPassword()))
                     .profileImage(userDTO.getProfileImage())
                     .loginType(userDTO.getLoginType())
@@ -64,6 +75,10 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    private String generateRandomNickname() {
+        return "user_" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     @PostMapping("/signin/process")
