@@ -69,8 +69,8 @@ const HeaderTop: React.FC = () => {
         }}>
         <div className="w-full h-32 p-4 flex items-center">
           {followerList.map((follower, idx) => (
-            <React.Fragment key={idx}>
-              <SwiperSlide>
+            <React.Fragment key={follower.nickname}>
+              <SwiperSlide key={follower.nickname}>
                 <div className="flex flex-col items-center mx-4">
                   <div className="has-tooltip relative">
                     {/* <Link href={`/`}> */}
