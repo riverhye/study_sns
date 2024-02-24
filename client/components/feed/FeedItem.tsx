@@ -4,7 +4,7 @@ import { ko } from 'date-fns/locale';
 import Image from 'next/image';
 import { FeedItemProps } from '@/type/type';
 
-const FeedItem: React.FC<FeedItemProps> = ({ feed, index, handleLike, children }) => {
+const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
   const dateDistance = (date: Date): ReactNode => {
     const now = Date.now();
     const d = new Date(date);

@@ -23,7 +23,7 @@ export interface UserFeedData {
   content: string;
   type: string;
   date: Date;
-  isLike: boolean;
+  isLike?: boolean;
 }
 [];
 
@@ -33,16 +33,17 @@ export interface UserFeedProps {}
 // [피드] 공통 부분 모듈화
 export interface FeedItemProps {
   feed: UserFeedData;
-  index: number;
-  handleLike: (index: number) => void;
   children?: ReactNode;
+  index: number;
+  handleLike?: (index: number) => void;
 }
 
 // [피드] props
 export interface FeedContentProps {
   feedData?: UserFeedData[];
+  type?: string;
   initialFeedData: UserFeedData[]; // temp
-  handleLike: (index: number) => void;
+  handleLike?: (index: number) => void;
 }
 
 // 타이머
