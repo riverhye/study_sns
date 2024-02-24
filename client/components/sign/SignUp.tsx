@@ -20,7 +20,7 @@ const SignUp = () => {
         email: email
       });
   
-      if (res.data.token === true) {
+      if (res.data === true) {
         alert('존재하는 이메일입니다.');
       } else {
         alert('사용 가능한 이메일입니다.');
@@ -128,6 +128,7 @@ const SignUp = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <div id="pwCheck"></div>
               </div>
 
               <div>
@@ -139,6 +140,7 @@ const SignUp = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+                 <div id="pwResult"></div>
               </div>
 
               <div>
