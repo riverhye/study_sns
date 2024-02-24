@@ -5,6 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -237,16 +239,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void handlePlayRequest(WebSocketSession session, String userId, FeedDTO feedDTO, StudyDTO studyDTO, String studyContent) {
         String studyMessage = playStudy(session, feedDTO, studyDTO, userId, studyContent);
 
-        // 반환된 메시지를 사용하여 클라이언트로 메시지 전송
         if (studyMessage != null) {
             sendFeedNotification(session, userId, studyMessage);
         } else {
-            // 실패한 경우에 대한 처리
             String errorMessage = "공부 시작 실패";
             try {
                 sendErrorMessageToClient(session, errorMessage);
             } catch (IOException e) {
-                // 클라이언트에게 에러 메시지를 보낼 수 없는 경우에 대한 예외 처리
                 log.error("Failed to send error message to client: {}", e.getMessage(), e);
             }
         }
@@ -278,7 +277,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String nickname = null;
 
         // 클레임에서 닉네임을 추출
-        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        String token = session.getUri().getQuery().substring(6);
         if (token != null) {
             try {
                 Claims claims = Jwts.parser()
@@ -329,7 +328,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String nickname = null;
 
         // 클레임에서 닉네임을 추출
-        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        String token = session.getUri().getQuery().substring(6);
         if (token != null) {
             try {
                 Claims claims = Jwts.parser()
@@ -376,7 +375,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String nickname = null;
 
         // 클레임에서 닉네임을 추출
-        String token = session.getHandshakeHeaders().getFirst("Sec-WebSocket-Protocol");
+        String token = session.getUri().getQuery().substring(6);
         if (token != null) {
             try {
                 Claims claims = Jwts.parser()
@@ -424,6 +423,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String errorMessage = "Failed to process pause request";
             sendFeedNotification(session, userId, errorMessage);
         }
+    }
+
+    @MessageMapping("/socket")
+    public void handleWebSocketMessage(@Payload String message) {
+        // 클라이언트로부터 받은 JSON 형식의 메시지를 파싱하여 필요한 작업을 수행
+        System.out.println("Received message aaaaaaaaaaaaaaaa: " + message);
     }
 
 }
