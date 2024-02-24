@@ -2,6 +2,7 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { link } from 'fs';
 import Link from 'next/link';
@@ -12,6 +13,7 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [redirectUrl, setRedirectUrl] = useState('');
+  const router = useRouter();
 
   const handleSign = async (type: string) => {
     if (data) await signOut();
@@ -32,7 +34,7 @@ export default function SignIn() {
         localStorage.setItem('accessToken', res.data.token);
         localStorage.setItem('nickname', res.data.nickname);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-        setRedirectUrl('/home');
+        router.push('/home');
       } else {
         alert('로그인 실패');
       }
