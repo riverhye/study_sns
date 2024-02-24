@@ -27,7 +27,6 @@ const EditProfile = () => {
       });
 
       alert('정보 수정이 완료되었습니다.');
-      // Optional: Redirect to a profile page or other appropriate route
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('정보 수정 실패');

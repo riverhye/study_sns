@@ -95,7 +95,7 @@ public class UserController {
 //                    .email(userEntity.getEmail())
                     .nickname(userEntity.getNickname())
 //                    .password(userEntity.getPassword())
-//                    .userId(userEntity.getUserId())
+                    .userId(userEntity.getUserId())
 //                    .profileImage(userEntity.getProfileImage())
 //                    .loginType(userEntity.getLoginType())
                     .token(token)
