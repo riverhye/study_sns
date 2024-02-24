@@ -3,25 +3,36 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { timeStamp } from '../studyComponents/timeStamp';
 
+interface TodoContent {
+  todoId: number;
+  todoContent: string;
+  todoDate: string;
+  nickname: string;
+  userId: number;
+}
+
 const TodoHeader = () => {
   // const todoList = props.content || '';
   const [todoList, setTodoList] = useState([]);
   const nickname = localStorage.getItem('nickname');
 
-  // useEffect(() => {
-  //   getTodo();
-  // }, [todoList]);
+  // TODO : 리스트 안 나옴
+  useEffect(() => {
+    if (todoList !== todoList) {
+      getTodo();
+    }
+  }, [todoList]);
 
-  async function getTodo() {
+  const getTodo = async () => {
     try {
       const date = timeStamp();
-      // nickname, todoContent, todoDate, todoId
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${date}`);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/dd/${date}`);
+      console.log(res.data);
       setTodoList(res.data);
     } catch (error) {
       console.error('Todo데이터 가져오기에 실패 했습니다.', error);
     }
-  }
+  };
 
   return (
     <>
