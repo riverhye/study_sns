@@ -30,6 +30,10 @@ const useTimerFunc = () => {
       console.log('play send');
     };
 
+    ws.onclose = () => {
+      console.log('connection closed');
+    };
+
     // // 첫 시작일 때에만 요청
     // if (!startPoint) {
     //   const sendData = async () => {
