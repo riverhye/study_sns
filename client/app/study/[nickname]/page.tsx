@@ -71,14 +71,14 @@ export default function Study(props: NicknamePropsType) {
   //TODO:studyPageData안에 데이터가 담길예정 -> 나눠서 props에 담아 각각의 컴포넌트에게 전달(Clear)
   return (
     <>
-      {/* 테스트 */}
-      <div>url/{nickname}의 공부 페이지</div>
       {/* 실제 */}
-      <StudyUser userData={studyPageData.user} />
-      <StudyTable tableData={studyPageData.studyTable} />
-      <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
-      <div className="my-5">
-        <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
+      <div className=" ml-[50px]">
+        <StudyUser userData={studyPageData.user} />
+        <StudyTable tableData={studyPageData.studyTable} />
+        <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
+        <div className="my-5">
+          <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
+        </div>
       </div>
     </>
   );
