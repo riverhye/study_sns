@@ -20,7 +20,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
         <div className="flex justify-between">
           <div className="flex items-center">
             <div className="w-14 h-14 rounded-full border-2 overflow-hidden">
-              <Image src="/blank-profile.png" alt="user profile" width={300} height={300} />
+              <Image src="/blank-profile.png" alt="user profile" priority={false} width={300} height={300} />
             </div>
             <div className="ml-2 cursor-default">{feed.nickname}</div>
           </div>
