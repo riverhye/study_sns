@@ -33,7 +33,7 @@ export default function SignIn() {
         localStorage.setItem('nickname', res.data.nickname);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         setRedirectUrl('/home');
-      }else {
+      } else {
         alert('로그인 실패');
       }
     } catch (error) {
