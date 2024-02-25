@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import dateReducer from './module/date';
 import timerReducer from './module/timer';
+import triggerReducer from './module/trigger';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 
 const createNoopStorage = () => {
@@ -23,13 +24,14 @@ const storage = typeof window === 'undefined' ? createNoopStorage() : createWebS
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['dateReducer'],
+  blacklist: ['dateReducer', 'triggerReducer'],
 };
 
 const rootReducer = combineReducers({
   // date: setReduxDate,
   date: dateReducer,
   timer: timerReducer,
+  trigger: triggerReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
