@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 
 public class FeedDTO {
-    private long feedId;
-    private long studyId;
-    private long userId;
+    private Long feedId;
+    private Long studyId;
+    private Long userId;
     private String studyContent;
     private LocalDateTime studyStartPoint;
     private LocalDateTime studyEndPoint;
