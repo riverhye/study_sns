@@ -1,3 +1,7 @@
+export const metadata = {
+  title: 'Search',
+};
+
 const Search = () => {
   return (
     <>

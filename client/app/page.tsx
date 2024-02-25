@@ -1,7 +1,11 @@
 import SignIn from '@/components/sign/SignIn';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Home',
+export const metadata: Metadata = {
+  title: {
+    default: 'Home',
+    template: '%s | SNS',
+  },
 };
 
 const HomePage = () => {
