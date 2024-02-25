@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import studysns.server.dto.UserDTO;
 import studysns.server.entity.UserEntity;
@@ -182,30 +183,40 @@ public class UserService {
         }
     }
 
+    @Transactional
     public UserDTO snsLoginOrCreateUser(String email, String nickname, UserEntity.LoginType loginType, String profileImage) {
-        UserEntity userEntity = userRepository.findByEmail(email)
+        UserEntity userEntity = null;
+        try {
+            userEntity = userRepository.findByEmail(email)
                 .orElseGet(() -> {
                     UserEntity newUser = UserEntity.builder()
-                            .email(email)
-                            .nickname(nickname)
-                            .loginType(loginType)
-                            .profileImage(profileImage)
-                            .build();
-                    // SNS 사용자는 비밀번호가 없을 수 있으므로, 엔티티가 이를 준비해야 합니다.
-                    // 보안 요구사항에 따라 여기에 기본값 또는 null 비밀번호를 설정해야 할 수 있습니다.
-                    return userRepository.save(newUser);
+                        .email(email)
+                        .nickname(nickname)
+                        .loginType(loginType)
+                        .profileImage(profileImage)
+                        .build();
+
+                    newUser = userRepository.save(newUser);
+                    return newUser;
                 });
+        } catch (Exception e) {
+            log.error("Error occurred while trying to create or login user", e);
+        }
+
+        if (userEntity == null) {
+            return null;
+        }
 
         String token = tokenProvider.createToken(userEntity);
 
         return UserDTO.builder()
-                .userId(userEntity.getUserId())
-                .email(userEntity.getEmail())
-                .nickname(userEntity.getNickname())
-                .profileImage(userEntity.getProfileImage())
-                .loginType(userEntity.getLoginType())
-                .token(token)
-                .build();
+            .userId(userEntity.getUserId())
+            .email(userEntity.getEmail())
+            .nickname(userEntity.getNickname())
+            .profileImage(userEntity.getProfileImage())
+            .loginType(userEntity.getLoginType())
+            .token(token)
+            .build();
     }
 
     public boolean checkEmailExists(String email) {
