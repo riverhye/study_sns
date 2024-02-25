@@ -20,8 +20,9 @@ const useTimerFunc = () => {
     // 소켓을 통해 서버로 데이터 전송
     if (socket) {
       try {
-        const play = { action: 'play' }; // + TODO : content
+        const play = { action: 'play', studyContent: content };
         socket.send(JSON.stringify(play));
+        console.log('내용', content);
         console.log('play send');
       } catch (error) {
         console.error('start socket', error);

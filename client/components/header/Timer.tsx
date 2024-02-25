@@ -7,7 +7,7 @@ import useTimerFunc from '../hooks/useTimerFunc';
 const Timer = () => {
   const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
   const { hours, minutes, seconds } = useTimer(studyStatus);
-  const { endStudy } = useTimerFunc(); // temp
+  const { pauseStudy, endStudy } = useTimerFunc(); // temp
   const nickname = localStorage.getItem('nickname');
 
   return (
@@ -25,7 +25,10 @@ const Timer = () => {
                 <span className="w-8 inline-block">{seconds}</span>
               </div>
             </div>
-            <button onClick={() => endStudy(true)}>끝</button>
+            <div>
+              <button onClick={pauseStudy}>pause</button>
+              <button onClick={() => endStudy(true)}>끝</button>
+            </div>
           </>
         ) : (
           ''
