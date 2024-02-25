@@ -4,8 +4,8 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { link } from 'fs';
 import Link from 'next/link';
+import { useWebSocket } from '../providers/SocketContext';
 
 export default function SignIn() {
   const { data } = useSession();
@@ -15,6 +15,8 @@ export default function SignIn() {
   const [redirectUrl, setRedirectUrl] = useState('');
   const [loginType, setLoginType] = useState('');
   const router = useRouter();
+  // const dispatch = useDispatch();
+  const { connectWebSocket, disconnectWebSocket } = useWebSocket();
 
   useEffect(() => {
     if (data?.user) {
@@ -37,8 +39,17 @@ export default function SignIn() {
 
   const handleSign = async (type: string) => {
     setLoginType(type);
-    if (data) await signOut();
-    else await signIn(type, { redirect: true, callbackUrl: '/' });
+    if (data) {
+       // 소셜 로그아웃 : 소켓 끊기
+      disconnectWebSocket();
+      await signOut();
+      }
+
+    else {
+      // 소셜 로그인 : 소켓 연결
+      connectWebSocket();
+      await signIn(type, { redirect: true, callbackUrl: '/' });
+      }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,6 +66,10 @@ export default function SignIn() {
         localStorage.setItem('accessToken', res.data.token);
         localStorage.setItem('nickname', res.data.nickname);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+
+        // 소켓 연결
+        connectWebSocket();
+
         router.push('/home');
       } else {
         alert('로그인 실패');
@@ -102,33 +117,30 @@ export default function SignIn() {
               </form>
 
               <div>
-                <button onClick={() => handleSign('GOOGLE')}>
-                  구글 계정 {data ? '로그아웃' : '로그인'}
-                </button>
+                <button onClick={() => handleSign('GOOGLE')}>구글 계정 {data ? '로그아웃' : '로그인'}</button>
               </div>
 
               <div>
-                <button onClick={() => handleSign('KAKAO')}>
-                  카카오 계정 {data ? '로그아웃' : '로그인'}
-                </button>
+                <button onClick={() => handleSign('KAKAO')}>카카오 계정 {data ? '로그아웃' : '로그인'}</button>
               </div>
 
-              <Link href={"/user/signup"}><button>회원가입</button></Link>
+              <Link href={'/user/signup'}>
+                <button>회원가입</button>
+              </Link>
             </div>
           </div>
 
           {data?.user ? (
-              <>
-                <h5>소셜 로그인 정보</h5>
-                <div>{data.user.name}</div> 
-                <div>{data.user.email}</div>
-                {/* <img src={data.user.image!} alt="user img" /> */}
-                {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오 , 랜덤닉네임*/}
-              </>
-            ) : (
-              ''
-            )}
-
+            <>
+              <h5>소셜 로그인 정보</h5>
+              <div>{data.user.name}</div>
+              <div>{data.user.email}</div>
+              {/* <img src={data.user.image!} alt="user img" /> */}
+              {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오 , 랜덤닉네임*/}
+            </>
+          ) : (
+            ''
+          )}
         </div>
       </section>
     </>

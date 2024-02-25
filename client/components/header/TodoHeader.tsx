@@ -16,7 +16,7 @@ const TodoHeader = () => {
     {
       todoId: 1,
       todoContent: '등록된 할 일이 없어요.',
-      todoDate: '2024-02-23',
+      todoDate: '',
       nickname: '',
       userId: 1,
     },
@@ -37,7 +37,7 @@ const TodoHeader = () => {
       }
     };
 
-    getTodo();
+    // getTodo(); // 무한 렌더 문제..
   }, [prevTodo]);
 
   // Todo 배열 비교
