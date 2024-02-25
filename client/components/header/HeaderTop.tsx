@@ -3,6 +3,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { useWebSocket } from '../providers/SocketContext';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -24,19 +25,31 @@ const HeaderTop: React.FC = () => {
     { nickname: '테스트9', image: '이미지' },
     { nickname: '테스트10', image: '이미지' },
   ]);
+  const { socket } = useWebSocket();
 
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     try {
-  //       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
-  //       setFollowerList(res.data);
-  //     } catch (error) {
-  //       console.error('팔로워 header', error);
-  //     }
-  //   };
+  useEffect(() => {
+    // follower 목록 소켓 send
+    if (socket) {
+      try {
+        const follow = { action: 'follow' };
+        socket.send(JSON.stringify(follow));
+        console.log('send data');
+      } catch (error) {
+        console.error('follow socket', error);
+      }
+    }
 
-  //   // getData();
-  // }, [followerList]);
+    //   //   const getData = async () => {
+    //   //     try {
+    //   //       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
+    //   //       setFollowerList(res.data);
+    //   //     } catch (error) {
+    //   //       console.error('팔로워 header', error);
+    //   //     }
+    //   //   };
+
+    //   // getData();
+  }, [followerList]);
 
   return (
     <div className="mt-5">
