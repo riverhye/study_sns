@@ -1,10 +1,7 @@
 package studysns.server.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Table(name = "feed")
 public class FeedEntity {
 
@@ -22,19 +20,19 @@ public class FeedEntity {
     private long feedId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "studyId", nullable = false)
+    @JoinColumn(name = "studyId", nullable = true)
     private StudyEntity study;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private UserEntity user;
 
-    @Column(name = "studyContent", nullable = false)
+    @Column(name = "studyContent", nullable = true)
     private String studyContent;
 
-    @Column(name = "studyStartPoint", nullable = false)
+    @Column(name = "studyStartPoint", nullable = true)
     private LocalDateTime studyStartPoint;
 
-    @Column(name = "studyEndPoint", nullable = false)
+    @Column(name = "studyEndPoint", nullable = true)
     private LocalDateTime studyEndPoint;
 }

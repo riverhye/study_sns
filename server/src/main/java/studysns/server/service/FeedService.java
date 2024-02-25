@@ -1,7 +1,9 @@
 package studysns.server.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import studysns.server.dto.FeedDTO;
 import studysns.server.dto.StudyDTO;
@@ -17,11 +19,13 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 
 public class FeedService {
 
@@ -70,98 +74,176 @@ public class FeedService {
             feedDTOList.add(dto);
         }
         return feedDTOList;
+
     }
 
-//    public StudyDTO playStudy(FeedDTO feedDTO, StudyDTO studyDTO) {
-//        LocalDateTime now = LocalDateTime.now(); // 현재 시간
-//
-//        // 일시 정지 했다가 다시 시작하는 경우
-//        if (feedDTO.getStudyStartPoint() != null) {
-//            // 기존의 기록을 삭제하고 새로운 기록을 시작
-//            feedDTO.setStudyStartPoint(now);
-//            feedDTO.setStudyEndPoint(now);
-//
-//            // 매 초마다 studyEndPoint 를 업데이트하는 스케줄러 시작
-//            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//            scheduler.scheduleAtFixedRate(() -> {
-//                LocalDateTime studyEndPoint = LocalDateTime.now();
-//                feedDTO.setStudyEndPoint(studyEndPoint);
-//            }, 0, 5, TimeUnit.SECONDS); // 5초마다 추가된 시간이 EndPoint로 업데이트 | 테스트 과정에서 확인하기 편하도록 초로 설정했음. ***********배포시 꼭 변경***************
-//
-//        } else {
-//            // 정지 또는 처음 시작을 하는 경우
-//            feedDTO.setStudyStartPoint(now);
-//            feedDTO.setStudyEndPoint(now);
-//
-//            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//            scheduler.scheduleAtFixedRate(() -> {
-//                LocalDateTime studyEndPoint = LocalDateTime.now();
-//                feedDTO.setStudyEndPoint(studyEndPoint);
-//            }, 0, 5, TimeUnit.SECONDS);
-//        }
-//
-//        return studyDTO;
-//    }
+    public String playRequest(String userIdString, String studyContent) { // (String userIdString, String studyContent, String nickname)
+        log.info("service userId: {}", userIdString);
+        log.info("service studyContent: {}", studyContent);
+//        log.info("service nickname: {}", nickname);
 
-//    public StudyDTO stopStudy(FeedDTO feedDTO, StudyDTO studyDTO) {
-//        LocalDateTime studyStartPoint = feedDTO.getStudyStartPoint();
-//        LocalDateTime studyEndPoint = LocalDateTime.now();
-//
-//        if (studyStartPoint != null) {
-//            // Calculate study duration in seconds
-//            Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
-//            long studySeconds = studyDuration.getSeconds();
-//
-//            // Convert study duration to minutes
-//            long studyMinutes = studySeconds / 60;
-//
-//            // Update todayStudyTime in studyDTO
-//            long updatedStudyTime = studyDTO.getTodayStudyTime() + studyMinutes;
-//            studyDTO.setTodayStudyTime(updatedStudyTime);
-//
-//            // Delete studyStartPoint and studyEndPoint from feedDTO
-//            feedDTO.setStudyStartPoint(null);
-//            feedDTO.setStudyEndPoint(null);
-//
-//            return studyDTO;
+        long userId = Long.parseLong(userIdString);
+        log.info("userId string: {}", userId);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        UserEntity userEntity = userOptional.get();
+
+//        Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
+//        if (studyOptional.isEmpty()) {
+//            throw new EntityNotFoundException("Study not found for the user");
 //        }
-//
-//        return null; // Or handle the case where studyStartPoint is null
-//    }
-//
-//    public StudyDTO pauseStudy(FeedDTO feedDTO, StudyDTO studyDTO) {
-//        LocalDateTime studyStartPoint = feedDTO.getStudyStartPoint();
-//        LocalDateTime studyEndPoint = LocalDateTime.now();
-//
-//        if (studyStartPoint != null) {
-//            Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
-//            long studySeconds = studyDuration.getSeconds();
-//
-//            long studyMinutes = studySeconds / 60;
-//
-//            long updatedStudyTime = studyDTO.getTodayStudyTime() + studyMinutes;
-//            studyDTO.setTodayStudyTime(updatedStudyTime);
-//
-//            // 여기에서 의미는 일단 휴식중인 시간이 기록됨
-//            if (studyStartPoint != null) {
-//                feedDTO.setStudyStartPoint(null);
-//                feedDTO.setStudyEndPoint(null);
-//
-//                LocalDateTime now = LocalDateTime.now();
-//
-//                feedDTO.setStudyStartPoint(now);
-//
-//                feedDTO.setStudyEndPoint(now);
-//
-//                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//                scheduler.scheduleAtFixedRate(() -> {
-//                    LocalDateTime newStudyEndPoint = LocalDateTime.now();
-//                    feedDTO.setStudyEndPoint(newStudyEndPoint);
-//                }, 0, 5, TimeUnit.SECONDS); // *********************배포시 변경**************************
+//        StudyEntity studyEntity = studyOptional.get();
+//        Long studyId = studyEntity.getStudyId();
+
+        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
+        FeedEntity feedEntity;
+//        String message;
+        if (existingFeedOptional.isPresent()) {
+            feedEntity = existingFeedOptional.get();
+//            if (feedEntity.getStudyContent() != null) {
+//                throw new IllegalStateException("StudyContent already exists");
 //            }
-//        }
-//            return studyDTO;
-//        }
+            feedEntity.setStudyContent(studyContent);
+            feedEntity.setStudyStartPoint(now);
+            feedEntity.setStudyEndPoint(now);
+//            message = "새로 시작 한 경우";
+        } else {
+            feedEntity = FeedEntity.builder()
+                    .user(userEntity)
+//                    .study(studyEntity)
+                    .studyContent(studyContent)
+                    .studyStartPoint(now)
+                    .studyEndPoint(now)
+                    .build();
+//            message = "일시 정지 후 다시 시작한 경우";
+        }
 
+        feedRepository.save(feedEntity);
+        log.info("FeedEntity play created: {}", feedEntity);
+
+        String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다."; // nickname + " 님이 " + studyContent + " 공부를 시작했습니다."
+        return message;
+
+    }
+
+    public String stopRequest(String userIdString, String studyContent){
+        LocalDateTime now = LocalDateTime.now();
+
+        long userId = Long.parseLong(userIdString);
+
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        UserEntity userEntity = userOptional.get();
+
+
+        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
+        FeedEntity feedEntity;
+        if (existingFeedOptional.isPresent()) {
+            feedEntity = existingFeedOptional.get();
+            feedEntity.setStudyEndPoint(now);
+
+            LocalDateTime studyStartPoint = feedEntity.getStudyStartPoint();
+            LocalDateTime studyEndPoint = feedEntity.getStudyStartPoint();
+
+            Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
+
+            long studySeconds = studyDuration.getSeconds();
+            long studyMinutes = studySeconds/60;
+
+            Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
+            if (studyOptional.isPresent()){
+                StudyEntity studyEntity = studyOptional.get();
+                long updatedStudyTime = studyEntity.getTodayStudyTime() + studyMinutes;
+                studyEntity.setTodayStudyTime(updatedStudyTime);
+            } else {
+                log.info("studyEntity 불러오는 중 오류. todayStudyTime 저장 하지 못함.");
+            }
+
+            feedEntity.setStudyStartPoint(null);
+            feedEntity.setStudyEndPoint(null);
+            feedEntity.setStudyContent(null);
+        } else {
+            feedEntity = FeedEntity.builder()
+                    .user(userEntity)
+                    .studyContent(studyContent)
+                    .studyStartPoint(now)
+                    .studyEndPoint(now)
+                    .build();
+        }
+
+        feedRepository.save(feedEntity);
+        log.info("FeedEntity stop created: {}", feedEntity);
+
+        String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 마쳤습니다.";
+        return message;
+
+
+    }
+
+    public String pauseRequest(String userIdString, String studyContent){
+        LocalDateTime now = LocalDateTime.now();
+
+        long userId = Long.parseLong(userIdString);
+
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        UserEntity userEntity = userOptional.get();
+
+
+        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
+        FeedEntity feedEntity;
+        if (existingFeedOptional.isPresent()) {
+            feedEntity = existingFeedOptional.get();
+            feedEntity.setStudyEndPoint(now);
+
+            LocalDateTime studyStartPoint = feedEntity.getStudyStartPoint();
+            LocalDateTime studyEndPoint = feedEntity.getStudyStartPoint();
+
+            Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
+
+            long studySeconds = studyDuration.getSeconds();
+            long studyMinutes = studySeconds/60;
+
+            Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
+            if (studyOptional.isPresent()){
+                StudyEntity studyEntity = studyOptional.get();
+                long updatedStudyTime = studyEntity.getTodayStudyTime() + studyMinutes;
+                studyEntity.setTodayStudyTime(updatedStudyTime);
+            } else {
+                log.info("studyEntity 불러오는 중 오류");
+            }
+
+            feedEntity.setStudyStartPoint(null);
+            feedEntity.setStudyEndPoint(null);
+//            feedEntity.setStudyContent(null);
+        } else {
+            feedEntity = FeedEntity.builder()
+                    .user(userEntity)
+                    .studyContent(studyContent)
+                    .studyStartPoint(now)
+                    .studyEndPoint(now)
+                    .build();
+        }
+
+        feedRepository.save(feedEntity);
+        log.info("FeedEntity pause created: {}", feedEntity);
+
+        String message = userEntity.getNickname() + " 님이 잠시 휴식 중입니다.";
+        return message;
+
+
+    }
     }
 

@@ -4,28 +4,38 @@ package studysns.server.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import studysns.server.dto.FollowDTO;
 import studysns.server.entity.FollowEntity;
+import studysns.server.entity.StudyEntity;
 import studysns.server.entity.UserEntity;
 import studysns.server.repository.FollowRepository;
+import studysns.server.repository.StudyRepository;
 import studysns.server.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FollowService {
+    @Autowired
     private final FollowRepository followRepository;
+    @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final StudyRepository studyRepository;
 
     private final NotificationService notificationService;
 
 
     @Autowired
-    public FollowService(FollowRepository followRepository, UserRepository userRepository, NotificationService notificationService){
+    public FollowService(FollowRepository followRepository, UserRepository userRepository, NotificationService notificationService, StudyRepository studyRepository){
         this.followRepository = followRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.studyRepository = studyRepository;
     }
 
     public void addFollow(FollowDTO followDTO){
@@ -59,4 +69,19 @@ public class FollowService {
         }
         return followDTOList;
     }
+
+    @Transactional(readOnly = true)
+    public List<String> rankRequest() {
+        List<StudyEntity> topUsers = studyRepository.findTop10ByOrderByTodayStudyTimeDesc();
+
+        List<String> nicknames = topUsers.stream()
+                .map(userEntity -> userRepository.findNicknameByUserId(userEntity.getUser().getUserId()))
+                .collect(Collectors.toList());
+
+        return nicknames;
+    }
+
+
+
+
 }
