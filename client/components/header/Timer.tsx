@@ -25,7 +25,7 @@ const Timer = () => {
                 <span className="w-8 inline-block">{seconds}</span>
               </div>
             </div>
-            <div>
+            <div className="flex-1">
               <button onClick={pauseStudy}>pause</button>
               <button onClick={() => endStudy(true)}>끝</button>
             </div>
