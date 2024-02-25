@@ -1,7 +1,7 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { link } from 'fs';
@@ -13,9 +13,30 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [redirectUrl, setRedirectUrl] = useState('');
+  const [loginType, setLoginType] = useState('');
   const router = useRouter();
 
+  useEffect(() => {
+    if (data?.user) {
+      const { name, email } = data.user;
+
+      // 서버에 로그인 요청
+      fetch(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          nickname: name,
+          loginType: loginType.toUpperCase(), // 로그인 타입을 대문자로 변환하여 전송
+        })
+      });
+    }
+  }, [data, loginType]); // data가 변경될 때마다 이 useEffect는 실행됩니다.
+
   const handleSign = async (type: string) => {
+    setLoginType(type);
     if (data) await signOut();
     else await signIn(type, { redirect: true, callbackUrl: '/' });
   };
