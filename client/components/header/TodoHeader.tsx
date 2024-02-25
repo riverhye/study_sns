@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { timeStamp } from '../studyComponents/timeStamp';
+import { useAppSelector } from '@/store/hooks';
 
 export interface TodoContent {
   todoId: number;
@@ -23,6 +24,7 @@ const TodoHeader = () => {
   ];
   const [prevTodo, setPrevTodo] = useState<TodoContent[]>(initialTodo);
   const nickname = localStorage.getItem('nickname');
+  const trigger = useAppSelector(state => state.trigger.trigger);
 
   useEffect(() => {
     const getTodo = async () => {
@@ -37,8 +39,8 @@ const TodoHeader = () => {
       }
     };
 
-    // getTodo(); // 무한 렌더 문제..
-  }, [prevTodo]);
+    getTodo();
+  }, [trigger]); // redux 트리거
 
   // Todo 배열 비교
   const compareArrays = (arr1: TodoContent[], arr2: TodoContent[]): boolean => {
