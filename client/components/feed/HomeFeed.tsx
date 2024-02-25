@@ -109,11 +109,7 @@ const HomeFeed = () => {
     if (e.key === 'Enter') {
       e.preventDefault(); // 엔터 키의 기본 동작인 줄바꿈을 막음
       if (value.content.trim() !== '') {
-        startStudy(value.content);
-        setValue({ content: '', error: '' });
-        if (studyStatus === 'end') {
-          setValid(true);
-        }
+        handleContent();
       } else {
         setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
         inputRef.current!.focus();
@@ -126,7 +122,10 @@ const HomeFeed = () => {
     if (value.content.trim() !== '') {
       startStudy(value.content);
       setValue({ content: '', error: '' });
-      setValid(true);
+      // TODO : 타이머 시작하면 버튼과 input 막기
+      // if (studyStatus == 'start') {
+      //   setValid(true);
+      // }
     } else {
       setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
       inputRef.current!.focus();
