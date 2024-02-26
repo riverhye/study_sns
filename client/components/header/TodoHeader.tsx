@@ -15,11 +15,11 @@ export interface TodoContent {
 const TodoHeader = () => {
   const initialTodo: TodoContent[] = [
     {
-      todoId: 1,
+      todoId: 0,
       todoContent: '등록된 할 일이 없어요.',
       todoDate: '',
       nickname: '',
-      userId: 1,
+      userId: 0,
     },
   ];
   const [prevTodo, setPrevTodo] = useState<TodoContent[]>(initialTodo);
