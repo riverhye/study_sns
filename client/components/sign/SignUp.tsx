@@ -2,6 +2,7 @@
 
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const SignUp = () => {
@@ -11,6 +12,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [validPassword, setValidPassword] = useState(true);
+  const router = useRouter();
 
   const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -62,7 +64,7 @@ const SignUp = () => {
 
       console.log("hi");
       alert('회원가입 성공');
-      document.location.href = '/home';
+      router.push('/home');
     } catch (error) {
       console.error('Error signing up:', error);
       alert('회원가입 실패!!');
@@ -111,10 +113,10 @@ const SignUp = () => {
                 />
                 {!passwordMatch && <span className="text-red-600">비밀번호가 일치하지 않습니다.</span>}
               </div>
-              <div>
+              {/* <div>
                 <input className="" type="checkbox" />
                 <a href="#"> 약관동의</a>
-              </div>
+              </div> */}
               <button
                 type="submit"
                 className="w-full bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"

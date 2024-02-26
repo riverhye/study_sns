@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import studysns.server.entity.UserEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
@@ -25,4 +26,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT u.nickname FROM UserEntity u WHERE u.userId = :userId")
     String findNicknameByUserId(@Param("userId") Long userId);
+
+    List<UserEntity> findByNicknameContaining(String nickname);
 }
