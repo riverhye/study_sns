@@ -24,7 +24,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <HeaderLeft />
               <div className="flex flex-col overflow-y-auto">
                 <HeaderTop />
-                <div className="p-4 mt-10">
+                <div className="p-4 mt-10 h-full">
                   <AuthProvider>{children}</AuthProvider>
                 </div>
               </div>
