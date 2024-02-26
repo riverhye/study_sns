@@ -3,6 +3,9 @@ package studysns.server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @NoArgsConstructor
@@ -24,4 +27,7 @@ public class FollowEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private UserEntity user;
+
+    @Column(name = "followTime", nullable = true)
+    private LocalDateTime followTime;
 }
