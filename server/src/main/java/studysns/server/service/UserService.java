@@ -240,4 +240,10 @@ public class UserService {
     public boolean checkEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public UserEntity findByNickname(String nickname) {
+        UserEntity user = userRepository.findByNickname(nickname);
+
+        return user;
+    }
 }

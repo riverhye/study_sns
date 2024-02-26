@@ -31,4 +31,10 @@ public class StudyEntity {
 
     @Column(name = "studyDate", nullable = false)
     private LocalDate studyDate;
+
+    public Long getTodayStudyTime() {
+        return this.todayStudyTime;
+    }
+
+
 }
