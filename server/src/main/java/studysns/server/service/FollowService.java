@@ -4,6 +4,7 @@ package studysns.server.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import studysns.server.dto.AllStudyInfoDTO;
 import studysns.server.dto.FollowDTO;
 import studysns.server.entity.FollowEntity;
 import studysns.server.entity.UserEntity;
@@ -32,8 +33,11 @@ public class FollowService {
         UserEntity userEntity = userRepository.findById(followDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found")); // postman 으로 테스트 해본다고 추가. 클라이언트 연결 후 삭제.
 
+        UserEntity userFollowEntity = userRepository.findById(followDTO.getFollowerId())
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         FollowEntity followEntity = FollowEntity.builder()
-                .followId(followDTO.getFollowId())
+                .userFollow(userFollowEntity)
                 .user(userEntity)
                 .build();
 
@@ -45,18 +49,35 @@ public class FollowService {
 
     public List<FollowDTO> getFollowByUserId(long userId) {
         // userId 기반, 해당 유저의 팔로워 조회
-        List<FollowEntity> followEntities = followRepository.findByUserUserId(userId);
+        List<FollowEntity> followEntities = followRepository.findByUser_UserId(userId);
         
         // 조회한 팔로워 정보를 FollowDTO 로 변환하여 반환
         List<FollowDTO> followDTOList = new ArrayList<>();
         for (FollowEntity entity : followEntities) {
             FollowDTO dto = FollowDTO.builder()
                     .followerId(entity.getFollowerId())
-                    .followId(entity.getFollowId())
+                    .followId(entity.getUserFollow().getUserId())
                     .userId(entity.getUser().getUserId())
                     .build();
             followDTOList.add(dto);
         }
         return followDTOList;
+    }
+
+
+    public AllStudyInfoDTO.User getFollowInfo(long userId) {
+        UserEntity user = userRepository.findByUserId(userId);
+
+        Long following = followRepository.countByUser_userId(userId);
+
+        Long follower = followRepository.countByUserFollowUserId(userId);
+
+        AllStudyInfoDTO.User userFollowInfo = AllStudyInfoDTO.User.builder()
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .followingId(follower)
+                .followerId(following)
+                .build();
+        return userFollowInfo;
     }
 }

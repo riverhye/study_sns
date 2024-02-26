@@ -65,17 +65,11 @@ public class TodoService {
         return todoDTOList;
     }
 
-    public List<AllStudyInfoDTO.Todo> getTodoByNickname(String nickname) {
+    public List<AllStudyInfoDTO.Todo> getTodoByNickname(Long userId) {
         List<AllStudyInfoDTO.Todo> todoDTOList = new ArrayList<>();
 
-        // 사용자 조회
-        UserEntity user = userRepository.findByNickname(nickname);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-
         // 할 일 목록 조회
-        List<TodoEntity> todoEntities = todoRepository.findByUser_UserId(user.getUserId());
+        List<TodoEntity> todoEntities = todoRepository.findByUser_UserId(userId);
         for (TodoEntity entity : todoEntities) {
             AllStudyInfoDTO.Todo dto = AllStudyInfoDTO.Todo.builder()
                     .todoContent(entity.getTodoContent())

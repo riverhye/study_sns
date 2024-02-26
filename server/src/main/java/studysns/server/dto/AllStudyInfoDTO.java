@@ -21,8 +21,8 @@ public class AllStudyInfoDTO {
     public static class User {
         private String nickname;
         private String email;
-//        private int folling;
-//        private int follower;
+        private Long followerId;
+        private Long followingId;
     }
 
     @Data
@@ -41,7 +41,7 @@ public class AllStudyInfoDTO {
     @Builder
     public static class MyRanking {
         private String rankingDate;
-        private String rankingTime;
+        private int rankingTime;
     }
 
     @Data

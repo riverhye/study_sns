@@ -17,8 +17,9 @@ public class FollowEntity {
     @Column(name = "followerId", nullable = false)
     private long followerId;
 
-    @Column(name = "followId")
-    private long followId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "followId", referencedColumnName = "userId")
+    private UserEntity userFollow;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")

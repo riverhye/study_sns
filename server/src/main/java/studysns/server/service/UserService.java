@@ -207,4 +207,10 @@ public class UserService {
                 .token(token)
                 .build();
     }
+
+    public UserEntity findByNickname(String nickname) {
+        UserEntity user = userRepository.findByNickname(nickname);
+
+        return user;
+    }
 }
