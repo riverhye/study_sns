@@ -5,12 +5,14 @@ import { setReduxTimer } from '@/store/module/timer';
 import { TimerState } from '@/type/type';
 import axios from 'axios';
 import { useWebSocket } from '../providers/SocketContext';
+import { IMessageEvent } from 'websocket';
 
 const useTimerFunc = () => {
   const dispatch = useDispatch();
   const { startPoint = 0, savedStudyTime = 0 } = useSelector((state: { timer: TimerState }) => state.timer);
 
   const { socket } = useWebSocket();
+  const nickname = localStorage.getItem('accessToken');
 
   // 타이머 시작
   const startStudy = (content: string) => {
@@ -20,10 +22,16 @@ const useTimerFunc = () => {
     // 소켓을 통해 서버로 데이터 전송
     if (socket) {
       try {
-        const play = { action: 'play', studyContent: content };
+        const play = { action: 'play', studyContent: content, nickname: nickname };
         socket.send(JSON.stringify(play));
         console.log('내용', content);
         console.log('play send');
+        socket.onmessage = (evt: IMessageEvent) => {
+          if (evt.data.slice(0, 6) === 'play: ') {
+            console.log(evt.data.slice(6));
+            return evt.data.slice(6);
+          }
+        };
       } catch (error) {
         console.error('start socket', error);
       }

@@ -20,7 +20,7 @@ const HomeFeed = () => {
       feedId: 62,
       nickname: '테스트',
       image: 'image',
-      content: '작성 내용',
+      content: 'ㅇㅇ님이 ㅁㅁ를 시작했습니다.',
       type: '시작했습니다.',
       date: new Date(),
       isLike: true,
