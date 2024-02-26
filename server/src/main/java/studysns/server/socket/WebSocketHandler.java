@@ -237,6 +237,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private String userId;
     private String studyContent;
+
+    private String targetNickname;
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String token = session.getUri().getQuery().substring(6);
@@ -260,6 +262,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String action = jsonMap.get("action");
 
         studyContent = jsonMap.get("studyContent");
+
+//        targetNickname = jsonMap.get("targetNickname");
+        targetNickname = "testNickname";
 
 //        nickname = jsonMap.get("nickname");
 
@@ -302,11 +307,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String messageRank = "rank: " + jsonArray.toJSONString();
             log.info("rank send info: {}", messageRank);
             session.sendMessage(new TextMessage(messageRank));
-        } else if ("follow".equals(action)){
-            String followMessage = followService.followRequest();
-            String messageWithType = "follow: " + followMessage;
-            session.sendMessage(new TextMessage(messageWithType));
-            log.info("follow message sent to client: {}", messageWithType);
+//        } else if ("follow".equals(action)){
+//            String followMessage = followService.followRequest(userId, targetNickname);
+//            String messageWithType = "follow: " + followMessage;
+//            session.sendMessage(new TextMessage(messageWithType));
+//            log.info("follow message sent to client: {}", messageWithType);
         }
         else {
             log.warn("Unknown action: {}", action);
