@@ -3,9 +3,7 @@ import RankUI from '@/components/ranking/RankUI';
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useState } from 'react';
-export const metadata = {
-  title: '랭킹',
-};
+
 interface RankingData {
   profileImage: string;
   nickname: string;

@@ -1,10 +1,6 @@
 'use client';
 import { useState } from 'react';
 
-export const metadata = {
-  title: 'Search',
-};
-
 const Search = () => {
   const [user, setUser] = useState<[]>([]);
   return (
