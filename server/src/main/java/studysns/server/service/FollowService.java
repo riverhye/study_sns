@@ -2,6 +2,7 @@ package studysns.server.service;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,13 @@ import studysns.server.repository.StudyRepository;
 import studysns.server.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FollowService {
     @Autowired
     private final FollowRepository followRepository;
@@ -96,14 +100,28 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> rankRequest() {
+    public List<Map<String, Object>> rankRequest() {
         List<StudyEntity> topUsers = studyRepository.findTop10ByOrderByTodayStudyTimeDesc();
 
-        List<String> nicknames = topUsers.stream()
-                .map(userEntity -> userRepository.findNicknameByUserId(userEntity.getUser().getUserId()))
-                .collect(Collectors.toList());
+        List<Map<String, Object>> userInfos = topUsers.stream()
+                .map(studyEntity -> {
+                    Map<String, Object> userInfo = new HashMap<>();
+                    UserEntity userEntity = studyEntity.getUser();
+                    String nickname = userRepository.findNicknameByUserId(userEntity.getUserId());
+                    long todayStudyTime = studyEntity.getTodayStudyTime();
+                    String profileImage = userEntity.getProfileImage();
 
-        return nicknames;
+                    userInfo.put("nickname", nickname);
+//                    log.info("nickname from followService: {}", nickname);
+                    userInfo.put("todayStudyTime", todayStudyTime);
+//                    log.info("studyTime from followService: {}", todayStudyTime);
+                    userInfo.put("profileImage", profileImage);
+
+                    return userInfo;
+                })
+                .collect(Collectors.toList());
+//        log.info("total value: {}", userInfos);
+        return userInfos;
     }
 
 
