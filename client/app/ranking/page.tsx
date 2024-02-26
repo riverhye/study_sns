@@ -16,7 +16,7 @@ const Ranking = () => {
     { profileImage: '', nickname: '', studyDate: '', todoayStudyTime: 150 },
   ]);
   async function getRnaking() {
-    const res: RankingData[] = await axios.get(`${process.env.NEXT_PUBLIC_URL}/ranking`);
+    const res: RankingData[] = (await axios.get(`${process.env.NEXT_PUBLIC_URL}/ranking`)).data;
 
     getRankingList(res);
   }
