@@ -1,52 +1,39 @@
 'use client';
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Category from './Category';
+import Setting from './Setting';
 import Timer from './Timer';
 import TodoHeader from './TodoHeader';
-import { HeaderLeftData } from '@/type/type';
+import { useState } from 'react';
 
 const HeaderLeft = () => {
-  const [todoList, setTodos] = useState<HeaderLeftData['content']>([
-    '오늘의 할일1111',
-    '할일b',
-    '할일c',
-    '할일ㄹㄹㄹㄹd',
-  ]);
+  // 호버 시 setting 아이콘 색 변화
+  const [hovered, setHovered] = useState(false);
+  const nickname = localStorage.getItem('nickname');
 
-  // todo 바뀔 때마다 반영
-  useEffect(() => {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const hours = String(currentDate.getHours()).padStart(2, '0');
-    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
 
-    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-    const getData = async () => {
-      try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`, {
-          params: { formattedDate },
-        });
-        setTodos(res.data);
-      } catch (err) {
-        console.error('투두 header 데이터 로드 실패(미연결)', err);
-      }
-    };
-
-    // getData();
-  }, [todoList]);
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
 
   return (
     <>
-      <div className="flex flex-col h-auto 1/12  px-4 bg-main-blue p-0">
+      <div className="flex flex-col h-auto w-1/4  px-4 bg-main-blue p-0">
         <Category />
-        <TodoHeader content={todoList} />
+        <TodoHeader />
         <Timer />
+        <div
+          className="self-end pt-2 cursor-pointer hover:scale-125 transition-transform duration-300 ease-in-out"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}>
+          <Link href={'/user/editprofile'}>
+            <Setting color={hovered ? 'gray' : 'none'} />
+          </Link>
+        </div>
       </div>
     </>
   );

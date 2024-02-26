@@ -15,7 +15,9 @@ import studysns.server.security.TokenProvider;
 import studysns.server.service.UserService;
 import studysns.server.socket.WebSocketHandler;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -39,31 +41,44 @@ public class UserController {
         return "GET: user";
     }
 
+    @PostMapping("/signupcheck")
+    public ResponseEntity<?> checkEmailAvailability(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean exists = userService.checkEmailExists(email);
+        return ResponseEntity.ok().body(Collections.singletonMap("emailAvailable", !exists));
+    }
+
     @PostMapping("/signup/process")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
+            String randomNickname = generateRandomNickname(); // 랜덤 닉네임 생성
+
             UserEntity userEntity = UserEntity.builder()
-                    .email(userDTO.getEmail())
-                    .nickname(userDTO.getNickname())
-                    .password(passwordEncoder.encode(userDTO.getPassword()))
-                    .profileImage(userDTO.getProfileImage())
-                    .loginType(userDTO.getLoginType())
-                    .build();
+                .email(userDTO.getEmail())
+                .nickname(randomNickname)
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .profileImage(userDTO.getProfileImage())
+                .loginType(userDTO.getLoginType())
+                .build();
 
             UserEntity responseUser = userService.createUser(userEntity);
 
             UserDTO responseUserDTO = UserDTO.builder()
-                    .email(responseUser.getEmail())
-                    .nickname(responseUser.getNickname())
-                    .password(responseUser.getPassword())
-                    .loginType(responseUser.getLoginType())
-                    .profileImage(responseUser.getProfileImage())
-                    .userId(responseUser.getUserId())
-                    .build();
+                .email(responseUser.getEmail())
+                .nickname(responseUser.getNickname())
+                .password(responseUser.getPassword())
+                .loginType(responseUser.getLoginType())
+                .profileImage(responseUser.getProfileImage())
+                .userId(responseUser.getUserId())
+                .build();
             return ResponseEntity.ok().body(responseUserDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    private String generateRandomNickname() {
+        return "user_" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     @PostMapping("/signin/process")
@@ -80,7 +95,7 @@ public class UserController {
 //                    .email(userEntity.getEmail())
                     .nickname(userEntity.getNickname())
 //                    .password(userEntity.getPassword())
-//                    .userId(userEntity.getUserId())
+                    .userId(userEntity.getUserId())
 //                    .profileImage(userEntity.getProfileImage())
 //                    .loginType(userEntity.getLoginType())
                     .token(token)
@@ -186,7 +201,7 @@ public class UserController {
     public ResponseEntity<?> snsSignIn(@RequestBody Map<String, String> snsDetails) {
         try {
             String email = snsDetails.get("email");
-            String nickname = snsDetails.get("nickname");
+            String nickname = snsDetails.get("nickname") + "_" + UUID.randomUUID().toString().substring(0, 4);
             String profileImage = snsDetails.get("profileImage");
             UserEntity.LoginType loginType = UserEntity.LoginType.valueOf(snsDetails.get("loginType"));
 

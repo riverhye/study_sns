@@ -1,5 +1,5 @@
 import React from 'react';
-import Calender from '@/components/studyComponents/Calender';
+import Calendar from '@/components/studyComponents/Calendar';
 /*
 !하나하나 연결 시킬지 (map으로),아니면 외부 달력쓸지 생각
 */
@@ -12,7 +12,7 @@ const StudyTable = (props: StudyTableProps) => {
   return (
     <>
       <hr />
-      <Calender />
+      <Calendar />
     </>
   );
 };

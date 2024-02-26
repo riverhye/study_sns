@@ -8,16 +8,19 @@ import FeedContent from './FeedContent';
 import useTimerFunc from '../hooks/useTimerFunc';
 import NoFeed from './NoFeed';
 import { StateValue } from '@/type/type';
+import { useSelector } from 'react-redux';
 
 const HomeFeed = () => {
   const [value, setValue] = useState<StateValue>({ content: '', error: '' });
   const [valid, setValid] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
   const initialFeedData: UserFeedData[] = [
     {
       feedId: 62,
       nickname: '테스트',
       image: 'image',
-      content: '작성 내용',
+      content: 'ㅇㅇ님이 ㅁㅁ를 시작했습니다.',
       type: '시작했습니다.',
       date: new Date(),
       isLike: true,
@@ -49,7 +52,9 @@ const HomeFeed = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`);
+        const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setFeedData(res.data);
       } catch (err) {
         console.error('피드 데이터', err);
@@ -62,7 +67,9 @@ const HomeFeed = () => {
   const handleUpdateFeed = async () => {
     try {
       // Add: userId
-      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`);
+      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       // 내림차순 정렬
       const sortedFeedData = res.data.slice().sort((a, b) => {
         return b.date.getTime() - a.date.getTime();
@@ -81,27 +88,28 @@ const HomeFeed = () => {
       const updatedFeedData = [...feedData];
       updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
       setFeedData(updatedFeedData);
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/like/addlike`, {
-        feedId: feedData[index].feedId,
-        userId,
-        isLike: updatedFeedData[index].isLike,
-      });
+
+      // const res = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_URL}/like/addlike`,
+      //   {
+      //     feedId: feedData[index].feedId,
+      //     userId,
+      //     isLike: updatedFeedData[index].isLike,
+      //   },
+      //   { headers: { Authorization: `Bearer ${token}` } },
+      // );
       console.log('피드 좋아요 전송');
     } catch (error) {
       console.error('피드 좋아요', error);
     }
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   // 빈값 아닐 때에만 타이머 시작 (1) 엔터키
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // 엔터 키의 기본 동작인 줄바꿈을 막음
       if (value.content.trim() !== '') {
-        startStudy(value.content);
-        setValue({ content: '', error: '' });
-        setValid(true);
+        handleContent();
       } else {
         setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
         inputRef.current!.focus();
@@ -114,36 +122,44 @@ const HomeFeed = () => {
     if (value.content.trim() !== '') {
       startStudy(value.content);
       setValue({ content: '', error: '' });
-      setValid(true);
     } else {
       setValue({ ...value, error: '공부할 내용을 먼저 입력해 주세요.' });
       inputRef.current!.focus();
     }
   };
 
+  useEffect(() => {
+    if (studyStatus === 'start' || studyStatus === 'pause') setValid(true);
+    else setValid(false);
+  }, [studyStatus]);
+
   return (
     <>
       {token ? (
         <section>
           <div className="flex justify-center h-12 w-full mt-10">
-            <input
-              onChange={e => setValue({ content: e.target.value, error: '' })}
-              value={value.content}
-              onKeyDown={handleEnter}
-              placeholder="무엇을 공부할까요?"
-              ref={inputRef}
-              className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
-              disabled={valid}
-            />
-            <button
-              onClick={handleContent}
-              type="button"
-              disabled={valid}
-              className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
-              START
-            </button>
-            {/* <button onClick={pauseStudy}>(임시)일시정지</button>
+            {!valid && (
+              <>
+                <input
+                  onChange={e => setValue({ content: e.target.value, error: '' })}
+                  value={value.content}
+                  onKeyDown={handleEnter}
+                  placeholder="무엇을 공부할까요?"
+                  ref={inputRef}
+                  className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
+                  disabled={valid}
+                />
+                <button
+                  onClick={handleContent}
+                  type="button"
+                  disabled={valid}
+                  className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
+                  START
+                </button>
+                {/* <button onClick={pauseStudy}>(임시)일시정지</button>
        <button onClick={() => endStudy(true)}>(임시)끝</button> */}
+              </>
+            )}
           </div>
           <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
             {value.error}

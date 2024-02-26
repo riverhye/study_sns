@@ -1,5 +1,6 @@
 import '@/styles/tailwind.css';
 import axios from 'axios';
+
 interface StudyUserProps {
   userData: {
     nickname: string;
@@ -10,16 +11,16 @@ interface StudyUserProps {
 }
 interface axiosData {
   userId: string;
-  followNickname: number;
+  followNickname: string | null;
 }
 const StudyUser = (props: StudyUserProps) => {
   const userData = props.userData;
-
+  const token = localStorage.getItem('accessToken'); //토큰
   async function pollowController() {
     //팔로우 api요청
     const data: axiosData = {
       userId: userData.nickname,
-      followNickname: 123, //!나중에 토큰으로 가져온값으로 수정해야함
+      followNickname: token, //!나중에 토큰으로 가져온값으로 수정해야함
     };
     await axios.post(`${process.env.NEXT_PUBLIC_URL}/follow`, data);
   }
@@ -27,7 +28,7 @@ const StudyUser = (props: StudyUserProps) => {
     //언팔로우 api요청
     const data: axiosData = {
       userId: userData.nickname,
-      followNickname: 123, //!나중에 토큰으로 가져온값으로 수정해야함
+      followNickname: token, //!나중에 토큰으로 가져온값으로 수정해야함
     };
     await axios.delete(`${process.env.NEXT_PUBLIC_URL}/follow`, { data });
   }
@@ -41,8 +42,8 @@ const StudyUser = (props: StudyUserProps) => {
         </div>
 
         <div>
-          <div className=" text-lg">닉네임{userData?.nickname}</div>
-          <div className="text-sm">이메일{userData?.email}</div>
+          <div className=" text-lg">{userData?.nickname}</div>
+          <div className="text-sm">{userData?.email}</div>
           <div className="flex">
             <div>팔로잉{userData?.folling}</div>
             <div>팔로워{userData?.follower}</div>{' '}

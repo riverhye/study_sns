@@ -2,11 +2,11 @@ package studysns.server.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -22,7 +22,7 @@ public class UserEntity {
     @Column(name = "email", length = 50, nullable = false)
     private String email;
 
-    @Column(name = "nickname", length = 20, nullable = false)
+    @Column(name = "nickname", length = 50, nullable = false)
     private String nickname;
 
     @Column(name = "password")
@@ -35,13 +35,31 @@ public class UserEntity {
     @Column(name = "profileImage", length = 255)
     private String profileImage;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyEntity> studies = new ArrayList<>();
+
+    public void addStudy(StudyEntity study) {
+        studies.add(study);
+        study.setUser(this);
+    }
+
     @PrePersist
     public void prePersist() {
         this.loginType = this.loginType == null ? LoginType.SNS : this.loginType;
     }
 
+    @Builder
+    public UserEntity(String email, String nickname, String password, LoginType loginType, String profileImage) {
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.loginType = loginType;
+        this.profileImage = profileImage;
+        this.studies = new ArrayList<>(); // 이 부분이 중요
+    }
+
     public enum LoginType{
-        SNS, GOOGLE, KAKAO
+        SNS, GOOGLE
     }
 
 }

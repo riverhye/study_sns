@@ -4,7 +4,7 @@ import { ko } from 'date-fns/locale';
 import Image from 'next/image';
 import { FeedItemProps } from '@/type/type';
 
-const FeedItem: React.FC<FeedItemProps> = ({ feed, index, handleLike, children }) => {
+const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
   const dateDistance = (date: Date): ReactNode => {
     const now = Date.now();
     const d = new Date(date);
@@ -20,7 +20,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ feed, index, handleLike, children }
         <div className="flex justify-between">
           <div className="flex items-center">
             <div className="w-14 h-14 rounded-full border-2 overflow-hidden">
-              <Image src="/blank-profile.png" alt="user profile" width={300} height={300} />
+              <Image src="/blank-profile.png" alt="user profile" priority={false} width={300} height={300} />
             </div>
             <div className="ml-2 cursor-default">{feed.nickname}</div>
           </div>
