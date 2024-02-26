@@ -24,10 +24,17 @@ public class FollowEntity {
     @JoinColumn(name = "followId", referencedColumnName = "userId")
     private UserEntity userFollow;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "followeeId")
+//    private UserEntity followee;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private UserEntity user;
 
-    @Column(name = "followTime", nullable = true)
+    @Column(name = "followingId")
+    private Long followingId;
+
+    @Column(name = "followTime")
     private LocalDateTime followTime;
 }

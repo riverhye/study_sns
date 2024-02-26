@@ -76,11 +76,11 @@ const useTimerFunc = () => {
     // 소켓을 통해 서버로 데이터 전송
     if (socket) {
       try {
-        const pause = { action: 'pause' };
-        socket.send(JSON.stringify(pause));
-        console.log('pause send');
+        const follow = { action: 'follow' };
+        socket.send(JSON.stringify(follow));
+        console.log('follow send');
       } catch (error) {
-        console.error('pause timer', error);
+        console.error('follow timer', error);
       }
     }
 
