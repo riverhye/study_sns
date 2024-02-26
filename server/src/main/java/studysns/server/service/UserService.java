@@ -203,28 +203,30 @@ public class UserService {
 
     @Transactional
     public UserDTO snsLoginOrCreateUser(String email, String nickname, UserEntity.LoginType loginType, String profileImage) {
-        UserEntity userEntity = userRepository.findByEmail(email)
-            .orElseGet(() -> {
-                UserEntity newUser = UserEntity.builder()
-                    .email(email)
-                    .nickname(nickname)
-                    .loginType(loginType)
-                    .profileImage(profileImage)
-                    .build();
+        Optional<UserEntity> optionalUserEntity = userRepository.findByEmail(email);
+        UserEntity userEntity;
 
-                newUser = userRepository.save(newUser);
+        if (optionalUserEntity.isPresent()) {
+            userEntity = optionalUserEntity.get();
+        } else {
+            userEntity = UserEntity.builder()
+                .email(email)
+                .nickname(nickname)
+                .loginType(loginType)
+                .profileImage(profileImage)
+                .build();
 
-                // UserEntity 저장 후 StudyEntity 생성 및 저장 로직 추가
-                StudyEntity studyEntity = StudyEntity.builder()
-                    .user(newUser)
-                    .todayStudyTime(0L)
-                    .studyDate(LocalDate.now())
-                    .build();
-                newUser.addStudy(studyEntity); // 양방향 연결 설정
-                studyRepository.save(studyEntity); // 필요에 따라 호출, cascade 설정에 따라 자동 처리될 수 있음
+            userEntity = userRepository.save(userEntity);
 
-                return newUser;
-            });
+            // UserEntity 저장 후 StudyEntity 생성 및 저장 로직 추가
+            StudyEntity studyEntity = StudyEntity.builder()
+                .user(userEntity)
+                .todayStudyTime(0L)
+                .studyDate(LocalDate.now())
+                .build();
+            userEntity.addStudy(studyEntity); // 양방향 연결 설정
+            studyRepository.save(studyEntity); // 필요에 따라 호출, cascade 설정에 따라 자동 처리될 수 있음
+        }
 
         if (userEntity == null) {
             return null;
