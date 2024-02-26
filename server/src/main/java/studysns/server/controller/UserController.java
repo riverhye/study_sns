@@ -54,23 +54,23 @@ public class UserController {
             String randomNickname = generateRandomNickname(); // 랜덤 닉네임 생성
 
             UserEntity userEntity = UserEntity.builder()
-                    .email(userDTO.getEmail())
-                    .nickname(randomNickname)
-                    .password(passwordEncoder.encode(userDTO.getPassword()))
-                    .profileImage(userDTO.getProfileImage())
-                    .loginType(userDTO.getLoginType())
-                    .build();
+                .email(userDTO.getEmail())
+                .nickname(randomNickname)
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .profileImage(userDTO.getProfileImage())
+                .loginType(userDTO.getLoginType())
+                .build();
 
             UserEntity responseUser = userService.createUser(userEntity);
 
             UserDTO responseUserDTO = UserDTO.builder()
-                    .email(responseUser.getEmail())
-                    .nickname(responseUser.getNickname())
-                    .password(responseUser.getPassword())
-                    .loginType(responseUser.getLoginType())
-                    .profileImage(responseUser.getProfileImage())
-                    .userId(responseUser.getUserId())
-                    .build();
+                .email(responseUser.getEmail())
+                .nickname(responseUser.getNickname())
+                .password(responseUser.getPassword())
+                .loginType(responseUser.getLoginType())
+                .profileImage(responseUser.getProfileImage())
+                .userId(responseUser.getUserId())
+                .build();
             return ResponseEntity.ok().body(responseUserDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
