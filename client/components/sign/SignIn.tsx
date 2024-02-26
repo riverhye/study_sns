@@ -21,7 +21,20 @@ export default function SignIn() {
   useEffect(() => {
     if (data?.user) {
       const { name, email } = data.user;
-
+  
+      // loginType 값을 서버에서 정의된 열거형 값에 맞춰서 조정
+      let serverLoginType;
+      switch(loginType.toUpperCase()) {
+        case 'GOOGLE':
+          serverLoginType = 'GOOGLE';
+          break;
+        case 'KAKAO':
+          serverLoginType = 'KAKAO';
+          break;
+        default:
+          serverLoginType = 'SNS'; // 기본값을 SNS로 설정하거나, 다른 로직에 따라 조정
+      }
+  
       // 서버에 로그인 요청
       fetch(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, {
         method: 'POST',
@@ -31,11 +44,28 @@ export default function SignIn() {
         body: JSON.stringify({
           email,
           nickname: name,
-          loginType: loginType.toUpperCase(), // 로그인 타입을 대문자로 변환하여 전송
+          loginType: serverLoginType, // 수정된 loginType 사용
         })
-      });
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          // 오류 메시지를 더 상세하게 출력할 수 있도록 수정
+          response.text().then(text => {
+            throw new Error(`Server responded with error: ${text}`);
+          });
+        }
+      })
+      .then(data => {
+        // 토큰 저장
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+      })
+      .catch(error => console.error('Login Error:', error));
     }
-  }, [data, loginType]); // data가 변경될 때마다 이 useEffect는 실행됩니다.
+  }, [data, loginType]);  
 
   const handleSign = async (type: string) => {
     setLoginType(type);
