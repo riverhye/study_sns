@@ -124,6 +124,12 @@ public class FollowService {
         return userInfos;
     }
 
+    public String followRequest() {
+
+        return null;
+    }
+
+
 
 
 

@@ -302,6 +302,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String messageRank = "rank: " + jsonArray.toJSONString();
             log.info("rank send info: {}", messageRank);
             session.sendMessage(new TextMessage(messageRank));
+        } else if ("follow".equals(action)){
+            String followMessage = followService.followRequest();
+            String messageWithType = "follow: " + followMessage;
+            session.sendMessage(new TextMessage(messageWithType));
+            log.info("follow message sent to client: {}", messageWithType);
         }
         else {
             log.warn("Unknown action: {}", action);
