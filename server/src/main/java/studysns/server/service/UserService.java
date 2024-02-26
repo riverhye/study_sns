@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import studysns.server.dto.UserDTO;
+import studysns.server.entity.StudyEntity;
 import studysns.server.entity.UserEntity;
+import studysns.server.repository.StudyRepository;
 import studysns.server.repository.UserRepository;
 import studysns.server.security.TokenProvider;
 import studysns.server.socket.WebSocketHandler;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -23,6 +26,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private StudyRepository studyRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -44,6 +50,7 @@ public class UserService {
     // 토큰 블랙리스트 관리를 위한 필드 추가
     private final Set<String> tokenBlacklist = Collections.synchronizedSet(new HashSet<>());
 
+    @Transactional
     public UserEntity createUser(UserEntity userEntity) {
         if(userEntity == null){
             throw new RuntimeException("Entity is Null");
@@ -60,8 +67,19 @@ public class UserService {
             throw new RuntimeException("이미 존재하는 이메일입니다.");
         }
 
-        return userRepository.save(userEntity);
+        UserEntity savedUser = userRepository.save(userEntity);
 
+        // UserEntity 저장 후 StudyEntity 생성 및 저장
+        StudyEntity studyEntity = StudyEntity.builder()
+            .user(savedUser)
+            .todayStudyTime(0L)
+            .studyDate(LocalDate.now())
+            .build();
+
+        savedUser.addStudy(studyEntity); // 양방향 연결 설정
+        studyRepository.save(studyEntity); // 필요에 따라 호출, cascade 설정에 따라 자동 처리될 수 있음
+
+        return savedUser;
     }
 
     public UserEntity login(String email, String password) {
