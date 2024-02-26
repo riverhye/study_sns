@@ -2,6 +2,7 @@
 
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const SignUp = () => {
@@ -11,6 +12,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [validPassword, setValidPassword] = useState(true);
+  const router = useRouter();
 
   const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -62,7 +64,7 @@ const SignUp = () => {
 
       console.log("hi");
       alert('회원가입 성공');
-      document.location.href = '/home';
+      router.push('/home');
     } catch (error) {
       console.error('Error signing up:', error);
       alert('회원가입 실패!!');
