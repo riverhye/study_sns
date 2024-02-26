@@ -22,10 +22,13 @@ export default function SignIn() {
       const { name, email } = data.user;
   
       // 서버에 로그인 요청
-      axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, {
+      axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, JSON.stringify({
         email,
-        nickname: name,
-        loginType: loginType
+        nickname: name
+      }), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
       .then(response => {
         console.log(response);
