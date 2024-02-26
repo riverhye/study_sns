@@ -11,45 +11,59 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 import Image from 'next/image';
+import { IMessageEvent } from 'websocket';
+import { FollowerRank } from '@/type/type';
 
 const HeaderTop: React.FC = () => {
-  const [followerList, setFollowerList] = useState([
-    { nickname: '테스트1', image: '이미지' },
-    { nickname: '테스트2', image: '이미지' },
-    { nickname: '테스트3', image: '이미지' },
-    { nickname: '테스트4', image: '이미지' },
-    { nickname: '테스트5', image: '이미지' },
-    { nickname: '테스트6', image: '이미지' },
-    { nickname: '테스트7', image: '이미지' },
-    { nickname: '테스트8', image: '이미지' },
-    { nickname: '테스트9', image: '이미지' },
-    { nickname: '테스트10', image: '이미지' },
+  const [followerList, setFollowerList] = useState<FollowerRank[]>([
+    { nickname: '테스트2', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트1', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트3', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트4', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트5', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트6', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트7', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트8', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트9', profileImage: null, todayStudyTime: 300 },
+    { nickname: '테스트10', profileImage: null, todayStudyTime: 300 },
   ]);
   const { socket } = useWebSocket();
 
-  useEffect(() => {
-    // follower 목록 소켓 send
-    if (socket) {
-      try {
-        const follow = { action: 'follow' };
-        socket.send(JSON.stringify(follow));
-        console.log('send data');
-      } catch (error) {
-        console.error('follow socket', error);
-      }
-    }
+  // 미리 작성: follower 목록 소켓 send
+  // useEffect(() => {
+  //   if (socket) {
+  //     try {
+  //       // 1분에 한 번씩 setInterval 요청
+  //       const intervalId = setInterval(()=>{
+  //         const rank = { action: 'rank' };
+  //         socket.send(JSON.stringify(rank));
+  //         console.log('send data');
+  //         socket.onmessage = (evt: IMessageEvent) => {
+  //           if(evt.data) {
+  //             console.log('follower rank socket');
+  //             // setFollowerList();
+  //           }
+  //           else {}
+  //         };
+  //       },1000*60);
 
-    //   //   const getData = async () => {
-    //   //     try {
-    //   //       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
-    //   //       setFollowerList(res.data);
-    //   //     } catch (error) {
-    //   //       console.error('팔로워 header', error);
-    //   //     }
-    //   //   };
+  //       return () => clearInterval(intervalId);
+  //     } catch (error) {
+  //       console.error('follow socket', error);
+  //     }
+  //   }
 
-    //   // getData();
-  }, [followerList]);
+  //   //   const getData = async () => {
+  //   //     try {
+  //   //       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
+  //   //       setFollowerList(res.data);
+  //   //     } catch (error) {
+  //   //       console.error('팔로워 header', error);
+  //   //     }
+  //   //   };
+
+  //   // getData();
+  // }, []);
 
   return (
     <div className="mt-5">
@@ -86,7 +100,7 @@ const HeaderTop: React.FC = () => {
               <SwiperSlide key={follower.nickname}>
                 <div className="flex flex-col items-center mx-4">
                   <div className="has-tooltip relative">
-                    {/* <Link href={`/`}> */}
+                    {/* <Link href={`/study/${follower.nickname}`}> */}
                     <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
                       <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
                     </div>

@@ -3,9 +3,11 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
 import { FeedItemProps } from '@/type/type';
+import { useWebSocket } from '../providers/SocketContext';
 
 const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
-  const dateDistance = (date: Date): ReactNode => {
+  const { socket } = useWebSocket();
+  const dateDistance = (date: string): ReactNode => {
     const now = Date.now();
     const d = new Date(date);
     const timeDiff = (now - d.getTime()) / 1000;
@@ -20,15 +22,19 @@ const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
         <div className="flex justify-between">
           <div className="flex items-center">
             <div className="w-14 h-14 rounded-full border-2 overflow-hidden">
-              <Image src="/blank-profile.png" alt="user profile" priority={false} width={300} height={300} />
+              <Image
+                src={feed.profileImage ? `/${feed.profileImage}` : '/blank-profile.png'}
+                alt="profile"
+                priority={false}
+                width={300}
+                height={300}
+              />
             </div>
             <div className="ml-2 cursor-default">{feed.nickname}</div>
           </div>
           <div className="mx-2 text-sm cursor-default">{dateDistance(feed.date)}</div>
         </div>
-        <div className="pt-4 cursor-default">
-          {feed.nickname}님이 {feed.content} 공부를 {feed.type}
-        </div>
+        <div className="pt-4 cursor-default">{feed.message}</div>
         {children}
       </div>
     </React.Fragment>

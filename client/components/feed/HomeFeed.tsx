@@ -9,6 +9,8 @@ import useTimerFunc from '../hooks/useTimerFunc';
 import NoFeed from './NoFeed';
 import { StateValue } from '@/type/type';
 import { useSelector } from 'react-redux';
+import { useWebSocket } from '../providers/SocketContext';
+import { IMessageEvent } from 'websocket';
 
 const HomeFeed = () => {
   const [value, setValue] = useState<StateValue>({ content: '', error: '' });
@@ -17,39 +19,53 @@ const HomeFeed = () => {
   const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
   const initialFeedData: UserFeedData[] = [
     {
+      action: 'play',
+      message: 'ㅇㅇ님이 운동 공부를 시작했습니다.',
+      date: String(new Date()),
       feedId: 62,
       nickname: '테스트',
-      image: 'image',
-      content: 'ㅇㅇ님이 ㅁㅁ를 시작했습니다.',
-      type: '시작했습니다.',
-      date: new Date(),
+      profileImage: null,
       isLike: true,
     },
     {
+      action: 'stop',
+      message: '도레미님이 어떤 공부를 끝냈습니다.',
       feedId: 65,
       nickname: '어쩌고',
-      content: '리액트',
-      type: '시작했습니다.',
-      image: 'image',
-      date: new Date('2024-02-19T12:34:56'),
+      profileImage: null,
+      date: '2024-02-25',
       isLike: true,
     },
     {
+      action: 'start',
       feedId: 67,
+      message: '나나님이 리액트 공부를 시작했습니다.',
       nickname: '맞는데요',
-      image: 'image2',
-      content: '게임',
-      type: '마쳤습니다.',
-      date: new Date('2024-02-14T12:34:56'),
+      profileImage: null,
+      date: '2024-02-14T12:34:56',
       isLike: false,
     },
   ];
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
   const { startStudy, pauseStudy, endStudy } = useTimerFunc();
   const token = localStorage.getItem('accessToken');
+  const { socket } = useWebSocket();
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
   useEffect(() => {
+    if (socket) {
+      try {
+        socket.onmessage = (evt: IMessageEvent) => {
+          if (evt.data.slice(0, 6) === 'play: ') {
+            console.log(evt.data.slice(6));
+          }
+        };
+      } catch (error) {
+        console.error('start socket', error);
+      }
+    }
+
+    // Temp: 아마 삭제할 axios
     const getData = async () => {
       try {
         const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`, {
@@ -65,19 +81,19 @@ const HomeFeed = () => {
 
   // 피드 새로고침
   const handleUpdateFeed = async () => {
-    try {
-      // Add: userId
-      const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // 내림차순 정렬
-      const sortedFeedData = res.data.slice().sort((a, b) => {
-        return b.date.getTime() - a.date.getTime();
-      });
-      setFeedData(sortedFeedData);
-    } catch (error) {
-      console.error('새 피드', error);
-    }
+    //   try {
+    //     // Add: userId
+    //     const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
+    //       headers: { Authorization: `Bearer ${token}` },
+    //     });
+    //     // 내림차순 정렬
+    //     const sortedFeedData = res.data.slice().sort((a, b) => {
+    //       return b.date.getTime() - a.date.getTime();
+    //     });
+    //     setFeedData(sortedFeedData);
+    //   } catch (error) {
+    //     console.error('새 피드', error);
+    //   }
   };
 
   // 피드 좋아요
@@ -156,20 +172,39 @@ const HomeFeed = () => {
                   className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
                   START
                 </button>
-                {/* <button onClick={pauseStudy}>(임시)일시정지</button>
-       <button onClick={() => endStudy(true)}>(임시)끝</button> */}
               </>
             )}
           </div>
           <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
             {value.error}
           </div>
-
           <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
           <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
         </section>
       ) : (
-        <NoFeed />
+        <>
+          <div className="flex justify-center h-12 w-full mt-10">
+            <input
+              onChange={e => setValue({ content: e.target.value, error: '' })}
+              value={value.content}
+              onKeyDown={handleEnter}
+              placeholder="무엇을 공부할까요?"
+              ref={inputRef}
+              className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
+              disabled={valid}
+            />
+            <button
+              onClick={handleContent}
+              type="button"
+              disabled={valid}
+              className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
+              START
+            </button>
+          </div>
+          <div className="mt-32">
+            <NoFeed />
+          </div>
+        </>
       )}
     </>
   );

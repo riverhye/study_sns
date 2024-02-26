@@ -1,6 +1,7 @@
 import FeedItem from './FeedItem';
 import { FeedContentProps } from '@/type/type';
 import LikeButton from './LikeButton';
+import { useEffect } from 'react';
 
 const FeedContent: React.FC<FeedContentProps> = props => {
   const feeds = props.feedData || props.initialFeedData;
@@ -9,7 +10,7 @@ const FeedContent: React.FC<FeedContentProps> = props => {
     <section>
       <div className="py-5 px-20 to-red-500">
         {feeds.map((feed, index) => (
-          <FeedItem key={index} feed={feed} index={index} handleLike={props.handleLike}>
+          <FeedItem key={feed.feedId} feed={feed} index={index} handleLike={props.handleLike}>
             {/* LikeFeed를 FeedItem 내에서 렌더링 */}
             <div className="w-10 h-10">
               {!props.type && <LikeButton isLike={feed.isLike || false} onClick={() => props?.handleLike?.(index)} />}
