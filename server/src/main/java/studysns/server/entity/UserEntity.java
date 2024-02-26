@@ -19,7 +19,7 @@ public class UserEntity {
     @Column(name = "userId", nullable = false)
     private Long userId;
 
-    @Column(name = "email", length = 50, nullable = false)
+    @Column(name = "email", length = 50)
     private String email;
 
     @Column(name = "nickname", length = 50, nullable = false)
