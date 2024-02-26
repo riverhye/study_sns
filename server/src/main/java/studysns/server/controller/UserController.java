@@ -203,7 +203,7 @@ public class UserController {
             String email = snsDetails.get("email");
             String nickname = snsDetails.get("nickname") + "_" + UUID.randomUUID().toString().substring(0, 4);
             String profileImage = snsDetails.get("profileImage");
-            UserEntity.LoginType loginType = UserEntity.LoginType.valueOf(snsDetails.get("loginType"));
+            UserEntity.LoginType loginType = UserEntity.LoginType.GOOGLE;
 
             UserDTO userDTO = userService.snsLoginOrCreateUser(email, nickname, loginType, profileImage);
 
