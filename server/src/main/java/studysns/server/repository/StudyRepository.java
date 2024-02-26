@@ -14,4 +14,7 @@ public interface StudyRepository extends JpaRepository<StudyEntity, Long> {
 //    Optional<StudyEntity> findByUserId(long userId);
 
     List<StudyEntity> findTop10ByOrderByTodayStudyTimeDesc();
+
+    Optional<StudyEntity> findByUser_UserId(Long userId);
+
 }
