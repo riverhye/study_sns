@@ -244,7 +244,6 @@ public class UserService {
             .build();
     }
 
-
     public boolean checkEmailExists(String email) {
         return userRepository.existsByEmail(email);
     }
