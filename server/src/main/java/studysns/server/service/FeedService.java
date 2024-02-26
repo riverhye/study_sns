@@ -77,10 +77,65 @@ public class FeedService {
 
     }
 
-    public String playRequest(String userIdString, String studyContent) { // (String userIdString, String studyContent, String nickname)
+//    public String playRequest(String userIdString, String studyContent) { // (String userIdString, String studyContent, String nickname)
+//        log.info("service userId: {}", userIdString);
+//        log.info("service studyContent: {}", studyContent);
+////        log.info("service nickname: {}", nickname);
+//
+//        long userId = Long.parseLong(userIdString);
+//        log.info("userId string: {}", userId);
+//
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        Optional<UserEntity> userOptional = userRepository.findById(userId);
+//        if (userOptional.isEmpty()) {
+//            throw new EntityNotFoundException("User not found");
+//        }
+//
+//        UserEntity userEntity = userOptional.get();
+//
+////        Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
+////        if (studyOptional.isEmpty()) {
+////            throw new EntityNotFoundException("Study not found for the user");
+////        }
+////        StudyEntity studyEntity = studyOptional.get();
+////        Long studyId = studyEntity.getStudyId();
+//
+//        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
+//        FeedEntity feedEntity;
+//        String message;
+//
+//        if (existingFeedOptional.isPresent()) {
+//            feedEntity = existingFeedOptional.get();
+//            if (feedEntity.getStudyContent() != null) { // feedEntity 에 studyContent 가 이미 존재할때
+////                throw new IllegalStateException("StudyContent already exists");
+////                feedEntity.setStudyContent(studyContent);
+//                feedEntity.setStudyStartPoint(now);
+//                feedEntity.setStudyEndPoint(now);
+//                message = "일시 정지 후 다시 시작한 경우";
+//            } else {
+//                feedEntity = FeedEntity.builder()
+//                        .user(userEntity)
+////                    .study(studyEntity)
+//                        .studyContent(studyContent)
+//                        .studyStartPoint(now)
+//                        .studyEndPoint(now)
+//                        .build();
+//                message = "새로 시작 한 경우";
+//            }
+//            feedRepository.save(feedEntity);
+//            log.info("FeedEntity play created: {}", feedEntity);
+//
+//            //        String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다."; // nickname + " 님이 " + studyContent + " 공부를 시작했습니다."
+//
+//        }
+//
+//        return message;
+//    }
+
+    public String playRequest(String userIdString, String studyContent) {
         log.info("service userId: {}", userIdString);
         log.info("service studyContent: {}", studyContent);
-//        log.info("service nickname: {}", nickname);
 
         long userId = Long.parseLong(userIdString);
         log.info("userId string: {}", userId);
@@ -94,45 +149,100 @@ public class FeedService {
 
         UserEntity userEntity = userOptional.get();
 
-//        Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
-//        if (studyOptional.isEmpty()) {
-//            throw new EntityNotFoundException("Study not found for the user");
-//        }
-//        StudyEntity studyEntity = studyOptional.get();
-//        Long studyId = studyEntity.getStudyId();
+        List<FeedEntity> userFeeds = feedRepository.findByUserUserId(userId);
+        String message;
 
-        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
-        FeedEntity feedEntity;
-//        String message;
-        if (existingFeedOptional.isPresent()) {
-            feedEntity = existingFeedOptional.get();
-//            if (feedEntity.getStudyContent() != null) {
-//                throw new IllegalStateException("StudyContent already exists");
-//            }
-            feedEntity.setStudyContent(studyContent);
-            feedEntity.setStudyStartPoint(now);
-            feedEntity.setStudyEndPoint(now);
-//            message = "새로 시작 한 경우";
+        if (!userFeeds.isEmpty()) {
+            FeedEntity latestFeed = userFeeds.get(0);
+            if (latestFeed.getStudyContent() != null) {
+                latestFeed.setStudyStartPoint(now);
+                latestFeed.setStudyEndPoint(now);
+                log.info("기존의 피드도 있고 studyContent가 있는 경우");
+                message = userEntity.getNickname() + "님이 다시" + studyContent + "공부를 시작했습니다.";
+            } else {
+                latestFeed.setStudyContent(studyContent);
+                latestFeed.setStudyStartPoint(now);
+                latestFeed.setStudyEndPoint(now);
+                log.info("기존의 피드는 있지만 studyContent가 비어있는 경우");
+                message = userEntity.getNickname() + "님이" + studyContent + "공부를 시작했습니다.";
+            }
+            feedRepository.save(latestFeed);
+            log.info("FeedEntity play created: {}", latestFeed);
         } else {
-            feedEntity = FeedEntity.builder()
+            FeedEntity newFeed = FeedEntity.builder()
                     .user(userEntity)
 //                    .study(studyEntity)
                     .studyContent(studyContent)
                     .studyStartPoint(now)
                     .studyEndPoint(now)
                     .build();
-//            message = "일시 정지 후 다시 시작한 경우";
+            feedRepository.save(newFeed);
+            log.info("New FeedEntity created: {}", newFeed);
+            log.info("기존의 피드가 없이 새로 생성 하는 경우.");
+            message = userEntity.getNickname() + "님이" + studyContent + "공부를 시작했습니다.";
         }
 
-        feedRepository.save(feedEntity);
-        log.info("FeedEntity play created: {}", feedEntity);
-
-        String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다."; // nickname + " 님이 " + studyContent + " 공부를 시작했습니다."
         return message;
-
     }
 
-    public String stopRequest(String userIdString, String studyContent){
+//    public String stopRequest(String userIdString, String studyContent){
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        long userId = Long.parseLong(userIdString);
+//
+//        Optional<UserEntity> userOptional = userRepository.findById(userId);
+//        if (userOptional.isEmpty()) {
+//            throw new EntityNotFoundException("User not found");
+//        }
+//
+//        UserEntity userEntity = userOptional.get();
+//
+//
+//        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
+//        FeedEntity feedEntity;
+//        if (existingFeedOptional.isPresent()) {
+//            feedEntity = existingFeedOptional.get();
+//            feedEntity.setStudyEndPoint(now);
+//
+//            LocalDateTime studyStartPoint = feedEntity.getStudyStartPoint();
+//            LocalDateTime studyEndPoint = feedEntity.getStudyEndPoint();
+//
+//            Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
+//
+//            long studySeconds = studyDuration.getSeconds();
+//            long studyMinutes = studySeconds/60;
+//            log.info("studyEntity의 todayStudyTime으로 저장 될 시간: {}", studyMinutes , " 분");
+//            Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
+//            if (studyOptional.isPresent()){
+//                StudyEntity studyEntity = studyOptional.get();
+//                long updatedStudyTime = studyEntity.getTodayStudyTime() + studyMinutes;
+//                log.info("studyEntity에서 불러온 기존의 todayStudyTime: {}", studyEntity.getTodayStudyTime());
+//                log.info("합산한 todayStudyTime: {}", updatedStudyTime);
+//                studyEntity.setTodayStudyTime(updatedStudyTime);
+//            } else {
+//                log.info("studyEntity 불러오는 중 오류. todayStudyTime 저장 하지 못함.");
+//            }
+//
+//            feedEntity.setStudyStartPoint(null);
+//            feedEntity.setStudyEndPoint(null);
+//            feedEntity.setStudyContent(null);
+//        } else {
+//            feedEntity = FeedEntity.builder()
+//                    .user(userEntity)
+//                    .studyContent(null)
+//                    .studyStartPoint(null)
+//                    .studyEndPoint(null)
+//                    .build();
+//        }
+//
+//        feedRepository.save(feedEntity);
+//        log.info("FeedEntity stop created: {}", feedEntity);
+//
+//        String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 마쳤습니다.";
+//        return message;
+//    }
+
+    public String stopRequest(String userIdString, String studyContent) {
         LocalDateTime now = LocalDateTime.now();
 
         long userId = Long.parseLong(userIdString);
@@ -144,50 +254,51 @@ public class FeedService {
 
         UserEntity userEntity = userOptional.get();
 
-
-        Optional<FeedEntity> existingFeedOptional = feedRepository.findById(userId);
-        FeedEntity feedEntity;
+        // 해당 사용자에 대한 최신 피드를 가져옵니다.
+        Optional<FeedEntity> existingFeedOptional = feedRepository.findLatestFeedByUserId(userId);
         if (existingFeedOptional.isPresent()) {
-            feedEntity = existingFeedOptional.get();
+            FeedEntity feedEntity = existingFeedOptional.get();
+
+            // 현재 시간을 studyEndPoint로 설정합니다.
             feedEntity.setStudyEndPoint(now);
 
-            LocalDateTime studyStartPoint = feedEntity.getStudyStartPoint();
-            LocalDateTime studyEndPoint = feedEntity.getStudyStartPoint();
+            // 공부 시간 계산
+            Duration studyDuration = Duration.between(feedEntity.getStudyStartPoint(), now);
+            long studyMinutes = studyDuration.toMinutes();
 
-            Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
-
-            long studySeconds = studyDuration.getSeconds();
-            long studyMinutes = studySeconds/60;
-
-            Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
-            if (studyOptional.isPresent()){
+            // 사용자의 공부 시간 업데이트
+            Optional<StudyEntity> studyOptional = studyRepository.findByUser_UserId(userId);
+            if (studyOptional.isPresent()) {
                 StudyEntity studyEntity = studyOptional.get();
                 long updatedStudyTime = studyEntity.getTodayStudyTime() + studyMinutes;
                 studyEntity.setTodayStudyTime(updatedStudyTime);
+                studyRepository.save(studyEntity); // 업데이트 저장
             } else {
-                log.info("studyEntity 불러오는 중 오류. todayStudyTime 저장 하지 못함.");
+                log.info("StudyEntity not found for user: {}", userId);
             }
 
+            // 피드 초기화
             feedEntity.setStudyStartPoint(null);
             feedEntity.setStudyEndPoint(null);
             feedEntity.setStudyContent(null);
+
+            // 피드 저장
+            feedRepository.save(feedEntity);
+            log.info("FeedEntity stop created: {}", feedEntity);
+
+            String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 마쳤습니다.";
+            return message;
         } else {
-            feedEntity = FeedEntity.builder()
-                    .user(userEntity)
-                    .studyContent(studyContent)
-                    .studyStartPoint(now)
-                    .studyEndPoint(now)
-                    .build();
+            log.info("No existing feed found for user: {}", userId);
+
+            // 새로운 피드 생성 (이 부분은 필요에 따라 처리)
+            // 이 부분은 새로운 피드를 생성하는 로직입니다. 사용 사례에 따라 필요 없을 수 있습니다.
+            // 새로운 피드를 생성하는 로직이 필요하지 않다면 여기에서 예외를 throw하거나 다른 처리 방법을 선택할 수 있습니다.
+            // 새로운 피드를 생성하는 방법은 해당 시나리오에 맞게 작성되어야 합니다.
+            return "No existing feed found for user: " + userId;
         }
-
-        feedRepository.save(feedEntity);
-        log.info("FeedEntity stop created: {}", feedEntity);
-
-        String message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 마쳤습니다.";
-        return message;
-
-
     }
+
 
     public String pauseRequest(String userIdString, String studyContent){
         LocalDateTime now = LocalDateTime.now();
@@ -209,7 +320,7 @@ public class FeedService {
             feedEntity.setStudyEndPoint(now);
 
             LocalDateTime studyStartPoint = feedEntity.getStudyStartPoint();
-            LocalDateTime studyEndPoint = feedEntity.getStudyStartPoint();
+            LocalDateTime studyEndPoint = feedEntity.getStudyEndPoint();
 
             Duration studyDuration = Duration.between(studyStartPoint, studyEndPoint);
 
@@ -231,7 +342,7 @@ public class FeedService {
         } else {
             feedEntity = FeedEntity.builder()
                     .user(userEntity)
-                    .studyContent(studyContent)
+//                    .studyContent(studyContent)
                     .studyStartPoint(now)
                     .studyEndPoint(now)
                     .build();
