@@ -14,49 +14,42 @@ const Timer = () => {
 
   return (
     <>
-      {nickname ? (
-        <div className="flex items-center">
-          <div className="w-20 h-20 rounded-full border-2 overflow-hidden">
-            <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
-          </div>
-          <div className="flex flex-col justify-center ml-2">
-            <span className="text-white text-sm ml-2 cursor-default">{nickname}</span>
-            <div className="text-white text-2xl w-28 text-center cursor-default">
-              <span className="w-8 inline-block">{hours}</span>:<span className="w-8 inline-block">{minutes}</span>:
-              <span className="w-8 inline-block">{seconds}</span>
-            </div>
-          </div>
-          <div className="flex-1">
-            {/* '' : 아무것도, start : pause & stop, pause: start & end */}
-            {studyStatus === 'start' && (
-              <>
-                <div className="mb-1 ml-1 hover:scale-125 cursor-pointer">
-                  <PauseIcon onClick={pauseStudy} />
-                </div>
-                <div className="ml-1 hover:scale-125 cursor-pointer">
-                  <StopIcon onClick={() => endStudy(true)} />
-                </div>
-              </>
-            )}
-            {studyStatus === 'pause' && (
-              <>
-                <div className="mb-1 ml-1 hover:scale-125 transition cursor-pointer">
-                  <StartIcon onClick={() => startStudy('')} />
-                </div>
-                <div className="ml-1 hover:scale-125 cursor-pointer">
-                  <StopIcon onClick={() => endStudy(true)} />
-                </div>
-              </>
-            )}
-            {studyStatus === '' && <div className=" w-[23px]"></div>}
-            {/* <StartIcon /> */}
-            {/* <button onClick={pauseStudy}>pause</button> */}
-            {/* <button onClick={() => endStudy(true)}>끝</button> */}
+      <div className="flex items-center">
+        <div className="w-20 h-20 rounded-full border-2 overflow-hidden">
+          <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
+        </div>
+        <div className="flex flex-col justify-center ml-2">
+          <span className="text-white text-sm ml-2 cursor-default">{nickname}</span>
+          <div className="text-white text-2xl w-28 text-center cursor-default">
+            <span className="w-8 inline-block">{hours}</span>:<span className="w-8 inline-block">{minutes}</span>:
+            <span className="w-8 inline-block">{seconds}</span>
           </div>
         </div>
-      ) : (
-        ''
-      )}
+        <div className="flex-1">
+          {/* 공부 상태에 따라 타이머 버튼 보이기 */}
+          {studyStatus === 'start' && (
+            <>
+              <div className="mb-1 ml-1 hover:scale-125 cursor-pointer">
+                <PauseIcon onClick={pauseStudy} />
+              </div>
+              <div className="ml-1 hover:scale-125 cursor-pointer">
+                <StopIcon onClick={() => endStudy(true)} />
+              </div>
+            </>
+          )}
+          {studyStatus === 'pause' && (
+            <>
+              <div className="mb-1 ml-1 hover:scale-125 transition cursor-pointer">
+                <StartIcon onClick={() => startStudy('')} />
+              </div>
+              <div className="ml-1 hover:scale-125 cursor-pointer">
+                <StopIcon onClick={() => endStudy(true)} />
+              </div>
+            </>
+          )}
+          {studyStatus === '' && <div className=" w-[23px]"></div>}
+        </div>
+      </div>
     </>
   );
 };
