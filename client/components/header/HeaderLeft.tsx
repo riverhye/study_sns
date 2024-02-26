@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Category from './Category';
-import Setting from './Setting';
+import HeaderIcons from '@/public/images/HeaderIcons';
 import Timer from './Timer';
 import TodoHeader from './TodoHeader';
 import { useState } from 'react';
@@ -31,7 +31,7 @@ const HeaderLeft = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}>
           <Link href={'/user/editprofile'}>
-            <Setting color={hovered ? 'gray' : 'none'} />
+            <HeaderIcons.Setting color={hovered ? 'gray' : 'none'} />
           </Link>
         </div>
       </div>

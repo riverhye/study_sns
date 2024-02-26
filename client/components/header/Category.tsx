@@ -17,7 +17,7 @@ const Category = () => {
       text: '내 공부',
       svgComponent: <StudyIcon color={selectedCategory === 2 ? 'white' : 'none'} />,
     },
-    { href: '/', text: '랭킹', svgComponent: <RankIcon color={selectedCategory === 3 ? 'white' : 'none'} /> },
+    { href: '/ranking', text: '랭킹', svgComponent: <RankIcon color={selectedCategory === 3 ? 'white' : 'none'} /> },
     {
       href: '/notification',
       text: '알림',
@@ -47,7 +47,6 @@ const Category = () => {
           </li>
         </Link>
       ))}
-      <Link href={'/home'}>유저피드</Link>
     </ul>
   );
 };
