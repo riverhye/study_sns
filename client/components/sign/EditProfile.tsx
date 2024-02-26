@@ -10,12 +10,22 @@ const EditProfile = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [validPassword, setValidPassword] = useState<boolean>(true); // 비밀번호 형식 여부
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true); // 새 비밀번호 일치 여부
+  const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true); // 닉네임이 사용 가능 여부
+  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true); // 닉네임이 사용 가능 여부
 
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      if (!validPassword || !nicknameAvailable || !passwordMatch) {
+        console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
       if (newPassword !== confirmNewPassword) {
-        alert('새 비밀번호가 일치하지 않습니다.');
+        console.error('새 비밀번호가 일치하지 않습니다.');
+        setPasswordMatch(false);
         return;
       }
 
@@ -25,10 +35,45 @@ const EditProfile = () => {
         newPassword: newPassword
       });
 
-      alert('정보 수정이 완료되었습니다.');
+      console.log('정보 수정이 완료되었습니다.');
     } catch (error) {
       console.error('Error updating profile:', error);
-      alert('정보 수정 실패');
+      console.log('정보 수정 실패');
+    }
+  };
+
+  // 비밀번호 형식 확인
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPasswordValue = e.target.value;
+    // 소문자, 대문자, 숫자로 조합된 6~14자리
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}$/;
+    const isValidPassword = passwordRegex.test(newPasswordValue);
+    setValidPassword(isValidPassword);
+    setNewPassword(newPasswordValue);
+  };
+
+  // 닉네임 변경/중복
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newNickname = e.target.value;
+    const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,10}$/;
+    const isNicknameValid = nicknameRegex.test(newNickname);
+    if (newNickname === 'existingNickname') {
+      setNicknameAvailable(false);
+    } else {
+      setNicknameAvailable(true);
+    }
+    setIsNicknameValid(isNicknameValid);
+    setNickname(newNickname);
+  };
+  
+  // 새 비밀번호 확인
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const confirmPasswordValue = e.target.value;
+    setConfirmNewPassword(confirmPasswordValue);
+    if (confirmPasswordValue === newPassword) {
+      setPasswordMatch(true);
+    } else {
+      setPasswordMatch(false);
     }
   };
 
@@ -49,9 +94,12 @@ const EditProfile = () => {
                     type="text"
                     placeholder={placeHolderNickname}
                     value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
+                    onChange={handleNicknameChange}
                   />
-                  <button type="button">수정</button>
+                  {!nickname && (<span className="text-blue-600">닉네임을 입력해주세요.</span>)}
+                  {nickname && !isNicknameValid && (<span className="text-red-600">2~10자의 한글, 영문, 숫자만 사용할 수 있습니다.</span>)}
+                  {nickname && !nicknameAvailable && (<span className="text-red-600">이미 사용 중인 닉네임입니다.</span>)}
+                  {nickname && isNicknameValid && nicknameAvailable && (<span className="text-blue-600">사용 가능한 닉네임입니다.</span>)}
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">기존 비밀번호</label>
@@ -62,6 +110,9 @@ const EditProfile = () => {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                   />
+                  {!currentPassword && (<span className="text-blue-600">기존 비밀번호를 입력해주세요.</span>)}
+                  {confirmNewPassword && !passwordMatch && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
+                  {confirmNewPassword && confirmNewPassword === newPassword && (<span className="text-blue-600">비밀번호 일치</span>)}
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호</label>
@@ -70,8 +121,10 @@ const EditProfile = () => {
                     type="password"
                     placeholder="New Password"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                   />
+                  {!newPassword && (<span className="text-blue-600">새 비밀번호를 입력해주세요.</span>)}
+                  {newPassword && !validPassword && (<span className="text-red-600">비밀번호 형식이 올바르지 않습니다. (소문자, 대문자, 숫자로 조합된 6~14자리)</span>)}
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호 확인</label>
@@ -80,8 +133,11 @@ const EditProfile = () => {
                     type="password"
                     placeholder="Confirm New Password"
                     value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    onChange={handleConfirmPasswordChange}
                   />
+                  {!confirmNewPassword && (<span className="text-blue-600">새 비밀번호를 다시 한 번 입력해주세요.</span>)}
+                  {confirmNewPassword && !passwordMatch && (<span className="text-red-600">새 비밀번호가 일치하지 않습니다.</span>)}
+                  {confirmNewPassword && confirmNewPassword === newPassword && (<span className="text-blue-600">새 비밀번호 일치</span>)}
                 </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                   수정하기
