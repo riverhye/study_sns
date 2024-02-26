@@ -5,35 +5,45 @@ import Category from './Category';
 import HeaderIcons from '@/public/images/HeaderIcons';
 import Timer from './Timer';
 import TodoHeader from './TodoHeader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const HeaderLeft = () => {
-  // 호버 시 setting 아이콘 색 변화
-  const [hovered, setHovered] = useState(false);
-  const nickname = localStorage.getItem('nickname');
+  const token = localStorage.getItem('accessToken');
 
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
+  const handleSignOut = () => {
+    // 리렌더가 왜 안 될까..
+    // localStorage.removeItem('accessToken');
+    // localStorage.removeItem('nickname');
   };
 
   return (
     <>
-      <div className="flex flex-col h-auto w-1/4  px-4 bg-main-blue p-0">
+      <div className="flex flex-col h-auto w-1/4 px-4 bg-main-blue p-0">
         <Category />
         <TodoHeader />
-        <Timer />
-        <div
-          className="self-end pt-2 cursor-pointer hover:scale-125 transition-transform duration-300 ease-in-out"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}>
-          <Link href={'/user/editprofile'}>
-            <HeaderIcons.Setting color={hovered ? 'gray' : 'none'} />
-          </Link>
-        </div>
+        {token && (
+          <>
+            <Timer />
+            <div className="relative inline-block text-left mt-6">
+              <div className="group">
+                <button className="transition-all duration-200 focus:outline-none p-4">
+                  <HeaderIcons.Setting color="gray" />
+                </button>
+                <div className="absolute left-14 -top-2 hidden w-30 bg-white border-2 border-strong-blue rounded-lg group-hover:block cursor-pointer">
+                  <Link href={'/user/editprofile'}>
+                    <span className="block p-[10px] hover:bg-subtle-blue bg-white rounded-lg">정보수정</span>
+                  </Link>
+                  <Link href={'/'}>
+                    <span className="block p-[10px] hover:bg-subtle-blue bg-white rounded-lg" onClick={handleSignOut}>
+                      로그아웃
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        <div className="w-56 h-20"></div>
       </div>
     </>
   );
