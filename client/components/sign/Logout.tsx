@@ -1,14 +1,18 @@
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
+
 
 const Logout = () => {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem('nickname');
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('accessToken');
-
-    router.push('/');
+  const handleLogout = async () => {
+    try {
+      await signOut({ redirect: false, callbackUrl: '/' });
+      localStorage.clear();
+      router.push('/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (
