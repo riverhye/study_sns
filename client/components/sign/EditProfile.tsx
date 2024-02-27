@@ -5,47 +5,21 @@ import axios from 'axios';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
+  const imageUserId: string = localStorage.getItem("user_id") ?? '';
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [validPassword, setValidPassword] = useState<boolean>(true); // 비밀번호 형식 여부
-  const [passwordMatch, setPasswordMatch] = useState<boolean>(true); // 새 비밀번호 일치 여부
-  const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true); // 닉네임이 사용 가능 여부
-  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true); // 닉네임이 사용 가능 여부
-
-  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      if (!validPassword || !nicknameAvailable || !passwordMatch) {
-        console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
-        return;
-      }
-
-      if (newPassword !== confirmNewPassword) {
-        console.error('새 비밀번호가 일치하지 않습니다.');
-        setPasswordMatch(false);
-        return;
-      }
-
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/update`, {
-        nickname: nickname,
-        currentPassword: currentPassword,
-        newPassword: newPassword
-      });
-
-      console.log('정보 수정이 완료되었습니다.');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      console.log('정보 수정 실패');
-    }
-  };
+  const [validPassword, setValidPassword] = useState<boolean>(true);
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
+  const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
+  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
+  const [profileImage, setProfileImage] = useState<string>('');
 
   // 비밀번호 형식 확인
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPasswordValue = e.target.value;
-    // 소문자, 대문자, 숫자로 조합된 6~14자리
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}$/;
     const isValidPassword = passwordRegex.test(newPasswordValue);
     setValidPassword(isValidPassword);
@@ -77,6 +51,58 @@ const EditProfile = () => {
     }
   };
 
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = e.target.files ? e.target.files[0] : null;
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      
+      try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/profile/image/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        
+        setProfileImage(response.data.imageUrl);
+        console.log('Profile image uploaded successfully');
+      } catch (error) {
+        console.error('Error uploading profile image:', error);
+      }
+    } else {
+      console.error('No file selected');
+    }
+  };
+  
+  // 수정하기 함수
+  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      if (!validPassword || !nicknameAvailable || !passwordMatch) {
+        console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        console.error('새 비밀번호가 일치하지 않습니다.');
+        setPasswordMatch(false);
+        return;
+      }
+
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/update`, {
+        nickname: nickname,
+        currentPassword: currentPassword,
+        newPassword: newPassword
+      });
+
+      console.log('정보 수정이 완료되었습니다.');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      console.log('정보 수정 실패');
+    }
+  };
+
   return (
     <>
       <section>
@@ -87,6 +113,10 @@ const EditProfile = () => {
                 정보수정
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateProfile}>
+                <div>
+                  <img src={`https://source.boringavatars.com/beam/120/${imageUserId}`} alt="Profile" className="rounded-full w-24 h-24" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} />
+                </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
                   <input
