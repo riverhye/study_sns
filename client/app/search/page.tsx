@@ -8,13 +8,15 @@ interface userdataI {
   isFollowing: boolean;
 }
 const Search = () => {
+  const token = localStorage.getItem('accessToken');
   const [searchNickname, setsearchNickname] = useState<string>('');
-  const [user, setUser] = useState<userdataI[]>([
-    { nickname: 'test', profileImage: '', isFollowing: false },
-    { nickname: 'test', profileImage: '', isFollowing: false },
-  ]);
+  const [user, setUser] = useState<userdataI[]>([]);
   const searchUser = async () => {
-    const res = (await axios.get(`${process.env.NEXT_PUBLIC_URL}/searchUser/${searchNickname}`)).data;
+    const res = (
+      await axios.get(`${process.env.NEXT_PUBLIC_URL}/searchUser/${searchNickname}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    ).data;
     setUser(res);
   };
   // useEffect(() => {
@@ -24,13 +26,15 @@ const Search = () => {
   // }, [searchNickname]);
   return (
     <>
-      <div>
+      <div className="flex justify-center h-12 w-full mt-10">
         <input
           type="text"
-          className=" mb-10 border-b-2 border-b-stone-800 outline-none"
+          className=" w-1/4 h-[40px] outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
           onChange={e => setsearchNickname(e.target.value)}
           value={searchNickname}></input>
-        <button onClick={searchUser} className=" bg-black text-gray-50 mx-2 w-[70px] h-[30px] rounded-md">
+        <button
+          onClick={searchUser}
+          className="w-20 h-[40px] ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
           검색
         </button>
       </div>
