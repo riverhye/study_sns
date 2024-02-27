@@ -111,13 +111,15 @@ const EditProfile = () => {
     const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
     if (confirmDelete) {
       try {
-        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete/{userId}`, {
-          data: {
-            userId: user_id
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           }
         });
         console.log('회원 탈퇴가 완료되었습니다.');
-
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('nickname');
+      
       } catch (error) {
         console.error('회원 탈퇴 실패:', error);
       }
