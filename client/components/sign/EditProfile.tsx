@@ -1,51 +1,27 @@
 'use client';
 
+
 import { useState } from 'react';
 import axios from 'axios';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
+  const profileImage: string = localStorage.getItem("profileImage") ?? '';
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
+  const [user_id, setUserid] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [validPassword, setValidPassword] = useState<boolean>(true); // 비밀번호 형식 여부
-  const [passwordMatch, setPasswordMatch] = useState<boolean>(true); // 새 비밀번호 일치 여부
-  const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true); // 닉네임이 사용 가능 여부
-  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true); // 닉네임이 사용 가능 여부
-
-  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      if (!validPassword || !nicknameAvailable || !passwordMatch) {
-        console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
-        return;
-      }
-
-      if (newPassword !== confirmNewPassword) {
-        console.error('새 비밀번호가 일치하지 않습니다.');
-        setPasswordMatch(false);
-        return;
-      }
-
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/update`, {
-        nickname: nickname,
-        currentPassword: currentPassword,
-        newPassword: newPassword
-      });
-
-      console.log('정보 수정이 완료되었습니다.');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      console.log('정보 수정 실패');
-    }
-  };
+  const [validPassword, setValidPassword] = useState<boolean>(true);
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
+  const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
+  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
+  // const [profileImage, setProfileImage] = useState<string>('');
 
   // 비밀번호 형식 확인
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPasswordValue = e.target.value;
-    // 소문자, 대문자, 숫자로 조합된 6~14자리
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}$/;
     const isValidPassword = passwordRegex.test(newPasswordValue);
     setValidPassword(isValidPassword);
@@ -77,6 +53,78 @@ const EditProfile = () => {
     }
   };
 
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = e.target.files ? e.target.files[0] : null;
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      
+      try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/{userId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        
+        setProfileImage(response.data.imageUrl);
+        console.log('Profile image uploaded successfully');
+      } catch (error) {
+        console.error('Error uploading profile image:', error);
+      }
+    } else {
+      console.error('No file selected');
+    }
+  };
+  
+  // 수정하기
+  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      if (!validPassword || !nicknameAvailable || !passwordMatch) {
+        console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        console.error('새 비밀번호가 일치하지 않습니다.');
+        setPasswordMatch(false);
+        return;
+      }
+
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/{userId}`, {
+        nickname: nickname,
+        currentPassword: currentPassword,
+        newPassword: newPassword
+      });
+
+      console.log('정보 수정이 완료되었습니다.');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      console.log('정보 수정 실패');
+    }
+  };
+
+  // 탈퇴하기
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
+    if (confirmDelete) {
+      try {
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });
+        console.log('회원 탈퇴가 완료되었습니다.');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('nickname');
+      
+      } catch (error) {
+        console.error('회원 탈퇴 실패:', error);
+      }
+    }
+  };
+
   return (
     <>
       <section>
@@ -87,6 +135,10 @@ const EditProfile = () => {
                 정보수정
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateProfile}>
+                <div>
+                  <img src={profileImage} alt="Profile" className="rounded-full w-24 h-24" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} />
+                </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
                   <input
@@ -143,7 +195,7 @@ const EditProfile = () => {
                   수정하기
                 </button>
 
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <button type="button" onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                   탈퇴하기
                 </button>
 

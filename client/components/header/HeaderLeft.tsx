@@ -6,6 +6,7 @@ import HeaderIcons from '@/public/images/HeaderIcons';
 import Timer from './Timer';
 import TodoHeader from './TodoHeader';
 import { useEffect, useState } from 'react';
+import Logout from '../sign/Logout';
 
 const HeaderLeft = () => {
   const token = localStorage.getItem('accessToken');
@@ -35,7 +36,7 @@ const HeaderLeft = () => {
                   </Link>
                   <Link href={'/'}>
                     <span className="block p-[10px] hover:bg-subtle-blue bg-white rounded-lg" onClick={handleSignOut}>
-                      로그아웃
+                      <Logout />
                     </span>
                   </Link>
                 </div>

@@ -57,18 +57,24 @@ public class UserController {
                 .email(userDTO.getEmail())
                 .nickname(randomNickname)
                 .password(passwordEncoder.encode(userDTO.getPassword()))
-                .profileImage(userDTO.getProfileImage())
                 .loginType(userDTO.getLoginType())
                 .build();
 
             UserEntity responseUser = userService.createUser(userEntity);
+
+            // userId를 이용하여 프로필 이미지 URL 생성
+            String profileImageUrl = "https://source.boringavatars.com/beam/120/" + responseUser.getUserId();
+            responseUser.setProfileImage(profileImageUrl);  // 생성된 URL을 UserEntity에 저장
+
+            // 프로필 이미지 URL이 업데이트된 UserEntity를 다시 저장
+            responseUser = userService.updateUser(responseUser);
 
             UserDTO responseUserDTO = UserDTO.builder()
                 .email(responseUser.getEmail())
                 .nickname(responseUser.getNickname())
                 .password(responseUser.getPassword())
                 .loginType(responseUser.getLoginType())
-                .profileImage(responseUser.getProfileImage())
+                .profileImage(responseUser.getProfileImage())  // 변경된 프로필 이미지 URL을 DTO에도 저장
                 .userId(responseUser.getUserId())
                 .build();
             return ResponseEntity.ok().body(responseUserDTO);
@@ -180,17 +186,18 @@ public class UserController {
         }
     }
 
-    @PostMapping("/editprofile/delete/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+    @DeleteMapping("/editprofile/delete")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal String userId, @RequestHeader(value="Authorization") String token) {
         try {
             // 사용자 존재 여부 확인
-            UserEntity user = userService.findUserById(userId);
+            UserEntity user = userService.findUserById(Long.valueOf(userId));
             if (user == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            // 사용자 삭제
-            userService.deleteUser(userId);
+            token = token.substring(7);
+            userService.blacklistToken(token);
+            userService.deleteUser(Long.valueOf(userId));
             return ResponseEntity.ok().body("ID " + userId + "인 사용자가 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -2,8 +2,11 @@ package studysns.server.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
+import studysns.server.dto.AllStudyInfoDTO;
 import studysns.server.dto.RankingDTO;
+import studysns.server.dto.StudyDTO;
 import studysns.server.entity.StudyEntity;
+import studysns.server.entity.UserEntity;
 import studysns.server.repository.StudyRepository;
 import studysns.server.repository.UserRepository;
 
@@ -14,6 +17,8 @@ import java.util.List;
 @RequestMapping("/ranking")
 public class RankingService {
 
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private StudyRepository studyRepository;
 
@@ -40,4 +45,24 @@ public class RankingService {
 
         return rankingList;
     }
+
+//    public AllStudyInfoDTO.MyRanking getMyRankingByNickname(String nickname) {
+//        UserEntity user = userRepository.findByNickname(nickname);
+//        if (user == null) {
+//            throw new IllegalArgumentException("사용자를 찾을 수 없습니다");
+//        }
+//
+//        StudyEntity latestStudy = studyRepository.findTopByUserOrderByTodayStudyTimeDesc(user);
+//        if (latestStudy == null) {
+//            throw new IllegalArgumentException("사용자에 대한 학습 기록을 찾을 수 없습니다");
+//        }
+//
+//        String rankingDate = latestStudy.getStudyDate().toString();
+//        Long rankingTime = latestStudy.getTodayStudyTime();
+//
+//        return AllStudyInfoDTO.MyRanking.builder()
+//                .rankingDate(rankingDate)
+//                .rankingTime(rankingTime)
+//                .build();
+//    }
 }

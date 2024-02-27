@@ -41,7 +41,7 @@ public class AllStudyInfoDTO {
     @Builder
     public static class MyRanking {
         private String rankingDate;
-        private int rankingTime;
+        private Long rankingTime;
     }
 
     @Data
