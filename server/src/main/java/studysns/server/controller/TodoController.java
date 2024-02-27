@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import studysns.server.dto.TodoDTO;
 import studysns.server.service.TodoService;
@@ -25,10 +26,17 @@ public class TodoController {
     public TodoController(TodoService todoService) { this.todoService = todoService; }
 
     @PostMapping("/maketodo")
-    public ResponseEntity<String> makeTodo(@RequestBody TodoDTO todoDTO) {
-        todoService.makeTodo(todoDTO);
+    public ResponseEntity<String> makeTodo(@AuthenticationPrincipal String userId, @RequestBody TodoDTO todoDTO) {
+        TodoDTO insertData = TodoDTO.builder()
+                .userId(Long.valueOf(userId))
+                .todoContent(todoDTO.getTodoContent())
+                .todoDate(todoDTO.getTodoDate())
+                .build();
+
+        todoService.makeTodo(insertData);
         return ResponseEntity.status(HttpStatus.CREATED).body("Todo 작성 성공");
     }
+
     @GetMapping("/gettodo/{nickname}/{todoDate}")
     public ResponseEntity<List<TodoDTO>> getTodoByNicknameAndTodoDate(@PathVariable String nickname, @PathVariable LocalDate todoDate) {
         List<TodoDTO> todoList = todoService.getTodoByNicknameAndTodoDate(nickname, todoDate);

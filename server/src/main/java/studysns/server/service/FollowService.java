@@ -84,7 +84,7 @@ public class FollowService {
 
 
 
-    public AllStudyInfoDTO.User getFollowInfo(long userId) {
+    public AllStudyInfoDTO.User getFollowInfo(Long userId) {
         UserEntity user = userRepository.findByUserId(userId);
 
         Long following = followRepository.countByUser_userId(userId);

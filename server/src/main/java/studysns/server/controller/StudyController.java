@@ -24,6 +24,7 @@ public class StudyController {
 
     private final TodoService todoService;
 
+    private final RankingService rankingService;
     private  final  FollowService followService;
 //    private final BadgeService badgeService;
 
@@ -32,12 +33,14 @@ public class StudyController {
             UserService userService,
             StudyService studyService,
             TodoService todoService,
-            FollowService followService
+            FollowService followService,
+            RankingService rankingService
 //            BadgeService badgeService
     ) {
         this.userService = userService;
         this.studyService = studyService;
         this.todoService = todoService;
+        this.rankingService = rankingService;
         this.followService = followService;
 //        this.badgeService = badgeService;
     }
@@ -55,7 +58,7 @@ public class StudyController {
         AllStudyInfoDTO.User userFollowerInfo = followService.getFollowInfo(userId);
         List<AllStudyInfoDTO.StudyTable> studyList = studyService.getStudyByNickname(userId);
         List<AllStudyInfoDTO.Todo> todoList = todoService.getTodoByNickname(userId);
-//        AllStudyInfoDTO.MyRanking myRanking = studyService.getMyRankingByNickname(nickname);
+        AllStudyInfoDTO.MyRanking myRanking = studyService.getMyRanking(userId);
 //        AllStudyInfoDTO.Badge badgeList = badgeService.getBadgeByNickname(nickname);
 
 
@@ -63,7 +66,7 @@ public class StudyController {
                 user(userFollowerInfo).
                 studyTable(studyList).
                 todo(todoList).
-//                myRanking(myRanking).
+                myRanking(myRanking).
 //                badge(badgeList).
                 build();
 
