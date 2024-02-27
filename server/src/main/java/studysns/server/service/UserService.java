@@ -203,22 +203,29 @@ public class UserService {
 
     @Transactional
     public UserDTO snsLoginOrCreateUser(String email, String nickname, UserEntity.LoginType loginType, String profileImage) {
-        UserEntity userEntity = null;
-        try {
-            userEntity = userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    UserEntity newUser = UserEntity.builder()
-                        .email(email)
-                        .nickname(nickname)
-                        .loginType(loginType)
-                        .profileImage(profileImage)
-                        .build();
+        Optional<UserEntity> optionalUserEntity = userRepository.findByEmail(email);
+        UserEntity userEntity;
 
-                    newUser = userRepository.save(newUser);
-                    return newUser;
-                });
-        } catch (Exception e) {
-            log.error("Error occurred while trying to create or login user", e);
+        if (optionalUserEntity.isPresent()) {
+            userEntity = optionalUserEntity.get();
+        } else {
+            userEntity = UserEntity.builder()
+                .email(email)
+                .nickname(nickname)
+                .loginType(loginType)
+                .profileImage(profileImage)
+                .build();
+
+            userEntity = userRepository.save(userEntity);
+
+            // UserEntity 저장 후 StudyEntity 생성 및 저장 로직 추가
+            StudyEntity studyEntity = StudyEntity.builder()
+                .user(userEntity)
+                .todayStudyTime(0L)
+                .studyDate(LocalDate.now())
+                .build();
+            userEntity.addStudy(studyEntity); // 양방향 연결 설정
+            studyRepository.save(studyEntity); // 필요에 따라 호출, cascade 설정에 따라 자동 처리될 수 있음
         }
 
         if (userEntity == null) {
@@ -236,6 +243,7 @@ public class UserService {
             .token(token)
             .build();
     }
+
 
     public boolean checkEmailExists(String email) {
         return userRepository.existsByEmail(email);

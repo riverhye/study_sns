@@ -5,6 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
@@ -235,6 +237,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private String userId;
     private String studyContent;
+
+    private String targetNickname;
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String token = session.getUri().getQuery().substring(6);
@@ -259,47 +263,70 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         studyContent = jsonMap.get("studyContent");
 
+//        targetNickname = jsonMap.get("targetNickname");
+        targetNickname = "testNickname";
+
 //        nickname = jsonMap.get("nickname");
 
         // 액션에 따라 처리
         if ("play".equals(action)) {
-            log.info("received action: {}", action);
-            log.info("studyContent received: {}", studyContent);
-            String playMessage = feedService.playRequest(userId, studyContent); // (userId, studyContent, nickname)
-            String messageWithType = "play: " + playMessage;
-            session.sendMessage(new TextMessage(messageWithType));
-            log.info("message to client: {}", messageWithType);
+//            log.info("received action: {}", action);
+//            log.info("studyContent received: {}", studyContent);
+            String playMessageWithAdditionalData = feedService.playRequest(userId, studyContent);
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("type", "play");
+            messageObject.put("message", playMessageWithAdditionalData);
+            session.sendMessage(new TextMessage(messageObject.toString()));
+//            log.info("message to client: {}", messageObject.toString());
         } else if ("stop".equals(action)) {
-            log.info("received action: {}", action);
-            String stopMessage = feedService.stopRequest(userId, studyContent);
-            String messageWithType = "stop: " + stopMessage;
-            session.sendMessage(new TextMessage(messageWithType));
-            log.info("message to client: {}", messageWithType);
+//            log.info("received action: {}", action);
+            String stopMessageWithAdditionalData = feedService.stopRequest(userId, studyContent);
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("type", "stop");
+            messageObject.put("message", stopMessageWithAdditionalData);
+            session.sendMessage(new TextMessage(messageObject.toString()));
+//            log.info("message to client: {}", messageObject.toString());
         } else if ("pause".equals(action)) {
-            log.info("received action: {}", action);
+//            log.info("received action: {}", action);
             String pauseMessage = feedService.pauseRequest(userId, studyContent);
             String messageWithType = "pause: " + pauseMessage;
             session.sendMessage(new TextMessage(messageWithType));
-            log.info("message to client: {}", messageWithType);
+//            log.info("message to client: {}", messageWithType);
         } else if ("rank".equals(action)) {
-            log.info("received action: {}", action);
-            List nicknames = followService.rankRequest();
-            log.info("message to client: {}", nicknames);
-            String rankMessage = String.join(",", nicknames);
-            String messageWithType = "rank: " + rankMessage;
-            session.sendMessage(new TextMessage(messageWithType));
+            List<Map<String, Object>> userInfos = followService.rankRequest();
+
+            JSONArray jsonArray = new JSONArray();
+            for (Map<String, Object> userInfo : userInfos) {
+                JSONObject userObject = new JSONObject();
+                userObject.put("nickname", userInfo.get("nickname"));
+                userObject.put("todayStudyTime", userInfo.get("todayStudyTime"));
+                userObject.put("profileImage", userInfo.get("profileImage"));
+                jsonArray.add(userObject);
+            }
+
+            String messageRank = "rank: " + jsonArray.toJSONString();
+            log.info("rank send info: {}", messageRank);
+            session.sendMessage(new TextMessage(messageRank));
+//        } else if ("follow".equals(action)){
+//            String followMessage = followService.followRequest(userId, targetNickname);
+//            String messageWithType = "follow: " + followMessage;
+//            session.sendMessage(new TextMessage(messageWithType));
+//            log.info("follow message sent to client: {}", messageWithType);
         }
         else {
             log.warn("Unknown action: {}", action);
         }
     }
 
-    public void sendMessageToClient(WebSocketSession session, String message) {
-        try {
-            session.sendMessage(new TextMessage(message));
-            log.info("Message sent: {}", message);
-        } catch (IOException e) {
-            log.error("Failed to send message: {}", e.getMessage(), e);
-        }
-    }
+
+
+
+//    public void sendMessageToClient(WebSocketSession session, String message) {
+//        try {
+//            session.sendMessage(new TextMessage(message));
+//            log.info("Message sent: {}", message);
+//        } catch (IOException e) {
+//            log.error("Failed to send message: {}", e.getMessage(), e);
+//        }
+//    }
 }

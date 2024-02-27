@@ -2,6 +2,7 @@ package studysns.server.service;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,15 @@ import studysns.server.repository.FollowRepository;
 import studysns.server.repository.StudyRepository;
 import studysns.server.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FollowService {
     @Autowired
     private final FollowRepository followRepository;
@@ -63,7 +68,7 @@ public class FollowService {
     public List<FollowDTO> getFollowByUserId(long userId) {
         // userId 기반, 해당 유저의 팔로워 조회
         List<FollowEntity> followEntities = followRepository.findByUser_UserId(userId);
-        
+
         // 조회한 팔로워 정보를 FollowDTO 로 변환하여 반환
         List<FollowDTO> followDTOList = new ArrayList<>();
         for (FollowEntity entity : followEntities) {
@@ -96,18 +101,56 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> rankRequest() {
+    public List<Map<String, Object>> rankRequest() {
         List<StudyEntity> topUsers = studyRepository.findTop10ByOrderByTodayStudyTimeDesc();
 
-        List<String> nicknames = topUsers.stream()
-                .map(userEntity -> userRepository.findNicknameByUserId(userEntity.getUser().getUserId()))
-                .collect(Collectors.toList());
+        List<Map<String, Object>> userInfos = topUsers.stream()
+                .map(studyEntity -> {
+                    Map<String, Object> userInfo = new HashMap<>();
+                    UserEntity userEntity = studyEntity.getUser();
+                    String nickname = userRepository.findNicknameByUserId(userEntity.getUserId());
+                    long todayStudyTime = studyEntity.getTodayStudyTime();
+                    String profileImage = userEntity.getProfileImage();
 
-        return nicknames;
+                    userInfo.put("nickname", nickname);
+//                    log.info("nickname from followService: {}", nickname);
+                    userInfo.put("todayStudyTime", todayStudyTime);
+//                    log.info("studyTime from followService: {}", todayStudyTime);
+                    userInfo.put("profileImage", profileImage);
+
+                    return userInfo;
+                })
+                .collect(Collectors.toList());
+//        log.info("total value: {}", userInfos);
+        return userInfos;
     }
 
-
-
+//    public String followRequest(String userId, String targetNickname) {
+//        String message;
+//        // 1. userId로 팔로우를 요청한 유저 정보 가져오기
+//        Long userIdLong = Long.parseLong(userId);
+//        UserEntity follower = userRepository.findById(userIdLong)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // 2. targetNickname으로 팔로우 대상 유저 정보 가져오기
+//        UserEntity targetUser = userRepository.findByNickname(targetNickname);
+//        if (targetUser == null) {
+//            throw new RuntimeException("Target user not found");
+//        }
+//
+//        // 3. FollowEntity에 정보 저장
+//        FollowEntity follow = FollowEntity.builder()
+//                .user(follower) // 팔로우 요청을 보낸 유저
+//                .followingId(targetUser.getUserId())  // 팔로우 대상 유저의 아이디
+//                .followTime(LocalDateTime.now())
+//                .build();
+//
+//        followRepository.save(follow);
+//
+//        message = targetNickname + "님이 회원님을 팔로우 했습니다.";
+//
+//        return message;
+//    }
 
 
 }

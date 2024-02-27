@@ -17,26 +17,27 @@ export default function SignIn() {
   const router = useRouter();
   const { connectWebSocket, disconnectWebSocket } = useWebSocket();
 
-
   useEffect(() => {
     if (data?.user) {
       const { name, email } = data.user;
-
+  
       // 서버에 로그인 요청
-      fetch(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, {
-        method: 'POST',
+      axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, JSON.stringify({
+        email,
+        nickname: name
+      }), {
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          nickname: name,
-          loginType: loginType.toUpperCase(), // 로그인 타입을 대문자로 변환하여 전송
-        })
+        }
+      })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.error('Request failed:', error);
       });
     }
-  }, [data, loginType]); // data가 변경될 때마다 이 useEffect는 실행됩니다.
-
+  }, [data, loginType]);
 
   const handleSign = async (type: string) => {
     setLoginType(type);
