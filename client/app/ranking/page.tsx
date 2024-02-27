@@ -21,10 +21,10 @@ const Ranking = () => {
     getRankingList(res);
   }
   return (
-    <div>
+    <div className="flex  w-full justify-center flex-col align-middle">
       {rankingList.map((list, index) => (
         <Link href={`study/${list.nickname}`}>
-          <div key={index} className=" mt-5">
+          <div key={index} className=" mt-5 ">
             <RankUI uidata={list} index={index} />
           </div>
         </Link>

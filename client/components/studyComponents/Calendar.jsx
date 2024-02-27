@@ -17,7 +17,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 // !redux에 버튼을 눌렀을때 달 정보 저장, 페이지 렌더때도 저장
 const RenderHeader = ({ currentMonth, prevMonth, nextMonth }) => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between ">
       {/* 여기가 년도,달 */}
       <div className=" w-11px  mx-2">
         <span className="text">
@@ -46,7 +46,7 @@ const RenderDays = () => {
   return (
     <div className="flex ">
       {date.map((day, index) => (
-        <div className="font-bold mx-2 w-10 h-8" key={index}>
+        <div className="font-bold mx-2 w-10 h-8  " key={index}>
           {day}
         </div>
       ))}
@@ -121,7 +121,7 @@ const Calender = () => {
   return (
     <>
       {' '}
-      <div className="flex flex-col  w-[350px] h-[270px] border-[1px] rounded-md border-gray-500 my-2 ">
+      <div className="flex flex-col  w-[370px] h-[270px]  rounded-md my-2 relative shadow-md">
         <RenderHeader currentMonth={currentMonth} prevMonth={prevMonth} nextMonth={nextMonth} />
         <RenderDays />
         <RenderCells currentMonth={currentMonth} selectedDate={selectedDate} onDateClick={onDateClick} />

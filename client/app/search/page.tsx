@@ -18,6 +18,7 @@ const Search = () => {
       })
     ).data;
     setUser(res);
+    setsearchNickname('');
   };
   // useEffect(() => {
   //   if (searchNickname) {
@@ -29,9 +30,10 @@ const Search = () => {
       <div className="flex justify-center h-12 w-full mt-10">
         <input
           type="text"
-          className=" w-1/4 h-[40px] outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
+          className=" w-1/3 h-[40px] outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all border-[1.5px] border-subtle-blue shadow"
           onChange={e => setsearchNickname(e.target.value)}
-          value={searchNickname}></input>
+          value={searchNickname}
+          placeholder="닉네임"></input>
         <button
           onClick={searchUser}
           className="w-20 h-[40px] ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">

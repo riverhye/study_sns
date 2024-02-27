@@ -3,10 +3,11 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
-  const profileImage: string = localStorage.getItem("profileImage") ?? '';
+  const [profileImage, setProfileImage] = useState<string>(localStorage.getItem("profileImage") ?? '');
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [user_id, setUserid] = useState('');
@@ -17,7 +18,7 @@ const EditProfile = () => {
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
   const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
-  // const [profileImage, setProfileImage] = useState<string>('');
+  const router = useRouter();
 
   // 비밀번호 형식 확인
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +54,7 @@ const EditProfile = () => {
     }
   };
 
-  // 이미지 업로드 핸들러
+  // 이미지 수정
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = e.target.files ? e.target.files[0] : null;
     if (imageFile) {
@@ -66,7 +67,7 @@ const EditProfile = () => {
             'Content-Type': 'multipart/form-data'
           }
         });
-        
+        localStorage.setItem('profileImage', response.data.imageUrl); // 이미지 URL을 localStorage에 저장
         setProfileImage(response.data.imageUrl);
         console.log('Profile image uploaded successfully');
       } catch (error) {
@@ -77,7 +78,7 @@ const EditProfile = () => {
     }
   };
   
-  // 수정하기
+  // 회원정보 수정
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -107,24 +108,23 @@ const EditProfile = () => {
 
   // 탈퇴하기
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
+    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까?');
     if (confirmDelete) {
       try {
-        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        });
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/delete/${user_id}`);
         console.log('회원 탈퇴가 완료되었습니다.');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('nickname');
-      
+  
+        // 탈퇴 후 로그아웃 처리
+        localStorage.removeItem("nickname"); 
+        localStorage.removeItem("user_id"); 
+        setUserid(''); 
+        router.push('/'); 
+
       } catch (error) {
         console.error('회원 탈퇴 실패:', error);
       }
     }
   };
-
   return (
     <>
       <section>

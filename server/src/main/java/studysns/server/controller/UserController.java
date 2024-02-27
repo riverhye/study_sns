@@ -52,21 +52,17 @@ public class UserController {
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
             String randomNickname = generateRandomNickname(); // 랜덤 닉네임 생성
+            String theProfileImageUrl = "https://source.boringavatars.com/beam/120/" + randomNickname;
 
             UserEntity userEntity = UserEntity.builder()
                 .email(userDTO.getEmail())
                 .nickname(randomNickname)
                 .password(passwordEncoder.encode(userDTO.getPassword()))
+                .profileImage(theProfileImageUrl)
                 .loginType(userDTO.getLoginType())
                 .build();
 
             UserEntity responseUser = userService.createUser(userEntity);
-
-            // userId를 이용하여 프로필 이미지 URL 생성
-            String profileImageUrl = "https://source.boringavatars.com/beam/120/" + responseUser.getUserId();
-            responseUser.setProfileImage(profileImageUrl);  // 생성된 URL을 UserEntity에 저장
-
-            // 프로필 이미지 URL이 업데이트된 UserEntity를 다시 저장
             responseUser = userService.updateUser(responseUser);
 
             UserDTO responseUserDTO = UserDTO.builder()
@@ -102,7 +98,7 @@ public class UserController {
                     .nickname(userEntity.getNickname())
 //                    .password(userEntity.getPassword())
                     .userId(userEntity.getUserId())
-//                    .profileImage(userEntity.getProfileImage())
+                    .profileImage(userEntity.getProfileImage())
 //                    .loginType(userEntity.getLoginType())
                     .token(token)
                     .build();
@@ -163,7 +159,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/editprofile/image/{userId}")
+    @PatchMapping("/editprofile/image")
     public ResponseEntity<?> uploadImage(@RequestParam("profileImageFile") MultipartFile profileImageFile, @PathVariable("userId") Long userId) {
         try {
             // 프로필 이미지 파일 저장
@@ -209,7 +205,7 @@ public class UserController {
         try {
             String email = snsDetails.get("email");
             String nickname = snsDetails.get("nickname") + "_" + UUID.randomUUID().toString().substring(0, 4);
-            String profileImage = snsDetails.get("profileImage");
+            String profileImage = "https://source.boringavatars.com/beam/120/" + nickname;
             UserEntity.LoginType loginType = UserEntity.LoginType.GOOGLE;
 
             UserDTO userDTO = userService.snsLoginOrCreateUser(email, nickname, loginType, profileImage);
