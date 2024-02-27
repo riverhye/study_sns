@@ -39,7 +39,6 @@ public class TodoService {
                 .build();
 
         todoRepository.save(todoEntity);
-
     }
     public List<TodoDTO> getTodoByNicknameAndTodoDate(String nickname, LocalDate tododate) {
         List<TodoDTO> todoDTOList = new ArrayList<>();

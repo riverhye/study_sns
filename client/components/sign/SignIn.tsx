@@ -32,6 +32,7 @@ export default function SignIn() {
         const userId = response?.data?.userId
         const token = response?.data?.token; // 응답에서 토큰 추출
         const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
+
         if (userId) {
           localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
         }
