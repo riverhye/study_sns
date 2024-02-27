@@ -1,13 +1,12 @@
 'use client';
 
-// 'use client' 생략
 
 import { useState } from 'react';
 import axios from 'axios';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
-  // const imageUserId: string = localStorage.getItem("user_id") ?? '';
+  const profileImage: string = localStorage.getItem("profileImage") ?? '';
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [user_id, setUserid] = useState('');
@@ -18,7 +17,7 @@ const EditProfile = () => {
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
   const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
-  const [profileImage, setProfileImage] = useState<string>('');
+  // const [profileImage, setProfileImage] = useState<string>('');
 
   // 비밀번호 형식 확인
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,7 +134,7 @@ const EditProfile = () => {
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateProfile}>
                 <div>
-                  {/* <img src={imageProfile} alt="Profile" className="rounded-full w-24 h-24" /> */}
+                  <img src={profileImage} alt="Profile" className="rounded-full w-24 h-24" />
                   <input type="file" accept="image/*" onChange={handleImageUpload} />
                 </div>
                 <div>

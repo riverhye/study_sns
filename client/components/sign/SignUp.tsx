@@ -1,148 +1,130 @@
 'use client';
-import { signIn, signOut, useSession } from 'next-auth/react';
-import { FormEvent, useState, useEffect } from 'react';
+
+
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import Link from 'next/link';
-import { useWebSocket } from '../providers/SocketContext';
-export default function SignIn() {
-  const { data } = useSession();
-  const [userId, setUserId] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [redirectUrl, setRedirectUrl] = useState('');
-  const [loginType, setLoginType] = useState('');
-  const router = useRouter();
-  const { connectWebSocket, disconnectWebSocket } = useWebSocket();
-  
-  useEffect(() => {
-    if (data?.user) {
-      const { name, email } = data.user;
-      // 서버에 로그인 요청
-      axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, JSON.stringify({
-        email,
-        nickname: name
-      }), {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        console.log(response);
-        const userId = response?.data?.userId
-        const token = response?.data?.token; // 응답에서 토큰 추출
-        const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
 
-        if (userId) {
-          localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
-        }
-        if (token) {
-          localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
-        }
-        if (nickname) {
-          localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
-        }
-      })
-      .catch(error => {
-        console.error('Request failed:', error);
+const SignUp = () => {
+  const [email, setEmail] = useState('');
+  const [emailAvailable, setEmailAvailable] = useState(true);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [validPassword, setValidPassword] = useState(true);
+  const router = useRouter();
+
+  const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signupcheck`, {
+        email: newEmail
       });
+      setEmailAvailable(res.data.emailAvailable);
+    } catch (error) {
+      console.error('Error checking email:', error);
+      setEmailAvailable(false);
     }
-  }, [data, loginType]);
-  const handleSign = async (type: string) => {
-    setLoginType(type);
-    if (data) {
-       // 소셜 로그아웃 : 소켓 끊기
-      disconnectWebSocket();
-      await signOut();
-      }
-    else {
-      // 소셜 로그인 : 소켓 연결
-      connectWebSocket();
-      await signIn(type, { redirect: true, callbackUrl: '/home' });
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    validatePassword(newPassword, confirmPassword);
+  }
+
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const confirmPasswordValue = e.target.value;
+    setConfirmPassword(confirmPasswordValue);
+    validatePassword(password, confirmPasswordValue);
+    if (confirmPasswordValue === password) {
+      setPasswordMatch(true);
+    } else {
+      setPasswordMatch(false);
+    }
+  };
+
+  const validatePassword = (password: string, confirmPassword: string) => {
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,14}$/.test(password)) {
+        setValidPassword(false);
+    } else {
+        setValidPassword(true);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signin/process`, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signup/process`, {
         email: email,
         password: password,
       });
-      if (res.data.token) {
-        alert('로그인 성공');
-        localStorage.setItem('accessToken', res.data.token);
-        localStorage.setItem('nickname', res.data.nickname);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-        // 소켓 연결
-        connectWebSocket();
-        router.push('/home');
-      } else {
-        alert('로그인 실패');
-      }
+
+      console.log("hi");
+      alert('회원가입 성공');
+      router.push('/home');
     } catch (error) {
-      console.error('Error signing in:', error);
-      alert('로그인 실패!!');
+      console.error('Error signing up:', error);
+      alert('회원가입 실패!!');
     }
   };
+
   return (
-    <>
-      <section>
-        <div className="flex flex-col items-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                로그인
-              </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-                <div>
-                  <input
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    type="text"
-                    placeholder="Email"
-                  />
-                </div>
-                <div>
-                  <input
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    type="password"
-                    placeholder="Password"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                  로그인
-                </button>
-              </form>
+    <section>
+      <div className="flex flex-col items-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              회원가입
+            </h1>
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
-                <button onClick={() => handleSign('GOOGLE')}>구글 계정 {data ? '로그아웃' : '로그인'}</button>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">이메일</label>
+                <input
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  type="text"
+                  placeholder="Email"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+                {!emailAvailable && <span className="text-red-600">이미 사용 중인 이메일입니다.</span>}
               </div>
               <div>
-                <button onClick={() => handleSign('KAKAO')}>카카오 계정 {data ? '로그아웃' : '로그인'}</button>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">비밀번호</label>
+                <input
+                  className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${!validPassword ? 'border-red-500' : ''}`}
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                {!validPassword && <span className="text-red-600">비밀번호 형식이 올바르지 않습니다. (소문자, 대문자, 숫자로 조합된 6~14자리)</span>}
               </div>
-              <Link href={'/user/signup'}>
-                <button>회원가입</button>
-              </Link>
-            </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">비밀번호 확인</label>
+                <input
+                  className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${!passwordMatch ? 'border-red-500' : ''}`}
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                />
+                {!passwordMatch && <span className="text-red-600">비밀번호가 일치하지 않습니다.</span>}
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                가입하기
+              </button>
+            </form>
           </div>
-          {data?.user ? (
-            <>
-              <h5>소셜 로그인 정보</h5>
-              <div>{data.user.name}</div>
-              <div>{data.user.email}</div>
-              {/* <img src={data.user.image!} alt="user img" /> */}
-              {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오 , 랜덤닉네임*/}
-            </>
-          ) : (
-            ''
-          )}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
-}
+};
+
+export default SignUp;
