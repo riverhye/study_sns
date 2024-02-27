@@ -4,9 +4,7 @@ const Logout = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem('nickname');
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('accessToken');
+    localStorage.clear();
 
     router.push('/');
   };
