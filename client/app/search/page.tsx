@@ -18,6 +18,7 @@ const Search = () => {
       })
     ).data;
     setUser(res);
+    setsearchNickname('');
   };
   // useEffect(() => {
   //   if (searchNickname) {
