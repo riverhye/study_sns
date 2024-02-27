@@ -73,6 +73,7 @@ export default function SignIn() {
         alert('로그인 성공');
         localStorage.setItem('accessToken', res.data.token);
         localStorage.setItem('nickname', res.data.nickname);
+        localStorage.setItem('profileImage', res.data.profileImage);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         // 소켓 연결
         connectWebSocket();
