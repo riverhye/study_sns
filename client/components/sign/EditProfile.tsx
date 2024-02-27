@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
@@ -17,7 +18,7 @@ const EditProfile = () => {
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
   const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
-  // const [profileImage, setProfileImage] = useState<string>('');
+  const router = useRouter();
 
   // 비밀번호 형식 확인
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,21 +111,20 @@ const EditProfile = () => {
     const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까?');
     if (confirmDelete) {
       try {
-        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        });
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/delete/${user_id}`);
         console.log('회원 탈퇴가 완료되었습니다.');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('nickname');
-      
+  
+        // 탈퇴 후 로그아웃 처리
+        localStorage.removeItem("nickname"); 
+        localStorage.removeItem("user_id"); 
+        setUserid(''); 
+        router.push('/'); 
+
       } catch (error) {
         console.error('회원 탈퇴 실패:', error);
       }
     }
   };
-
   return (
     <>
       <section>
