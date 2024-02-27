@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
-  const profileImage: string = localStorage.getItem("profileImage") ?? '';
+  const [profileImage, setProfileImage] = useState<string>(localStorage.getItem("profileImage") ?? '');
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [user_id, setUserid] = useState('');
@@ -66,7 +66,7 @@ const EditProfile = () => {
             'Content-Type': 'multipart/form-data'
           }
         });
-        
+        localStorage.setItem('profileImage', response.data.imageUrl); // 이미지 URL을 localStorage에 저장
         setProfileImage(response.data.imageUrl);
         console.log('Profile image uploaded successfully');
       } catch (error) {
