@@ -107,7 +107,7 @@ const EditProfile = () => {
 
   // 탈퇴하기
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
+    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까?');
     if (confirmDelete) {
       try {
         const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete`, {
