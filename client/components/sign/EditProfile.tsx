@@ -53,7 +53,7 @@ const EditProfile = () => {
     }
   };
 
-  // 이미지 업로드 핸들러
+  // 이미지 수정
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = e.target.files ? e.target.files[0] : null;
     if (imageFile) {
@@ -77,7 +77,7 @@ const EditProfile = () => {
     }
   };
   
-  // 수정하기
+  // 회원정보 수정
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

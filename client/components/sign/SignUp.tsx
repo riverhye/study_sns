@@ -7,6 +7,7 @@ import axios from 'axios';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [emailAvailable, setEmailAvailable] = useState(true);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,28 +15,56 @@ const SignUp = () => {
   const [validPassword, setValidPassword] = useState(true);
   const router = useRouter();
 
-  const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  const handleEmailCheck = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const newEmail = e.target.value;
     setEmail(newEmail);
+
+    // 이메일 유효성 검사
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setEmailError('올바른 이메일 형식이 아닙니다.');
+      return;
+    }
+
+    // 이메일 중복 검사
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signupcheck`, {
         email: newEmail
       });
-      setEmailAvailable(res.data.emailAvailable);
+      if (!res.data.emailAvailable) {
+        setEmailError('이미 사용 중인 이메일입니다.');
+      }
     } catch (error) {
       console.error('Error checking email:', error);
-      setEmailAvailable(false);
+      setEmailError('이메일을 확인하는 중 오류가 발생했습니다.');
     }
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  
+
+
+  //비밀번호 유효성 검사
+  const validatePassword = (password: string, confirmPassword: string) => {
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,14}$/.test(password)) {
+        setValidPassword(false);
+    } else {
+        setValidPassword(true);
+    }
+  };
+
+
+  //비밀번호 유효성/일치 확인 
+  const handlePasswordCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
     validatePassword(newPassword, confirmPassword);
   }
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const confirmPasswordValue = e.target.value;
     setConfirmPassword(confirmPasswordValue);
     validatePassword(password, confirmPasswordValue);
@@ -43,14 +72,6 @@ const SignUp = () => {
       setPasswordMatch(true);
     } else {
       setPasswordMatch(false);
-    }
-  };
-
-  const validatePassword = (password: string, confirmPassword: string) => {
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,14}$/.test(password)) {
-        setValidPassword(false);
-    } else {
-        setValidPassword(true);
     }
   };
 
@@ -62,7 +83,6 @@ const SignUp = () => {
         password: password,
       });
 
-      console.log("hi");
       alert('회원가입 성공');
       router.push('/home');
     } catch (error) {
@@ -70,6 +90,7 @@ const SignUp = () => {
       alert('회원가입 실패!!');
     }
   };
+
 
   return (
     <section>
@@ -85,11 +106,12 @@ const SignUp = () => {
                 <input
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   type="text"
+                  name="email"
                   placeholder="Email"
                   value={email}
-                  onChange={handleEmailChange}
+                  onChange={handleEmailCheck}
                 />
-                {!emailAvailable && <span className="text-red-600">이미 사용 중인 이메일입니다.</span>}
+                {emailError && <span className="text-red-600">{emailError}</span>}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">비밀번호</label>
@@ -98,7 +120,7 @@ const SignUp = () => {
                   type="password"
                   placeholder="Password"
                   value={password}
-                  onChange={handlePasswordChange}
+                  onChange={handlePasswordCheck}
                 />
                 {!validPassword && <span className="text-red-600">비밀번호 형식이 올바르지 않습니다. (소문자, 대문자, 숫자로 조합된 6~14자리)</span>}
               </div>
@@ -109,7 +131,7 @@ const SignUp = () => {
                   type="password"
                   placeholder="Confirm Password"
                   value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
+                  onChange={handleConfirmPasswordCheck}
                 />
                 {!passwordMatch && <span className="text-red-600">비밀번호가 일치하지 않습니다.</span>}
               </div>
