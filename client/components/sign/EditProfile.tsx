@@ -62,7 +62,7 @@ const EditProfile = () => {
       formData.append('image', imageFile);
       
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/profile/image/upload`, formData, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/{userId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -78,7 +78,7 @@ const EditProfile = () => {
     }
   };
   
-  // 수정하기 함수
+  // 수정하기
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -93,7 +93,7 @@ const EditProfile = () => {
         return;
       }
 
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/update`, {
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/{userId}`, {
         nickname: nickname,
         currentPassword: currentPassword,
         newPassword: newPassword
@@ -111,7 +111,7 @@ const EditProfile = () => {
     const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
     if (confirmDelete) {
       try {
-        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/delete/{userId}`, {
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/delete/{userId}`, {
           data: {
             userId: user_id
           }
