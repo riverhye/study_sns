@@ -24,6 +24,7 @@ import studysns.server.entity.StudyEntity;
 import studysns.server.entity.UserEntity;
 import studysns.server.service.FeedService;
 import studysns.server.service.FollowService;
+import studysns.server.service.LikeService;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -50,6 +51,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private LikeService likeService;
 
 
     private static final ConcurrentHashMap<String, Set<WebSocketSession>> ROOMS = new ConcurrentHashMap<>();
@@ -227,6 +231,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private String studyContent;
 
     private String targetNickname;
+
+    private String feedId;
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String token = session.getUri().getQuery().substring(6);
@@ -309,6 +315,34 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String messageWithType = "follow: " + followMessage;
             session.sendMessage(new TextMessage(messageWithType));
             log.info("follow message sent to client: {}", messageWithType);
+        }
+        else if ("like".equals(action)) {
+            log.info("received action: {}", action);
+
+//            String feedId = jsonMap.get("feedId");
+            String feedId = "2";
+
+            String likeData = likeService.likeFeed(userId, feedId);
+
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("type", "like");
+            messageObject.put("message", likeData);
+            session.sendMessage(new TextMessage(messageObject.toString()));
+            log.info("message to client: {}", messageObject.toString());
+        }
+        else if ("unlike".equals(action)) {
+            log.info("received action: {}", action);
+
+            //            String feedId = jsonMap.get("feedId");
+            String feedId = "2";
+
+            String unlikeData = likeService.unlikeFeed(userId, feedId);
+
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("type", "unlike");
+            messageObject.put("message", unlikeData);
+            session.sendMessage(new TextMessage(messageObject.toString()));
+            log.info("message to client: {}", messageObject.toString());
         }
         else {
             log.warn("Unknown action: {}", action);
