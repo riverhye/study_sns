@@ -27,13 +27,11 @@ public class FollowEntity {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "followeeId")
 //    private UserEntity followee;
-
+//
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private UserEntity user;
 
-    @Column(name = "followingId")
-    private Long followingId;
 
     @Column(name = "followTime")
     private LocalDateTime followTime;

@@ -155,85 +155,73 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 
     // -------------클라이언트에 팔로우한 사용자의 목록을 전송
-    public void sendFollowInfoToClient(WebSocketSession session, List<FollowDTO> followList) throws IOException {
-        // sendFollowInfoToClient 메소드는 WebSocketSession 과 FollowDTO 목록을 매개변수로 받음.
-        try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // ObjectMapper 를 사용해 DTO 목록을 JSON 문자열로 변환한 다음, WebSocketSession 을 통해 클라이언트로 전송함.
-        String followJson = objectMapper.writeValueAsString(followList);
-        session.sendMessage(new TextMessage(followJson));
-        log.info("follow information has been sent to client: {}", followJson);
-        } catch (IOException e) {
-            log.error("failed to send follow information: {}", e.getMessage(), e);
-        }
-    }
+//    public void sendFollowInfoToClient(WebSocketSession session, List<FollowDTO> followList) throws IOException {
+//        // sendFollowInfoToClient 메소드는 WebSocketSession 과 FollowDTO 목록을 매개변수로 받음.
+//        try {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        // ObjectMapper 를 사용해 DTO 목록을 JSON 문자열로 변환한 다음, WebSocketSession 을 통해 클라이언트로 전송함.
+//        String followJson = objectMapper.writeValueAsString(followList);
+//        session.sendMessage(new TextMessage(followJson));
+//        log.info("follow information has been sent to client: {}", followJson);
+//        } catch (IOException e) {
+//            log.error("failed to send follow information: {}", e.getMessage(), e);
+//        }
+//    }
 
 
     // -------------클라이언트에 실시간 알림을 표시
-    public void sendFollowNotification(String userId, String notificationMessage) {
-        Set<WebSocketSession> userSessions = ROOMS.get(userId);
-        if (userSessions != null) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String notificationJson;
-            try {
-                notificationJson = objectMapper.writeValueAsString(notificationMessage);
-                for (WebSocketSession userSession : userSessions) {
-                    userSession.sendMessage(new TextMessage(notificationJson));
-                    log.info("new follow notification has been sent to client");
-                }
-            } catch (IOException e) {
-                log.error("failed to send follow notification: {}", e.getMessage());
-            }
-        }
-    }
+//    public void sendFollowNotification(String userId) {
+//        Set<WebSocketSession> userSessions = ROOMS.get(userId);
+//
+//    }
 
     // --------------클라이언트에 피드 리스트 전송
-    public void sendFeedListToClient(WebSocketSession session, List<FeedDTO> feedList) throws IOException {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String feedJson = objectMapper.writeValueAsString(feedList);
-            session.sendMessage(new TextMessage(feedJson));
-            log.info("feed list has been sent to client");
-        } catch (IOException e) {
-            log.error("failed to send feed list: {}", e.getMessage());
-        }
-    }
+//    public void sendFeedListToClient(WebSocketSession session, List<FeedDTO> feedList) throws IOException {
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            String feedJson = objectMapper.writeValueAsString(feedList);
+//            session.sendMessage(new TextMessage(feedJson));
+//            log.info("feed list has been sent to client");
+//        } catch (IOException e) {
+//            log.error("failed to send feed list: {}", e.getMessage());
+//        }
+//    }
 
     // ------------------클라이언트에 실시간 피드 알림 보내기
 
-    public void sendFeedNotification(WebSocketSession session, String userId, String notificationMessage) {
-        Set<WebSocketSession> userSessions = ROOMS.get(userId);
-        if (userSessions != null) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String notificationJson;
-            try {
-                notificationJson = objectMapper.writeValueAsString(notificationMessage);
-                for (WebSocketSession userSession : userSessions) {
-                    userSession.sendMessage(new TextMessage(notificationJson));
-                    log.info("new feed notification has been sent to client");
-                }
-            } catch (IOException e) {
-                log.error("failed to send feed notification: {}", e.getMessage());
-            }
-        }
-    }
+//    public void sendFeedNotification(WebSocketSession session, String userId, String notificationMessage) {
+//        Set<WebSocketSession> userSessions = ROOMS.get(userId);
+//        if (userSessions != null) {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            String notificationJson;
+//            try {
+//                notificationJson = objectMapper.writeValueAsString(notificationMessage);
+//                for (WebSocketSession userSession : userSessions) {
+//                    userSession.sendMessage(new TextMessage(notificationJson));
+//                    log.info("new feed notification has been sent to client");
+//                }
+//            } catch (IOException e) {
+//                log.error("failed to send feed notification: {}", e.getMessage());
+//            }
+//        }
+//    }
 
     // ----------------클라이언트에 좋아요 리스트 전송
-    public void senLikeListToClient(WebSocketSession session, List<LikeDTO> likeList) throws IOException {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String likeJson = objectMapper.writeValueAsString(likeList);
-            session.sendMessage(new TextMessage(likeJson));
-            log.info("like list has been sent to client");
-        } catch (IOException e) {
-            log.error("failed to send like list: {}", e.getMessage());
-        }
-    }
+//    public void senLikeListToClient(WebSocketSession session, List<LikeDTO> likeList) throws IOException {
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            String likeJson = objectMapper.writeValueAsString(likeList);
+//            session.sendMessage(new TextMessage(likeJson));
+//            log.info("like list has been sent to client");
+//        } catch (IOException e) {
+//            log.error("failed to send like list: {}", e.getMessage());
+//        }
+//    }
 
     // ------------------클라이언트에 실시간 좋아요 알림 보내기
-    public void sendLikeNotification(){
-
-    }
+//    public void sendLikeNotification(){
+//
+//    }
 
     private String userId;
     private String studyContent;
@@ -264,35 +252,40 @@ public class WebSocketHandler extends TextWebSocketHandler {
         studyContent = jsonMap.get("studyContent");
 
 //        targetNickname = jsonMap.get("targetNickname");
-        targetNickname = "testNickname";
+        targetNickname = "user_ad98ba4c";
 
 //        nickname = jsonMap.get("nickname");
 
-        // 액션에 따라 처리
         if ("play".equals(action)) {
-//            log.info("received action: {}", action);
-//            log.info("studyContent received: {}", studyContent);
+            log.info("received action: {}", action);
+            log.info("studyContent received: {}", studyContent);
             String playMessageWithAdditionalData = feedService.playRequest(userId, studyContent);
+
             JSONObject messageObject = new JSONObject();
             messageObject.put("type", "play");
             messageObject.put("message", playMessageWithAdditionalData);
             session.sendMessage(new TextMessage(messageObject.toString()));
-//            log.info("message to client: {}", messageObject.toString());
-        } else if ("stop".equals(action)) {
-//            log.info("received action: {}", action);
+            log.info("message to client: {}", messageObject.toString());
+        }
+        else if ("stop".equals(action)) {
+            log.info("received action: {}", action);
             String stopMessageWithAdditionalData = feedService.stopRequest(userId, studyContent);
+
             JSONObject messageObject = new JSONObject();
             messageObject.put("type", "stop");
             messageObject.put("message", stopMessageWithAdditionalData);
             session.sendMessage(new TextMessage(messageObject.toString()));
-//            log.info("message to client: {}", messageObject.toString());
-        } else if ("pause".equals(action)) {
-//            log.info("received action: {}", action);
+            log.info("message to client: {}", messageObject.toString());
+        }
+        else if ("pause".equals(action)) {
+            log.info("received action: {}", action);
             String pauseMessage = feedService.pauseRequest(userId, studyContent);
+
             String messageWithType = "pause: " + pauseMessage;
             session.sendMessage(new TextMessage(messageWithType));
-//            log.info("message to client: {}", messageWithType);
-        } else if ("rank".equals(action)) {
+            log.info("message to client: {}", messageWithType);
+        }
+        else if ("rank".equals(action)) {
             List<Map<String, Object>> userInfos = followService.rankRequest();
 
             JSONArray jsonArray = new JSONArray();
@@ -307,11 +300,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String messageRank = "rank: " + jsonArray.toJSONString();
             log.info("rank send info: {}", messageRank);
             session.sendMessage(new TextMessage(messageRank));
-//        } else if ("follow".equals(action)){
-//            String followMessage = followService.followRequest(userId, targetNickname);
-//            String messageWithType = "follow: " + followMessage;
-//            session.sendMessage(new TextMessage(messageWithType));
-//            log.info("follow message sent to client: {}", messageWithType);
+        }
+        else if ("follow".equals(action)){
+            String followMessage = followService.followRequest(userId, targetNickname);
+//            log.info("핸들러 userid: {}", userId);
+//            log.info("핸들러 타겟 닉네임: {}", targetNickname);
+
+            String messageWithType = "follow: " + followMessage;
+            session.sendMessage(new TextMessage(messageWithType));
+            log.info("follow message sent to client: {}", messageWithType);
         }
         else {
             log.warn("Unknown action: {}", action);

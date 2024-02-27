@@ -86,10 +86,10 @@ public class FeedService {
         if (userOptional.isEmpty()) {
             throw new EntityNotFoundException("User not found");
         }
-        Optional<FeedEntity> userOptional2 = feedRepository.findById(userId);
+//        Optional<FeedEntity> userOptional2 = feedRepository.findById(userId);
 
         UserEntity userEntity = userOptional.get();
-        FeedEntity feedEntity = userOptional2.get();
+//        FeedEntity feedEntity = userOptional2.get();
 
         Optional<StudyEntity> studyOptional = studyRepository.findById(userId);
         if (studyOptional.isEmpty()) {
@@ -132,7 +132,7 @@ public class FeedService {
         }
 
         JSONObject additionalData = new JSONObject();
-        additionalData.put("feedId", feedEntity.getFeedId());
+//        additionalData.put("feedId", feedEntity.getFeedId());
         additionalData.put("nickname", userEntity.getNickname());
         additionalData.put("profileImage", userEntity.getProfileImage());
         additionalData.put("date", LocalDateTime.now().toString());
