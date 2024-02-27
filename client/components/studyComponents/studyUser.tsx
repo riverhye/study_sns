@@ -10,8 +10,7 @@ interface StudyUserProps {
   };
 }
 interface axiosData {
-  userId: string;
-  followNickname: string | null;
+  followId: string;
 }
 const StudyUser = (props: StudyUserProps) => {
   const userData = props.userData;
@@ -19,16 +18,14 @@ const StudyUser = (props: StudyUserProps) => {
   async function pollowController() {
     //팔로우 api요청
     const data: axiosData = {
-      userId: userData.nickname,
-      followNickname: token, //!나중에 토큰으로 가져온값으로 수정해야함
+      followId: userData.nickname,
     };
-    await axios.post(`${process.env.NEXT_PUBLIC_URL}/follow`, data);
+    await axios.post(`${process.env.NEXT_PUBLIC_URL}/follow`, data, { headers: { Authorization: `Bearer ${token}` } });
   }
   async function unPollowController() {
     //언팔로우 api요청
     const data: axiosData = {
-      userId: userData.nickname,
-      followNickname: token, //!나중에 토큰으로 가져온값으로 수정해야함
+      followId: userData.nickname,
     };
     await axios.delete(`${process.env.NEXT_PUBLIC_URL}/follow`, { data });
   }
@@ -48,7 +45,10 @@ const StudyUser = (props: StudyUserProps) => {
             <div>팔로잉{userData?.folling}</div>
             <div>팔로워{userData?.follower}</div>{' '}
             <div>
-              <button onClick={pollowController} className="mx-2 bg-black text-white w-[80px] rounded-lg">
+              {}
+              <button
+                onClick={pollowController}
+                className="w-20 h-[30px] ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
                 팔로우
               </button>
               {/* 이미 팔로우한 사람이면 언팔로우가 뜨게 해야함 (내페이지면 아무것도 안보이게)

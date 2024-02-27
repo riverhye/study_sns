@@ -4,7 +4,6 @@ TODO:유저정보 가져오기 (유저닉네임, 팔로잉 팔로워, 내가 팔
 TODO:달력표시할 정보 가져오기 - 어떤 요일에 몇시간?-> 누르면 그 날의 투두 정보 나오게
 TODO:todo리스트 정보 가져오기,생성 
 TODO:업적,랭킹  정보 가져오기 
-!콘솔로그 두번뜨는거 설정 방지 해야 할것 같습니다
 여기서 api를 한번에 받아온 다음 props로 각각의 컴포넌트로 구조분해해서 넘기기
 */
 'use client';
@@ -71,11 +70,17 @@ export default function Study(props: NicknamePropsType) {
   //TODO:studyPageData안에 데이터가 담길예정 -> 나눠서 props에 담아 각각의 컴포넌트에게 전달(Clear)
   return (
     <>
-      {/* 실제 */}
       <div className=" ml-[50px]">
         <StudyUser userData={studyPageData.user} />
-        <StudyTable tableData={studyPageData.studyTable} />
-        <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
+        <div className="flex ">
+          <div className="mr-10 ">
+            <StudyTable tableData={studyPageData.studyTable} />
+          </div>
+          <div className="mt-2 w-[100%] ">
+            <StudyTodo todoData={studyPageData.todo} nickname={nickname} />
+          </div>
+        </div>
+
         <div className="my-5">
           <StudyMyRank myRankData={studyPageData.myRanking} badgeData={studyPageData.badge} />
         </div>

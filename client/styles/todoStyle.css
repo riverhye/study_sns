@@ -1,0 +1,14 @@
+@keyframes vibration {
+  from {
+    transform: rotate(0.5deg);
+  }
+  to {
+    transform: rotate(-0.5deg);
+  }
+}
+.vibration {
+  animation: vibration 0.05s infinite alternate;
+}
+.red-outline {
+  border-color: rgb(253, 68, 68) !important;
+}

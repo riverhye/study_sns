@@ -1,10 +1,12 @@
 //리덕스 값이 변할때마다 api요청
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 //리덕스
 import { setReduxDate } from '@/store/module/date';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { timeStamp } from './timeStamp';
 import axios from 'axios';
+import '../../styles/todoStyle.css';
+
 //리스트를 만들어서 todo값 담기->map으로 돌려서 표현, 다른날자 누르면 리스트를 대체=>map으로 돌려서 바꿔지는 todo리스트
 //그 리스트를 의존성배열에 걸어두면 될듯(리스트도 타입이 필요하겠네..)
 
@@ -17,11 +19,11 @@ interface StudyTodoProps {
   nickname: string;
 }
 interface TodoItem {
-  todoId: number;
-  userId: number;
+  todoId?: number;
+  userId?: number;
   todoContent: string;
-  todoDate: string;
-  nickname: string;
+  todoDate?: string;
+  nickname?: string;
 }
 const StudyTodo = (props: StudyTodoProps) => {
   // 리덕스
@@ -30,13 +32,22 @@ const StudyTodo = (props: StudyTodoProps) => {
   const [todoText, setTodoText] = useState(''); //날짜
   const [todoList, setTodoList] = useState<TodoItem[]>([]); //todo 리스트
 
-  //
-
-  const token = localStorage.getItem('accessToken'); //토큰
+  //todoList배열 추가
+  function addTOdoList(newTodo: TodoItem) {
+    const todoCopy = [...todoList];
+    todoCopy.push(newTodo);
+    setTodoList(todoCopy);
+  }
+  const myNickname = localStorage.getItem('nickname');
+  const token = localStorage.getItem('accessToken'); //토큰가져와서 변수에 저장하는 코드
   const data = props.todoData;
   const nickname = props.nickname;
+  //애니메이션 관련 코드
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
     dispatch(setReduxDate(timeStamp()));
+    console.log(myNickname, nickname);
     //페이지 렌더할때마다 현재시간으로
   }, []);
   useEffect(() => {
@@ -52,13 +63,36 @@ const StudyTodo = (props: StudyTodoProps) => {
     return (
       <>
         {todoList.map((todo, todoId) => (
-          <div key={todoId}>{todo.todoContent}</div>
+          <div className=" rounded-md transition-all border-[1.5px] border-gray-200 w-[350px] h-[80px] my-2 flex items-center mr-3">
+            <div key={todoId} className="ml-3 ">
+              {todo.todoContent}
+            </div>
+          </div>
         ))}
       </>
     );
   }, [todoList]);
   //todo 생성
   async function todoController() {
+    if (todoList.length >= 6) {
+      //input주변이 빨개지면서 흔들거리기
+      const inputElement = inputRef.current;
+      const inputElementT = buttonRef.current;
+      if (inputElement && inputElementT) {
+        inputElement.classList?.add('vibration');
+        inputElement.classList?.add('red-outline');
+        inputElementT.classList?.add('vibration');
+
+        setTimeout(() => {
+          inputElement.classList?.remove('vibration');
+          inputElement.classList?.remove('red-outline');
+          inputElementT.classList?.remove('vibration');
+        }, 400);
+      }
+
+      return;
+      // 6개 이상이면 함수 종료
+    }
     const todoContent = todoText;
     const todoDate = reduxdate;
 
@@ -68,6 +102,7 @@ const StudyTodo = (props: StudyTodoProps) => {
     };
     // console.log(data);
     setTodoText('');
+
     //빈값(띄어쓰기만 있을경우도 포함)을 작성시 함수 종료
     const trimmed = todoContent.trim();
     if (trimmed === '') {
@@ -78,6 +113,7 @@ const StudyTodo = (props: StudyTodoProps) => {
       await axios.post(`${process.env.NEXT_PUBLIC_URL}/study/maketodo`, data, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      addTOdoList({ todoContent: todoContent });
     } catch (error) {
       console.error('Todo 생성 요청이 실패했습니다.', error);
     }
@@ -98,21 +134,29 @@ const StudyTodo = (props: StudyTodoProps) => {
   }
   return (
     <>
-      <div>
-        <div>날짜:{reduxdate}</div>
-        <input
-          type="text"
-          value={todoText}
-          onChange={e => {
-            setTodoText(e.target.value);
-          }}
-          className="border-b-2 border-b-stone-800 outline-none"
-        />
-        <button onClick={todoController} className=" bg-black text-white w-[100px] rounded-lg">
-          입력
-        </button>
-      </div>
-      <div>{SetTodomap}</div>
+      {myNickname === decodeURIComponent(nickname) && (
+        <div>
+          <input
+            ref={inputRef}
+            type="text"
+            value={todoText}
+            onChange={e => {
+              setTodoText(e.target.value);
+            }}
+            className="outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all border-[1.5px] border-subtle-blue shadow w-[350px] h-[38px]"
+            placeholder="TODO 내용을 입력 해주세요"
+          />
+          <button
+            ref={buttonRef}
+            onClick={todoController}
+            className="w-20 h-[40px] ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
+            작성
+          </button>
+        </div>
+      )}
+
+      <div className="my-3">{reduxdate}</div>
+      <div className="flex flex-col flex-wrap h-[200px]  content-start">{SetTodomap}</div>
     </>
   );
 };
