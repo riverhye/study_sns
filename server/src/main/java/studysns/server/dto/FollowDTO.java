@@ -15,4 +15,5 @@ public class FollowDTO {
     private Long userId; // 기준 유저
     private LocalDateTime followTime;
     private Long followingId;
+    
 }

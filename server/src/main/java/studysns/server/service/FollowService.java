@@ -12,6 +12,7 @@ import studysns.server.dto.AllStudyInfoDTO;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import studysns.server.dto.FollowCountDTO;
 import studysns.server.dto.FollowDTO;
 import studysns.server.entity.FollowEntity;
 import studysns.server.entity.StudyEntity;
@@ -64,22 +65,21 @@ public class FollowService {
 
     }
 
-    public List<FollowDTO> getFollowByUserId(long userId) {
-        // userId 기반, 해당 유저의 팔로워 조회
-        List<FollowEntity> followEntities = followRepository.findByUser_UserId(userId);
+    public List<FollowCountDTO> getFollowByUserId(long userId) {
+        Long followerCount = followRepository.countByUserUserId(userId);
+        Long followingCount = followRepository.countByUserFollowUserId(userId);
 
-        // 조회한 팔로워 정보를 FollowDTO 로 변환하여 반환
-        List<FollowDTO> followDTOList = new ArrayList<>();
-        for (FollowEntity entity : followEntities) {
-            FollowDTO dto = FollowDTO.builder()
-                    .followerId(entity.getFollowerId())
-                    .followId(entity.getUserFollow().getUserId())
-                    .userId(entity.getUser().getUserId())
-                    .build();
-            followDTOList.add(dto);
-        }
-        return followDTOList;
+        List<FollowCountDTO> followCountDTOList = new ArrayList<>();
+        FollowCountDTO dto = FollowCountDTO.builder()
+                .followerCount(followerCount)
+                .followingCount(followingCount)
+                .build();
+        followCountDTOList.add(dto);
+        return followCountDTOList;
+
     }
+
+
 
 
 
