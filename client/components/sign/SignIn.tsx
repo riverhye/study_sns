@@ -1,12 +1,10 @@
 'use client';
-
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import { useWebSocket } from '../providers/SocketContext';
-
 export default function SignIn() {
   const { data } = useSession();
   const [userId, setUserId] = useState('');
@@ -16,11 +14,10 @@ export default function SignIn() {
   const [loginType, setLoginType] = useState('');
   const router = useRouter();
   const { connectWebSocket, disconnectWebSocket } = useWebSocket();
-
+  
   useEffect(() => {
     if (data?.user) {
       const { name, email } = data.user;
-  
       // 서버에 로그인 요청
       axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, JSON.stringify({
         email,
@@ -39,9 +36,8 @@ export default function SignIn() {
         if (userId) {
           localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
         }
-
         if (token) {
-          localStorage.setItem('token', token); // 토큰을 로컬 스토리지에 저장
+          localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
         }
         if (nickname) {
           localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
@@ -52,7 +48,6 @@ export default function SignIn() {
       });
     }
   }, [data, loginType]);
-
   const handleSign = async (type: string) => {
     setLoginType(type);
     if (data) {
@@ -60,14 +55,12 @@ export default function SignIn() {
       disconnectWebSocket();
       await signOut();
       }
-
     else {
       // 소셜 로그인 : 소켓 연결
       connectWebSocket();
       await signIn(type, { redirect: true, callbackUrl: '/home' });
     }
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -76,16 +69,13 @@ export default function SignIn() {
         email: email,
         password: password,
       });
-
       if (res.data.token) {
         alert('로그인 성공');
         localStorage.setItem('accessToken', res.data.token);
         localStorage.setItem('nickname', res.data.nickname);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-
         // 소켓 연결
         connectWebSocket();
-
         router.push('/home');
       } else {
         alert('로그인 실패');
@@ -95,9 +85,6 @@ export default function SignIn() {
       alert('로그인 실패!!');
     }
   };
-
-
-
   return (
     <>
       <section>
@@ -126,28 +113,23 @@ export default function SignIn() {
                     placeholder="Password"
                   />
                 </div>
-
                 <button
                   type="submit"
                   className="w-full bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                   로그인
                 </button>
               </form>
-
               <div>
                 <button onClick={() => handleSign('GOOGLE')}>구글 계정 {data ? '로그아웃' : '로그인'}</button>
               </div>
-
               <div>
                 <button onClick={() => handleSign('KAKAO')}>카카오 계정 {data ? '로그아웃' : '로그인'}</button>
               </div>
-
               <Link href={'/user/signup'}>
                 <button>회원가입</button>
               </Link>
             </div>
           </div>
-
           {data?.user ? (
             <>
               <h5>소셜 로그인 정보</h5>

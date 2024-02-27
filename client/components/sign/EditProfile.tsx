@@ -1,13 +1,16 @@
 'use client';
 
+// 'use client' 생략
+
 import { useState } from 'react';
 import axios from 'axios';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
-  const imageUserId: string = localStorage.getItem("user_id") ?? '';
+  // const imageUserId: string = localStorage.getItem("user_id") ?? '';
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
+  const [user_id, setUserid] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -103,6 +106,24 @@ const EditProfile = () => {
     }
   };
 
+  // 탈퇴하기
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
+    if (confirmDelete) {
+      try {
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/delete/{userId}`, {
+          data: {
+            userId: user_id
+          }
+        });
+        console.log('회원 탈퇴가 완료되었습니다.');
+
+      } catch (error) {
+        console.error('회원 탈퇴 실패:', error);
+      }
+    }
+  };
+
   return (
     <>
       <section>
@@ -114,7 +135,7 @@ const EditProfile = () => {
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateProfile}>
                 <div>
-                  <img src={`https://source.boringavatars.com/beam/120/${imageUserId}`} alt="Profile" className="rounded-full w-24 h-24" />
+                  {/* <img src={imageProfile} alt="Profile" className="rounded-full w-24 h-24" /> */}
                   <input type="file" accept="image/*" onChange={handleImageUpload} />
                 </div>
                 <div>
@@ -173,7 +194,7 @@ const EditProfile = () => {
                   수정하기
                 </button>
 
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <button type="button" onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                   탈퇴하기
                 </button>
 
