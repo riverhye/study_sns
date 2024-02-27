@@ -1,16 +1,14 @@
 package studysns.server.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Table(name = "likeTable")
 public class LikeEntity {
 
@@ -24,11 +22,14 @@ public class LikeEntity {
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedId", nullable = false)
+    @JoinColumn(name = "feedId")
     private FeedEntity feed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "studyId", nullable = false)
+    @JoinColumn(name = "studyId")
     private FeedEntity study;
+
+    @Column(name = "isLiked", nullable = false)
+    private boolean isLiked = false;
 
 }

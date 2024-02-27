@@ -1,5 +1,7 @@
 package studysns.server.service;
 
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import studysns.server.dto.LikeDTO;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 
 public class LikeService {
 
@@ -56,6 +59,84 @@ public class LikeService {
         }
         return likeDTOList;
     }
+
+    public String likeFeed(String userId, String feedId) {
+        long parsedUserId = Long.parseLong(userId);
+        UserEntity existingUser = userRepository.findByUserId(parsedUserId);
+
+        String message;
+
+        if (existingUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        FeedEntity feed = feedRepository.findById(Long.parseLong(feedId)).orElse(null);
+        if (feed == null) {
+            throw new IllegalArgumentException("Feed not found");
+        }
+
+        // 이미 좋아요가 있는지 확인
+        LikeEntity existingLike = likeRepository.findByUserAndFeed(existingUser, feed);
+        if (existingLike != null) {
+            // 이미 좋아요가 있으므로 추가하지 않음
+            return message = "이미 좋아요를 눌렀습니다.";
+        }
+
+        // 좋아요 엔터티 생성
+        LikeEntity like = LikeEntity.builder()
+                .user(existingUser)
+                .feed(feed)
+                .isLiked(true)
+                .build();
+
+        likeRepository.save(like);
+
+        message = "좋아요를 눌렀습니다.";
+
+        boolean isLiked = like.isLiked();
+        long returnedFeedId = feed.getFeedId();
+
+        JSONObject Data = new JSONObject();
+        Data.put("isLiked", isLiked);
+        Data.put("feedId", returnedFeedId);
+
+        return message + Data;
+    }
+
+
+
+    public String unlikeFeed(String userId, String feedId) {
+        long parsedUserId = Long.parseLong(userId);
+        UserEntity user = userRepository.findByUserId(parsedUserId);
+        FeedEntity feed = feedRepository.findById(Long.parseLong(feedId)).orElse(null);
+
+        String message;
+
+        if (user == null || feed == null) {
+            throw new IllegalArgumentException("User or feed not found");
+        }
+
+        LikeEntity like = likeRepository.findByUserAndFeed(user, feed);
+        if (like != null) {
+            likeRepository.delete(like);
+
+            message = "좋아요를 취소 했습니다.";
+
+        } else {
+            message = "이미 좋아요를 취소했습니다.";
+        }
+
+        boolean isLiked = false;
+
+        long returnedFeedId = feed.getFeedId();
+
+        JSONObject Data = new JSONObject();
+        Data.put("isLiked", isLiked);
+        Data.put("feedId", returnedFeedId);
+
+        return message + Data;
+    }
+
 }
 
 
