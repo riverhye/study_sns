@@ -7,7 +7,6 @@ import axios from 'axios';
 
 const EditProfile = () => {
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
-  // const imageUserId: string = localStorage.getItem("user_id") ?? '';
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [user_id, setUserid] = useState('');
@@ -54,7 +53,7 @@ const EditProfile = () => {
     }
   };
 
-  // 이미지 업로드 핸들러
+  // 이미지 수정
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = e.target.files ? e.target.files[0] : null;
     if (imageFile) {
@@ -78,7 +77,7 @@ const EditProfile = () => {
     }
   };
   
-  // 수정하기
+  // 회원정보 수정
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
