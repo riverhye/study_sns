@@ -76,6 +76,7 @@ const HomeFeed = () => {
         console.error('피드 데이터', err);
       }
     };
+
     // getData();
   }, []);
 

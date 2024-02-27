@@ -20,19 +20,19 @@ public class FeedEntity {
     private long feedId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "studyId", nullable = true)
+    @JoinColumn(name = "studyId", nullable = false)
     private StudyEntity study;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private UserEntity user;
 
-    @Column(name = "studyContent", nullable = true)
+    @Column(name = "studyContent")
     private String studyContent;
 
-    @Column(name = "studyStartPoint", nullable = true)
+    @Column(name = "studyStartPoint")
     private LocalDateTime studyStartPoint;
 
-    @Column(name = "studyEndPoint", nullable = true)
+    @Column(name = "studyEndPoint")
     private LocalDateTime studyEndPoint;
 }

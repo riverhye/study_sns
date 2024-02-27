@@ -3,6 +3,8 @@ package studysns.server.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,7 @@ import studysns.server.repository.StudyRepository;
 import studysns.server.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,32 +124,52 @@ public class FollowService {
         return userInfos;
     }
 
-//    public String followRequest(String userId, String targetNickname) {
-//        String message;
-//        // 1. userId로 팔로우를 요청한 유저 정보 가져오기
-//        Long userIdLong = Long.parseLong(userId);
-//        UserEntity follower = userRepository.findById(userIdLong)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // 2. targetNickname으로 팔로우 대상 유저 정보 가져오기
-//        UserEntity targetUser = userRepository.findByNickname(targetNickname);
-//        if (targetUser == null) {
-//            throw new RuntimeException("Target user not found");
-//        }
-//
-//        // 3. FollowEntity에 정보 저장
-//        FollowEntity follow = FollowEntity.builder()
-//                .user(follower) // 팔로우 요청을 보낸 유저
-//                .followingId(targetUser.getUserId())  // 팔로우 대상 유저의 아이디
-//                .followTime(LocalDateTime.now())
-//                .build();
-//
-//        followRepository.save(follow);
-//
-//        message = targetNickname + "님이 회원님을 팔로우 했습니다.";
-//
-//        return message;
-//    }
+    public String followRequest(String userId, String targetNickname) {
+        String message;
+        Long userIdLong = Long.parseLong(userId);
+
+        Optional<FollowEntity> userOptional = followRepository.findById(userIdLong);
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        FollowEntity followEntity = userOptional.get();
+
+        Optional<UserEntity> userOptional2 = userRepository.findById(userIdLong);
+        if (userOptional2.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        UserEntity userEntity = userOptional2.get();
+
+        UserEntity TokenUser = userRepository.findById(userIdLong)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("현재 토큰의 유저 ID: {}", TokenUser.getUserId());
+
+        UserEntity targetUser = userRepository.findByNickname(targetNickname);
+        if (targetUser == null) {
+            throw new RuntimeException("Target user not found");
+        }
+        log.info("내가 팔로우 한 유저의 ID: {}", targetUser.getUserId());
+
+        FollowEntity follow = FollowEntity.builder()
+                .user(targetUser) // 팔로우 요청을 한 유저 (현재 토큰의 유저)
+                .userFollow(TokenUser)// 내가 팔로우 한 유저
+                .followTime(LocalDateTime.now())
+                .build();
+
+        followRepository.save(follow);
+
+        JSONObject additionalData = new JSONObject();
+        additionalData.put("feedId", followEntity.getFollowerId());
+        additionalData.put("profileImage", userEntity.getProfileImage());
+        additionalData.put("date", LocalDateTime.now().toString());
+        additionalData.put("nickname", targetNickname);
+
+        message = targetNickname + " 님을 팔로우 했습니다.";
+
+        return message + additionalData.toString();
+    }
 
 
 }
