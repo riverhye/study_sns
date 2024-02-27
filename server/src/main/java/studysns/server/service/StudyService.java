@@ -13,7 +13,11 @@ import studysns.server.repository.StudyRepository;
 import studysns.server.repository.TodoRepository;
 import studysns.server.repository.UserRepository;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -89,25 +93,18 @@ public class StudyService {
         return todoDTOList;
     }
 
-//    public AllStudyInfoDTO.MyRanking getMyRankingByNickname(String nickname) {
-//        UserEntity user = userRepository.findByNickname(nickname);
-//        if (user == null) {
-//            throw new IllegalArgumentException("사용자를 찾을 수 없습니다");
-//        }
-//
-//        // 사용자의 최신 학습 기록을 가져옵니다
-//        StudyEntity latestStudy = studyRepository.findByUser_todayStudyDate(user.getUserId());
-//
-//        if (latestStudy == null) {
-//            // 사용자에 대한 학습 기록이 없는 경우 처리
-//            throw new IllegalArgumentException("사용자에 대한 학습 기록을 찾을 수 없습니다");
-//        }
-//
-//        return AllStudyInfoDTO.MyRanking.builder()
-//                .rankingDate(latestStudy.getRankingDate())
-//                .rankingTime(StudyDTO.getStudyDate().toString())
-//                .build();
-//    }
+
+
+    public AllStudyInfoDTO.MyRanking getMyRanking (Long userId) {
+        StudyEntity studyEntity = studyRepository.findFirstByUser_UserIdOrderByTodayStudyTimeDesc(userId);
+
+        AllStudyInfoDTO.MyRanking myRanking = AllStudyInfoDTO.MyRanking.builder()
+                .rankingTime(studyEntity.getTodayStudyTime())
+                .rankingDate(String.valueOf(studyEntity.getStudyDate()))
+                .build();
+
+        return myRanking;
+    }
 
 //    public AllStudyInfoDTO.Badge getBadgeByNickname(String nickname) {
 //
