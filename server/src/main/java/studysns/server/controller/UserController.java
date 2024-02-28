@@ -174,7 +174,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/editprofile/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal String userId, @RequestHeader(value="Authorization") String token) {
         try {
             // 사용자 존재 여부 확인
