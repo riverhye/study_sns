@@ -38,7 +38,8 @@ const StudyMyRank = (props: StudyMyRankProps) => {
         <div className="ml-3 text-[40px] flex items-center">
           <div className="  ml-5 flex">
             {' '}
-            <div className=" font-bold text-main-blue mr-1">{clientRanking}</div>
+            <div className=" font-bold text-main-blue mr-1">{(clientRanking / 60).toFixed(2)}</div>
+            {/* 소숫점 2자리수까지만 표현 */}
             <div>시간</div>
           </div>
           {!myRankData?.rankingTime == undefined && <div>{myRankData?.rankingDate}</div>}

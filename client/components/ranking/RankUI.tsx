@@ -18,7 +18,12 @@ const RankUI = (props: props) => {
       <div className=" flex outline outline-1 w-[75%] h-[80px] rounded-md items-center justify-between ">
         <div className=" flex items-center">
           <div className="mr-1 ml-3">{props.index + 1}.</div>
-          <div className="w-[60px] bg-amber-200 rounded-full h-[60px] mr-3">{contents.profileImage}</div>
+
+          <img
+            src={contents.profileImage}
+            alt="Profile"
+            className="w-[60px] bg-amber-200 rounded-full h-[60px] mr-3  "
+          />
           <div className="mr-3">임시(db연결되면 지워야함):닉네임{contents.nickname}</div>
         </div>
 
