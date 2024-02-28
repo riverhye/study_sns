@@ -6,7 +6,8 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { timeStamp } from './timeStamp';
 import axios from 'axios';
 import '../../styles/todoStyle.css';
-
+//아이콘
+import { Icon } from '@iconify/react/dist/iconify.js';
 //리스트를 만들어서 todo값 담기->map으로 돌려서 표현, 다른날자 누르면 리스트를 대체=>map으로 돌려서 바꿔지는 todo리스트
 //그 리스트를 의존성배열에 걸어두면 될듯(리스트도 타입이 필요하겠네..)
 
@@ -31,6 +32,7 @@ const StudyTodo = (props: StudyTodoProps) => {
   const reduxdate = useAppSelector(state => state.date.date);
   const [todoText, setTodoText] = useState(''); //날짜
   const [todoList, setTodoList] = useState<TodoItem[]>([]); //todo 리스트
+  //ref정의
 
   //todoList배열 추가
   function addTOdoList(newTodo: TodoItem) {
@@ -63,15 +65,45 @@ const StudyTodo = (props: StudyTodoProps) => {
     return (
       <>
         {todoList.map((todo, todoId) => (
-          <div className=" rounded-md transition-all border-[1.5px] border-gray-200 w-[350px] h-[80px] my-2 flex items-center mr-3">
-            <div key={todoId} className="ml-3 ">
-              {todo.todoContent}
+          <div className="group">
+            <div className=" rounded-md transition-all border-[1.5px] border-gray-200 w-[350px] h-[80px] my-2 flex items-center mr-3 justify-between  group-hover:outline outline-rose-200">
+              <div key={todoId} className="ml-3">
+                {todo.todoContent}
+              </div>
+              <button
+                className={`mr-3 text-rose-300 ml-auto ${myNickname === decodeURIComponent(nickname) ? 'hidden group-hover:block' : 'hidden'} `}
+                onClick={() => deleteIcon(todo.todoId)}>
+                <Icon icon="zondicons:minus-outline" />
+              </button>
             </div>
           </div>
         ))}
       </>
     );
   }, [todoList]);
+
+  //호버시에 삭제 뜨는 함수
+  async function deleteIcon(todoid: number | undefined) {
+    //유저가 일치 한다면
+    if (myNickname === decodeURIComponent(nickname)) {
+      //호버했을때 보여진다음 삭제 axios요청
+      //pop해서 새로운 배열 등록
+      //!어떻게 요소를 분간할 것인가?
+      console.log('요청들어감', todoid);
+      try {
+        await axios.delete(`${process.env.NEXT_PUBLIC_URL}/study/deletetodo`, {
+          data: { todoId: todoid },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (error) {
+        console.error('todo삭제 실패', error);
+      }
+
+      //!axios를 다시 요청해서 배열을 바꿀것인가?
+      console.log('삭제 버튼 클릭');
+    }
+  }
+
   //todo 생성
   async function todoController() {
     if (todoList.length >= 6) {
@@ -118,8 +150,6 @@ const StudyTodo = (props: StudyTodoProps) => {
       console.error('Todo 생성 요청이 실패했습니다.', error);
     }
   }
-
-  //비동기 처리
 
   //todo 가져오기
   async function getTodo() {
