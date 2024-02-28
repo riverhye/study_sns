@@ -18,4 +18,5 @@ public class UserDTO {
     private String profileImage; // 파일이 저장될 위치 또는 URL
     private String token;
     private MultipartFile profileImageFile; // 프로필 이미지 파일
+
 }
