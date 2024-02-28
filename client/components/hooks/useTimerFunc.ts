@@ -77,11 +77,11 @@ const useTimerFunc = () => {
     // 소켓을 통해 서버로 데이터 전송
     if (socket) {
       try {
-        const rank = { action: 'rank' };
-        socket.send(JSON.stringify(rank));
-        console.log('rank send');
+        const pause = { action: 'pause' };
+        socket.send(JSON.stringify(pause));
+        console.log('pause send');
       } catch (error) {
-        console.error('rank timer', error);
+        console.error('pause timer', error);
       }
       socket.onmessage = (evt: IMessageEvent) => {
         console.log(JSON.parse(evt.data as string));
