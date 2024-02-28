@@ -5,6 +5,8 @@ import { setReduxTimer } from '@/store/module/timer';
 import { TimerState } from '@/type/type';
 import axios from 'axios';
 import { useWebSocket } from '../providers/SocketContext';
+import { connectWebSocket } from '../providers/SocketService';
+import { IMessageEvent } from 'websocket';
 
 const useTimerFunc = () => {
   const dispatch = useDispatch();
@@ -22,7 +24,6 @@ const useTimerFunc = () => {
       try {
         const play = { action: 'play', studyContent: content };
         socket.send(JSON.stringify(play));
-        console.log('내용', content);
         console.log('play send');
       } catch (error) {
         console.error('start socket', error);
@@ -76,11 +77,11 @@ const useTimerFunc = () => {
     // 소켓을 통해 서버로 데이터 전송
     if (socket) {
       try {
-        const unlike = { action: 'unlike' };
-        socket.send(JSON.stringify(unlike));
-        console.log('unlike send');
+        const pause = { action: 'pause' };
+        socket.send(JSON.stringify(pause));
+        console.log('pause send');
       } catch (error) {
-        console.error('unlike timer', error);
+        console.error('pause timer', error);
       }
     }
 
@@ -103,7 +104,7 @@ const useTimerFunc = () => {
 
     // 소켓을 통해 서버로 데이터 전송
     try {
-      if (socket && sendToServer) {
+      if (socket) {
         const stop = { action: 'stop' };
         socket.send(JSON.stringify(stop));
         console.log('stop send');

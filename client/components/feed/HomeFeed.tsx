@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { UserFeedData, TimerState } from '@/type/type';
+import { UserFeedData, TimerState, SocketMessage } from '@/type/type';
 import { useEffect, useRef, useState } from 'react';
 import UpdateFeed from './UpdateFeed';
 import FeedContent from './FeedContent';
@@ -49,7 +49,51 @@ const HomeFeed = () => {
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
   const { startStudy, pauseStudy, endStudy } = useTimerFunc();
   const token = localStorage.getItem('accessToken');
+  const nickname = localStorage.getItem('nickname');
   const { socket } = useWebSocket();
+
+  if (socket) {
+    try {
+      socket.onmessage = evt => {
+        try {
+          console.log('걍 DATA', evt.data);
+          const data = evt.data as string;
+          const parsedData = JSON.parse(data);
+          // play, pause, stop
+          if (parsedData) {
+            // setFeedData()
+            console.log('parsed: ', parsedData);
+          }
+
+          // pause
+          if (data.includes('휴식')) {
+            setFeedData({
+              message: data,
+              date: '2024-02-02',
+              feedId: 0,
+              nickname: data.slice(0, 13),
+              profileImage: null,
+            });
+          }
+          // const parsedData = JSON.parse(evt);
+
+          // if (parsedData.type === 'play') {
+          //   console.log('play data: ', JSON.parse(parsedData.message));
+          // } else if (parsedData.type === 'pause') {
+          //   console.log('pause data: ', JSON.parse(parsedData.message));
+          // } else if (parsedData.type === 'stop') {
+          //   console.log('stop data: ', JSON.parse(parsedData.message));
+          // } else {
+          //   console.warn('Unknown message type:', parsedData.type);
+          // }
+        } catch (jsonError) {
+          console.error('Error parsing JSON:', jsonError);
+        }
+      };
+    } catch (error) {
+      console.error('start socket', error);
+    }
+  }
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
   useEffect(() => {
@@ -97,14 +141,40 @@ const HomeFeed = () => {
     //   }
   };
 
-  // 피드 좋아요
+  // [알림] 피드 좋아요
+  let feedId: number; // 해당 피드만
+
   const handleLike = async (index: number) => {
     try {
-      // TODO : socket emit, UI 변경
-      const userId = '임시';
+      const userIdOrNull = localStorage.getItem('userId');
+      const userId: number = userIdOrNull ? +userIdOrNull : 0;
+
       const updatedFeedData = [...feedData];
       updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
       setFeedData(updatedFeedData);
+
+      if (socket) {
+        try {
+          // 좋아요 추가
+          if (feedData[index].isLike !== updatedFeedData[index].isLike) {
+            feedId = updatedFeedData[index].feedId;
+            const message: SocketMessage = { userId, feedId };
+            console.log(message);
+            socket.send(message);
+          }
+
+          // 내 피드인 경우에만 feedData에 넣기 + 알림 아이콘 추가
+          // 내 피드 : nickname과 비교
+          socket.onmessage = (evt: IMessageEvent) => {
+            console.log(evt.data);
+            // if(nickname === 받아온닉네임) {
+            // setFeedData(evt.data); // feedData에 넣기
+            // }
+          };
+        } catch (error) {
+          console.error('start socket', error);
+        }
+      }
 
       // const res = await axios.post(
       //   `${process.env.NEXT_PUBLIC_URL}/like/addlike`,
@@ -150,63 +220,94 @@ const HomeFeed = () => {
     else setValid(false);
   }, [studyStatus]);
 
+  if (socket) {
+    try {
+      socket.onmessage = evt => {
+        try {
+          console.log('걍 DATA', evt.data);
+          const data = evt.data as string;
+          const parsedData = JSON.parse(data);
+          // play, pause, stop
+          if (parsedData) {
+            // setFeedData()
+            console.log('parsed: ', parsedData);
+          }
+
+          // pause
+          if (data.includes('휴식')) {
+            setFeedData(prevFeedData => [
+              ...prevFeedData,
+              {
+                message: data,
+                date: '2024-02-02',
+                feedId: 0,
+                nickname: data.slice(0, 13),
+                profileImage: null,
+              },
+            ]);
+          }
+
+          // const parsedData = JSON.parse(evt);
+
+          // if (parsedData.type === 'play') {
+          //   console.log('play data: ', JSON.parse(parsedData.message));
+          // } else if (parsedData.type === 'pause') {
+          //   console.log('pause data: ', JSON.parse(parsedData.message));
+          // } else if (parsedData.type === 'stop') {
+          //   console.log('stop data: ', JSON.parse(parsedData.message));
+          // } else {
+          //   console.warn('Unknown message type:', parsedData.type);
+          // }
+        } catch (jsonError) {
+          console.error('Error parsing JSON:', jsonError);
+        }
+      };
+    } catch (error) {
+      console.error('start socket', error);
+    }
+  }
+
   return (
     <>
-      {token ? (
-        <section>
-          <div className="flex justify-center h-12 w-full mt-10">
-            {!valid && (
-              <>
-                <input
-                  onChange={e => setValue({ content: e.target.value, error: '' })}
-                  value={value.content}
-                  onKeyDown={handleEnter}
-                  placeholder="무엇을 공부할까요?"
-                  ref={inputRef}
-                  className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
-                  disabled={valid}
-                />
-                <button
-                  onClick={handleContent}
-                  type="button"
-                  disabled={valid}
-                  className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
-                  START
-                </button>
-              </>
-            )}
-          </div>
-          <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
-            {value.error}
-          </div>
-          <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
-          <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
-        </section>
-      ) : (
-        <>
-          <div className="flex justify-center h-12 w-full mt-10">
-            <input
-              onChange={e => setValue({ content: e.target.value, error: '' })}
-              value={value.content}
-              onKeyDown={handleEnter}
-              placeholder="무엇을 공부할까요?"
-              ref={inputRef}
-              className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
-              disabled={valid}
-            />
-            <button
-              onClick={handleContent}
-              type="button"
-              disabled={valid}
-              className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
-              START
-            </button>
-          </div>
+      <section>
+        <div className="flex justify-center h-12 w-full mt-10">
+          {!valid && (
+            <>
+              <input
+                onChange={e => setValue({ content: e.target.value, error: '' })}
+                value={value.content}
+                onKeyDown={handleEnter}
+                placeholder="무엇을 공부할까요?"
+                ref={inputRef}
+                className="w-1/4 outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all"
+                disabled={valid}
+              />
+              <button
+                onClick={handleContent}
+                type="button"
+                disabled={valid}
+                className={`w-20 ml-3 rounded-md ${valid ? 'bg-slate-200' : 'bg-strong-yellow'} active:filter-none shadow-md transform active:scale-75 transition-transform`}>
+                START
+              </button>
+            </>
+          )}
+        </div>
+        <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
+          {value.error}
+        </div>
+
+        {/* 피드 데이터가 있으면 , 없으면 */}
+        {feedData ? (
+          <>
+            <UpdateFeed handleUpdateFeed={handleUpdateFeed} />
+            <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
+          </>
+        ) : (
           <div className="mt-32">
             <NoFeed />
           </div>
-        </>
-      )}
+        )}
+      </section>
     </>
   );
 };
