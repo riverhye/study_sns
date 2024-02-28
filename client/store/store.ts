@@ -1,6 +1,14 @@
+store.ts
+
+
+
+
+
+
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import dateReducer from './module/date';
+import signReducer from './module/sign';
 import timerReducer from './module/timer';
 import triggerReducer from './module/trigger';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
@@ -32,6 +40,7 @@ const rootReducer = combineReducers({
   date: dateReducer,
   timer: timerReducer,
   trigger: triggerReducer,
+  sign: signReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
