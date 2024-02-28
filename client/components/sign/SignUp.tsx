@@ -84,7 +84,7 @@ const SignUp = () => {
       });
 
       alert('회원가입 성공');
-      router.push('/home');
+      router.push('/');
     } catch (error) {
       console.error('Error signing up:', error);
       alert('회원가입 실패!!');
