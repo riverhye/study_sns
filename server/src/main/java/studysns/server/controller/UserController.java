@@ -68,7 +68,7 @@ public class UserController {
             UserDTO responseUserDTO = UserDTO.builder()
                 .email(responseUser.getEmail())
                 .nickname(responseUser.getNickname())
-                .password(responseUser.getPassword())
+                .password(null)
                 .loginType(responseUser.getLoginType())
                 .profileImage(responseUser.getProfileImage())  // 변경된 프로필 이미지 URL을 DTO에도 저장
                 .userId(responseUser.getUserId())
@@ -121,34 +121,26 @@ public class UserController {
         return "GET /editprofile by user id "+ userId;
     }
 
-    @PatchMapping("/editprofile/process/{userId}")
-    public ResponseEntity<?> editUserProfile(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
+    @PatchMapping("/editprofile/process")
+    public ResponseEntity<?> editUserProfile(@AuthenticationPrincipal String userId, @RequestBody UserDTO userDTO, @RequestHeader(value="Authorization") String token) {
         try {
-            // 사용자 ID를 기반으로 기존 사용자 검색
-            UserEntity existingUser = userService.findUserById(userId);
+            token = token.substring(7);
+
+            UserEntity existingUser = userService.findUserById(Long.valueOf(userId));
             if (existingUser == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            // 받은 DTO로부터 사용자 정보 업데이트
-            existingUser.setEmail(userDTO.getEmail());
             existingUser.setNickname(userDTO.getNickname());
-            // 비밀번호 변경 시, 암호화 처리
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 existingUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
-            existingUser.setLoginType(userDTO.getLoginType());
-            existingUser.setProfileImage(userDTO.getProfileImage());
 
-            // 사용자 정보 업데이트
             UserEntity updatedUser = userService.updateUser(existingUser);
 
-            // 응답 DTO 생성
             UserDTO responseUserDTO = UserDTO.builder()
-                    .email(updatedUser.getEmail())
                     .nickname(updatedUser.getNickname())
-                    .password(updatedUser.getPassword()) // 응답에 비밀번호 포함을 피함
-                    .loginType(updatedUser.getLoginType())
+                    .password(null) // 응답에 비밀번호 포함을 피함
                     .profileImage(updatedUser.getProfileImage())
                     .userId(updatedUser.getUserId())
                     .build();
