@@ -67,11 +67,11 @@ const EditProfile = () => {
     setNewPassword(newPasswordValue);
   };
 
-  // 기존 비밀번호 확인
-  const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const currentPasswordValue = e.target.value;
-    setCurrentPassword(currentPasswordValue);
-  };
+  // // 기존 비밀번호 확인
+  // const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const currentPasswordValue = e.target.value;
+  //   setCurrentPassword(currentPasswordValue);
+  // };
 
   // 새 비밀번호 확인
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,33 +84,31 @@ const EditProfile = () => {
     }
   };
 
-  // 회원정보 수정
-  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      if (!validPassword || !nicknameAvailable || !passwordMatch) {
-        console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
-        return;
-      }
-    
-      if (newPassword !== confirmNewPassword) {
-        console.error('새 비밀번호가 일치하지 않습니다.');
-        setPasswordMatch(false);
-        return;
-      }
-    
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/`, {
-        nickname: nickname,
-        password: password,
-        newPassword: newPassword
-      });
-    
-      console.log('정보 수정이 완료되었습니다.');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      console.log('정보 수정 실패');
+const handlePasswordUpdate = async () => {
+  try {
+    if (!validPassword || !passwordMatch) {
+      console.error('비밀번호 형식이 올바르지 않거나 비밀번호가 일치하지 않습니다.');
+      return;
     }
-  };
+
+    if (newPassword !== confirmNewPassword) {
+      console.error('새 비밀번호가 일치하지 않습니다.');
+      setPasswordMatch(false);
+      return;
+    }
+
+    const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/`, {
+      password: password,
+      newPassword: newPassword
+    });
+    alert('비밀번호 수정 성공');
+    console.log('비밀번호 수정이 완료되었습니다.');
+
+  } catch (error) {
+    console.error('Error updating password:', error);
+    console.log('비밀번호 수정 실패');
+  }
+};
 
   // 탈퇴하기
   const handleDeleteAccount = async () => {
@@ -142,7 +140,8 @@ const EditProfile = () => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 정보수정
               </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateProfile}>
+              <form className="space-y-4 md:space-y-6" >
+                {/* onSubmit={handleUpdateProfile} */}
                 <div>
                   <img src={profileImage} alt="Profile" className="rounded-full w-24 h-24" />
                   <input type="file" accept="image/*" onChange={handleImageUpload} />
@@ -161,7 +160,12 @@ const EditProfile = () => {
                   {nickname && !nicknameAvailable && (<span className="text-red-600">이미 사용 중인 닉네임입니다.</span>)}
                   {nickname && isNicknameValid && nicknameAvailable && (<span className="text-blue-600">사용 가능한 닉네임입니다.</span>)}
                 </div>
-                <div>
+
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  닉네임 수정하기
+                </button>
+
+                {/* <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">기존 비밀번호</label>
                   <input
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -173,7 +177,9 @@ const EditProfile = () => {
                   {!currentPassword && (<span className="text-blue-600">기존 비밀번호를 입력해주세요.</span>)}
                   {currentPassword && !password && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
                   {currentPassword && currentPassword === password && (<span className="text-blue-600">비밀번호 일치</span>)}
-                </div>
+                </div> */}
+
+
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호</label>
                   <input
@@ -199,13 +205,15 @@ const EditProfile = () => {
                   {confirmNewPassword && !passwordMatch && (<span className="text-red-600">새 비밀번호가 일치하지 않습니다.</span>)}
                   {confirmNewPassword && confirmNewPassword === newPassword && (<span className="text-blue-600">새 비밀번호 일치</span>)}
                 </div>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  수정하기
+                <button type="button" onClick={handlePasswordUpdate} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  비밀번호 수정하기
                 </button>
-
-                <button type="button" onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                  탈퇴하기
-                </button>
+                <br/>
+                <div className="flex justify-end"> 
+                  <button type="button" onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    탈퇴하기
+                  </button>
+                </div>
 
               </form>
             </div>
