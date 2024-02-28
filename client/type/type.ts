@@ -22,7 +22,7 @@ export interface UserFeedData {
   action?: string;
   message: string;
   date: string;
-  feedId: number;
+  feedId?: number;
   nickname: string;
   profileImage: string | null;
   isLike?: boolean;
@@ -90,3 +90,8 @@ export interface FollowerRank {
   todayStudyTime: number;
 }
 [];
+
+export interface SocketMessage {
+  action: string;
+  feedId: number;
+}

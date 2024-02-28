@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import { useWebSocket } from '../providers/SocketContext';
+import { setReduxToken } from '@/store/module/sign';
+import { useDispatch } from 'react-redux';
 export default function SignIn() {
   const { data } = useSession();
   const [userId, setUserId] = useState('');
@@ -14,53 +16,104 @@ export default function SignIn() {
   const [loginType, setLoginType] = useState('');
   const router = useRouter();
   const { connectWebSocket, disconnectWebSocket } = useWebSocket();
-  
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (data?.user) {
       const { name, email } = data.user;
       // 서버에 로그인 요청
-      axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, JSON.stringify({
-        email,
-        nickname: name
-      }), {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        console.log(response);
-        const userId = response?.data?.userId
-        const token = response?.data?.token; // 응답에서 토큰 추출
-        const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
+      axios
+        .post(
+          `${process.env.NEXT_PUBLIC_URL}/user/social/login`,
+          JSON.stringify({
+            email,
+            nickname: name,
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+        .then(response => {
+          console.log(response);
+          const userId = response?.data?.userId;
+          const token = response?.data?.token; // 응답에서 토큰 추출
+          const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
 
-        if (userId) {
-          localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
-        }
-        if (token) {
-          localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
-        }
-        if (nickname) {
-          localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
-        }
-      })
-      .catch(error => {
-        console.error('Request failed:', error);
-      });
+          if (userId) {
+            localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
+          }
+          if (token) {
+            localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
+          }
+          if (nickname) {
+            localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
+          }
+        })
+        .catch(error => {
+          console.error('Request failed:', error);
+        });
     }
   }, [data, loginType]);
+
   const handleSign = async (type: string) => {
     setLoginType(type);
+    console.log('sgin');
     if (data) {
-       // 소셜 로그아웃 : 소켓 끊기
+      // 소셜 로그아웃 : 소켓 끊기
+      console.log(1111111);
       disconnectWebSocket();
+      localStorage.removeItem('userId'); // 토큰을 로컬 스토리지에 저장
+      localStorage.removeItem('accessToken'); // 토큰을 로컬 스토리지에 저장
+      localStorage.removeItem('nickname'); // 닉네임을 로컬 스토리지에 저장
       await signOut();
-      }
-    else {
+    } else {
+      console.log('2222222');
       // 소셜 로그인 : 소켓 연결
+      if (data && typeof data === 'object' && 'user' in data) {
+        const { name, email } = (data as { user: { name: string; email: string } }).user;
+        // 서버에 로그인 요청
+        axios
+          .post(
+            `${process.env.NEXT_PUBLIC_URL}/user/social/login`,
+            JSON.stringify({
+              email,
+              nickname: name,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+          .then(response => {
+            console.log(response);
+            const userId = response?.data?.userId;
+            const token = response?.data?.token; // 토큰을 로컬 스토리지에 저장
+            const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
+
+            if (userId) {
+              localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
+            }
+            if (token) {
+              localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
+              const tokenSet = localStorage.getItem('accessToken');
+              dispatch(setReduxToken(tokenSet));
+            }
+            if (nickname) {
+              localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
+            }
+          })
+          .catch(error => {
+            console.error('Request failed:', error);
+          });
+      }
       connectWebSocket();
-      await signIn(type, { redirect: true, callbackUrl: '/home' });
+      await signIn(type, { redirect: false, callbackUrl: '/' });
     }
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -72,6 +125,9 @@ export default function SignIn() {
       if (res.data.token) {
         alert('로그인 성공');
         localStorage.setItem('accessToken', res.data.token);
+        const token = localStorage.getItem('accessToken');
+        dispatch(setReduxToken(token));
+        localStorage.setItem('userId', res.data.userId);
         localStorage.setItem('nickname', res.data.nickname);
         localStorage.setItem('profileImage', res.data.profileImage);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
@@ -121,27 +177,26 @@ export default function SignIn() {
                 </button>
               </form>
               <div>
-                <button onClick={() => handleSign('GOOGLE')}>구글 계정 {data ? '로그아웃' : '로그인'}</button>
+                <button onClick={() => handleSign('GOOGLE')}>구글</button>
               </div>
-              <div>
-                <button onClick={() => handleSign('KAKAO')}>카카오 계정 {data ? '로그아웃' : '로그인'}</button>
-              </div>
+              {/* <div> */}
+              {/* <button onClick={() => handleSign('KAKAO')}>카카오 계정 {data ? '로그아웃' : '로그인'}</button> */}
+              {/* </div> */}
               <Link href={'/user/signup'}>
                 <button>회원가입</button>
               </Link>
             </div>
           </div>
-          {data?.user ? (
-            <>
-              <h5>소셜 로그인 정보</h5>
-              <div>{data.user.name}</div>
-              <div>{data.user.email}</div>
-              {/* <img src={data.user.image!} alt="user img" /> */}
-              {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오 , 랜덤닉네임*/}
-            </>
-          ) : (
-            ''
-          )}
+
+          {/* {data?.user && ( */}
+          {/* <> */}
+          {/* <h5>소셜 로그인 정보</h5> */}
+          {/* <div>{data.user.name}</div> */}
+          {/* <div>{data.user.email}</div> */}
+          {/* <img src={data.user.image!} alt="user img" /> */}
+          {/* 로그인 타입 지정...구글이면 구글 카카오면 카카오 , 랜덤닉네임*/}
+          {/* </> */}
+          {/* )} */}
         </div>
       </section>
     </>

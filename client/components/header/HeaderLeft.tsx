@@ -7,22 +7,34 @@ import Timer from './Timer';
 import TodoHeader from './TodoHeader';
 import { useEffect, useState } from 'react';
 import Logout from '../sign/Logout';
+import { useAppSelector } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
+import { resetReduxToken } from '@/store/module/sign';
+import { resetReduxTrigger, setReduxTrigger } from '@/store/module/trigger';
 
 const HeaderLeft = () => {
   const token = localStorage.getItem('accessToken');
+  const dispatch = useDispatch();
+  const getToken = useAppSelector(state => state.sign.token);
 
   const handleSignOut = () => {
-    // 리렌더가 왜 안 될까..
-    // localStorage.removeItem('accessToken');
-    // localStorage.removeItem('nickname');
+    dispatch(resetReduxToken());
+    dispatch(resetReduxTrigger());
   };
+
+  useEffect(() => {
+    // 토큰이 없을 때만 로그아웃 처리
+    if (!token) {
+      handleSignOut();
+    }
+  }, [token]);
 
   return (
     <>
       <div className="flex flex-col h-auto w-1/4 px-4 bg-main-blue p-0">
         <Category />
         <TodoHeader />
-        {token && (
+        {getToken && (
           <>
             <Timer />
             <div className="relative inline-block text-left mt-6">

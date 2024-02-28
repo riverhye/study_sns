@@ -11,7 +11,11 @@ const Category = () => {
 
   const items: Categories[] = [
     { href: '/', text: '홈', svgComponent: <HomeIcon color={selectedCategory === 0 ? 'white' : 'none'} /> },
-    { href: '/search', text: '검색', svgComponent: <SearchIcon color={selectedCategory === 1 ? 'white' : 'none'} /> },
+    {
+      href: `${token ? '/search' : '/'}`,
+      text: '검색',
+      svgComponent: <SearchIcon color={selectedCategory === 1 ? 'white' : 'none'} />,
+    },
     {
       href: `${token ? `/study/${nickname}` : '/'}`,
       text: '내 공부',

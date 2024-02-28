@@ -30,40 +30,38 @@ const HeaderTop: React.FC = () => {
   const { socket } = useWebSocket();
 
   // 미리 작성: follower 목록 소켓 send
-  // useEffect(() => {
-  //   if (socket) {
-  //     try {
-  //       // 1분에 한 번씩 setInterval 요청
-  //       const intervalId = setInterval(()=>{
-  //         const rank = { action: 'rank' };
-  //         socket.send(JSON.stringify(rank));
-  //         console.log('send data');
-  //         socket.onmessage = (evt: IMessageEvent) => {
-  //           if(evt.data) {
-  //             console.log('follower rank socket');
-  //             // setFollowerList();
-  //           }
-  //           else {}
-  //         };
-  //       },1000*60);
+  useEffect(() => {
+    if (socket) {
+      try {
+        const rank = { action: 'rank' };
 
-  //       return () => clearInterval(intervalId);
-  //     } catch (error) {
-  //       console.error('follow socket', error);
-  //     }
-  //   }
+        const handleSocketMessage = (evt: IMessageEvent) => {
+          if (evt.data) {
+            console.log('follower rank socket');
+            // setFollowerList();
+          } else {
+          }
+        };
 
-  //   //   const getData = async () => {
-  //   //     try {
-  //   //       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}`);
-  //   //       setFollowerList(res.data);
-  //   //     } catch (error) {
-  //   //       console.error('팔로워 header', error);
-  //   //     }
-  //   //   };
+        // 1분에 한 번씩 setInterval 요청
+        const intervalId = setInterval(() => {
+          socket.send(JSON.stringify(rank));
+          console.log('send data');
+        }, 3000);
 
-  //   // getData();
-  // }, []);
+        // 메시지 이벤트에 대한 콜백 등록
+        socket.onmessage = handleSocketMessage;
+
+        return () => {
+          // 클리어할 때 이전에 등록한 콜백을 해제
+          socket.onmessage = handleSocketMessage;
+          clearInterval(intervalId);
+        };
+      } catch (error) {
+        console.error('follow socket', error);
+      }
+    }
+  }, []);
 
   return (
     <div className="mt-5">
@@ -100,11 +98,11 @@ const HeaderTop: React.FC = () => {
               <SwiperSlide key={follower.nickname}>
                 <div className="flex flex-col items-center mx-4">
                   <div className="has-tooltip relative">
-                    {/* <Link href={`/study/${follower.nickname}`}> */}
-                    <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
-                      <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
-                    </div>
-                    {/* </Link> */}
+                    <Link href={`/study/${follower.nickname}`}>
+                      <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
+                        <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
+                      </div>
+                    </Link>
                     <div className=" absolute top-4 tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center cursor-default">
                       {follower.nickname}
                       <span className="block text-center cursor-default">00:00</span>

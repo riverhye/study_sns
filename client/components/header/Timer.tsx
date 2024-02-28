@@ -15,7 +15,7 @@ const Timer = () => {
   return (
     <>
       <div className="flex items-center">
-        <div className="w-20 h-20 rounded-full border-2 overflow-hidden">
+        <div className="w-20 h-20 rounded-full border-2 overflow-hidden object-fill md:w-14 md:h-14">
           <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
         </div>
         <div className="flex flex-col justify-center ml-2">
