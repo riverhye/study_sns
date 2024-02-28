@@ -22,10 +22,11 @@ import { NicknamePropsType } from '../../../type/type';
 //Study페이지 조회 데이터 타입
 interface StudyPageData {
   user: {
+    userimage: string;
     nickname: string;
     email: string;
-    folling: number;
-    follower: number;
+    followingId: number;
+    followerId: number;
   };
   studyTable: {
     todayStudyTime: number;
@@ -45,7 +46,7 @@ export default function Study(props: NicknamePropsType) {
   const nickname = props.params.nickname;
 
   const [studyPageData, setStudyPageData] = useState<StudyPageData>({
-    user: { nickname: 'tNickname', email: 'tEmail@dot.com', folling: 0, follower: 0 },
+    user: { nickname: 'tNickname', email: 'tEmail@dot.com', followingId: 0, followerId: 0, userimage: '' },
     studyTable: [],
     todo: [],
     myRanking: { rankingDate: '', rankingTime: 0 },
@@ -59,6 +60,7 @@ export default function Study(props: NicknamePropsType) {
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/${nickname}`);
         setStudyPageData(res.data);
+        console.log('유저데이터', res.data);
       } catch (error) {
         console.error('스터디페이지 데이터 가져오기 실패:', error);
       }

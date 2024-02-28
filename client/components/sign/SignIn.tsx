@@ -22,38 +22,37 @@ export default function SignIn() {
     if (data?.user) {
       const { name, email } = data.user;
       // 서버에 로그인 요청
-      axios
-        .post(
-          `${process.env.NEXT_PUBLIC_URL}/user/social/login`,
-          JSON.stringify({
-            email,
-            nickname: name,
-          }),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-        .then(response => {
-          console.log(response);
-          const userId = response?.data?.userId;
-          const token = response?.data?.token; // 응답에서 토큰 추출
-          const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
+      axios.post(`${process.env.NEXT_PUBLIC_URL}/user/social/login`, JSON.stringify({
+        email,
+        nickname: name
+      }), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log(response);
+        const userId = response?.data?.userId
+        const token = response?.data?.token; // 응답에서 토큰 추출
+        const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
+        const profileImage = response?.data?.profileImage
 
-          if (userId) {
-            localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
-          }
-          if (token) {
-            localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
-          }
-          if (nickname) {
-            localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
-          }
-        })
-        .catch(error => {
-          console.error('Request failed:', error);
-        });
+        if (userId) {
+          localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
+        }
+        if (token) {
+          localStorage.setItem('accessToken', token); // 토큰을 로컬 스토리지에 저장
+        }
+        if (nickname) {
+          localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
+        }
+        if (profileImage){
+          localStorage.setItem('profileImage', profileImage);
+        }
+      })
+      .catch(error => {
+        console.error('Request failed:', error);
+      });
     }
   }, [data, loginType]);
 
