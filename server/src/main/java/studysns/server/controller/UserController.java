@@ -189,7 +189,6 @@ public class UserController {
 
             UserEntity updatedUser = userService.updateUser(existingUser);
 
-            // 비밀번호 수정 응답에는 비밀번호 정보를 포함하지 않음
             UserDTO responseUserDTO = UserDTO.builder()
                     .nickname(updatedUser.getNickname())
                     .profileImage(updatedUser.getProfileImage())

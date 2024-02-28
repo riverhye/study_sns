@@ -28,7 +28,7 @@ const EditProfile = () => {
       formData.append('image', imageFile);
       
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/{userId}`, formData, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -70,7 +70,8 @@ const EditProfile = () => {
           nickname: nickname
         });
       
-        console.log('닉네임 수정이 완료되었습니다.');
+        alert('닉네임 수정이 완료되었습니다.');
+        router.push('/home'); 
       } catch (error) {
         console.error('Error updating profile:', error);
         console.log('닉네임 수정 실패');
@@ -120,11 +121,11 @@ const EditProfile = () => {
         }
       
         const res = await axios.patch(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/password`, {
-          password: password,
-          newPassword: newPassword
+          password: newPassword
         });
       
-        console.log('비밀번호 수정이 완료되었습니다.');
+        alert('비밀번호 수정이 완료되었습니다.');
+        router.push('/home'); 
       } catch (error) {
         console.error('Error updating profile:', error);
         console.log('비밀번호 수정 실패');
