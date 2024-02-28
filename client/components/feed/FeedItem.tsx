@@ -1,9 +1,10 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
-import { FeedItemProps } from '@/type/type';
+import { FeedItemProps, UserFeedData } from '@/type/type';
 import { useWebSocket } from '../providers/SocketContext';
+import { IMessageEvent } from 'websocket';
 
 const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
   const { socket } = useWebSocket();
@@ -15,6 +16,49 @@ const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
     else if (timeDiff < 60 * 60 * 24 * 3) return formatDistanceToNow(d, { addSuffix: true, locale: ko });
     return format(d, 'PPP', { locale: ko });
   };
+
+  // if (socket) {
+  //   try {
+  //     socket.onmessage = evt => {
+  //       try {
+  //         console.log('걍 DATA', evt.data);
+  //         const data = evt.data as string;
+  //         const parsedData = JSON.parse(data);
+  //         // play, pause, stop
+  //         if (parsedData) {
+  //           // setFeedData()
+  //           console.log('parsed: ', parsedData);
+  //         }
+
+  //         // pause
+  //         if(data.includes('휴식')) {
+  //           setFeedData({
+  //             message: data,
+  //             date: '2024-02-02',
+  //             feedId: 0,
+  //             nickname: data.slice(0,13),
+  //             profileImage: null
+  //           });
+  //         }
+  //         // const parsedData = JSON.parse(evt);
+
+  //         // if (parsedData.type === 'play') {
+  //         //   console.log('play data: ', JSON.parse(parsedData.message));
+  //         // } else if (parsedData.type === 'pause') {
+  //         //   console.log('pause data: ', JSON.parse(parsedData.message));
+  //         // } else if (parsedData.type === 'stop') {
+  //         //   console.log('stop data: ', JSON.parse(parsedData.message));
+  //         // } else {
+  //         //   console.warn('Unknown message type:', parsedData.type);
+  //         // }
+  //       } catch (jsonError) {
+  //         console.error('Error parsing JSON:', jsonError);
+  //       }
+  //     };
+  //   } catch (error) {
+  //     console.error('start socket', error);
+  //   }
+  // }
 
   return (
     <React.Fragment>
