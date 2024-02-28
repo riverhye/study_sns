@@ -79,6 +79,7 @@ const HeaderTop: React.FC = () => {
   //       console.error('err', error);
   //     }
   //   }
+  const token = useAppSelector(state => state.sign.token);
 
   const formatStudyTime = (minutes: number) => {
     const studyDate = new Date(0); // Initialize a date object with the epoch time
@@ -89,67 +90,69 @@ const HeaderTop: React.FC = () => {
 
   return (
     <div className="mt-5 w-screen">
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={0}
-        slidesPerView={10}
-        navigation
-        breakpoints={{
-          320: {
-            slidesPerView: 1,
-            spaceBetween: 20,
-          },
-          480: {
-            slidesPerView: 3,
-            spaceBetween: 30,
-          },
-          640: {
-            slidesPerView: 4,
-            spaceBetween: 40,
-          },
-          768: {
-            slidesPerView: 4,
-            spaceBetween: 40,
-          },
-          1024: {
-            slidesPerView: 5,
-            spaceBetween: 50,
-          },
-        }}>
-        <div className="w-full h-32 p-4 flex items-center">
-          {followerList.map((follower, idx) => (
-            <React.Fragment key={follower.nickname + 'a'}>
-              <SwiperSlide key={follower.nickname + 't'}>
-                <div className="flex flex-col items-center mx-4">
-                  <div className="has-tooltip relative">
-                    <Link href={`/study/${follower.nickname}`}>
-                      <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_USER_IMG_URL}/user_4ae8a619`}
-                          alt="profile"
-                          width={300}
-                          height={300}
-                        />
+      {token && (
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={0}
+          slidesPerView={10}
+          navigation
+          breakpoints={{
+            320: {
+              slidesPerView: 1,
+              spaceBetween: 20,
+            },
+            480: {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            },
+            640: {
+              slidesPerView: 4,
+              spaceBetween: 40,
+            },
+            768: {
+              slidesPerView: 4,
+              spaceBetween: 40,
+            },
+            1024: {
+              slidesPerView: 5,
+              spaceBetween: 50,
+            },
+          }}>
+          <div className="w-full h-32 p-4 flex items-center">
+            {followerList.map((follower, idx) => (
+              <React.Fragment key={follower.nickname + 'a'}>
+                <SwiperSlide key={follower.nickname + 't'}>
+                  <div className="flex flex-col items-center mx-4">
+                    <div className="has-tooltip relative">
+                      <Link href={`/study/${follower.nickname}`}>
+                        <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
+                          <img
+                            src={`${process.env.NEXT_PUBLIC_USER_IMG_URL}/user_4ae8a619`}
+                            alt="profile"
+                            width={300}
+                            height={300}
+                          />
+                        </div>
+                      </Link>
+                      <div className=" absolute top-4 tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center cursor-default">
+                        {follower.nickname}
+                        <span className="block text-center cursor-default">
+                          {formatStudyTime(follower.todayStudyTime)}
+                        </span>
                       </div>
-                    </Link>
-                    <div className=" absolute top-4 tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center cursor-default">
-                      {follower.nickname}
-                      <span className="block text-center cursor-default">
-                        {formatStudyTime(follower.todayStudyTime)}
-                      </span>
                     </div>
+                    {idx < 3 && (
+                      <div className="absolute left-20 top-0 text-2xl text-amber-400 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+                        {idx + 1}
+                      </div>
+                    )}
                   </div>
-                  {idx < 3 && (
-                    <div className="absolute left-20 top-0 text-2xl text-amber-400 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
-                      {idx + 1}
-                    </div>
-                  )}
-                </div>
-              </SwiperSlide>
-            </React.Fragment>
-          ))}
-        </div>
-      </Swiper>
+                </SwiperSlide>
+              </React.Fragment>
+            ))}
+          </div>
+        </Swiper>
+      )}
     </div>
   );
 };
