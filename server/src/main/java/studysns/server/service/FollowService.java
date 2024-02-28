@@ -124,7 +124,7 @@ public class FollowService {
         return userInfos;
     }
 
-    public String followRequest(String userId, String targetNickname) {
+    public JSONObject followRequest(String userId, String targetNickname) {
         String message;
         Long userIdLong = Long.parseLong(userId);
 
@@ -159,16 +159,18 @@ public class FollowService {
                 .build();
 
         followRepository.save(follow);
+        message = targetNickname + " 님을 팔로우 했습니다.";
 
         JSONObject additionalData = new JSONObject();
         additionalData.put("feedId", followEntity.getFollowerId());
         additionalData.put("profileImage", userEntity.getProfileImage());
         additionalData.put("date", LocalDateTime.now().toString());
         additionalData.put("nickname", targetNickname);
+        additionalData.put("message", message);
 
-        message = targetNickname + " 님을 팔로우 했습니다.";
 
-        return message + additionalData.toString();
+
+        return additionalData;
     }
 
 
