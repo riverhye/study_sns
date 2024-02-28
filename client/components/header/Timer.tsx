@@ -4,19 +4,20 @@ import { TimerState } from '@/type/type';
 import Image from 'next/image';
 import useTimerFunc from '../hooks/useTimerFunc';
 import HeaderIcons from '@/public/images/HeaderIcons';
+import { useAppSelector } from '@/store/hooks';
 
 const Timer = () => {
   const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
   const { hours, minutes, seconds } = useTimer(studyStatus);
   const { startStudy, pauseStudy, endStudy } = useTimerFunc();
   const { StartIcon, PauseIcon, StopIcon } = HeaderIcons;
-  const nickname = localStorage.getItem('nickname');
+  const nickname = useAppSelector(state => state.sign.nickname);
 
   return (
     <>
       <div className="flex items-center">
-        <div className="w-20 h-20 rounded-full border-2 overflow-hidden object-fill md:w-14 md:h-14">
-          <Image src="/blank-profile.png" priority={false} alt="user profile" width={300} height={300} />
+        <div className="w-20 h-20 rounded-full overflow-hidden object-fill md:w-14 md:h-14">
+          <img src="https://source.boringavatars.com/beam/120/user_4ae8a619" alt="profile" width={300} height={300} />'
         </div>
         <div className="flex flex-col justify-center ml-2">
           <span className="text-white text-sm ml-2 cursor-default">{nickname}</span>

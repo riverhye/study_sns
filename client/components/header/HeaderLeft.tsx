@@ -33,9 +33,9 @@ const HeaderLeft = () => {
     <>
       <div className="flex flex-col h-auto w-1/4 px-4 bg-main-blue p-0">
         <Category />
-        <TodoHeader />
         {getToken && (
           <>
+            <TodoHeader />
             <Timer />
             <div className="relative inline-block text-left mt-6">
               <div className="group">

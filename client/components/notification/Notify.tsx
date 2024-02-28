@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import FeedContent from '../feed/FeedContent';
 import { useWebSocket } from '../providers/SocketContext';
-
-export const token = localStorage.getItem('accessToken');
+import { useAppSelector } from '@/store/hooks';
 
 const Notify = () => {
+  const token = useAppSelector(state => state.sign.token);
   const initialFeedData: UserFeedData[] = [
     {
       feedId: 92,
@@ -29,7 +29,7 @@ const Notify = () => {
       nickname: '미역국',
       profileImage: null,
       message: '호지차님이 나를 팔로우합니다.',
-      date: String(new Date()),
+      date: '2024-02-02',
     },
   ];
   const [feedList, setFeedList] = useState<UserFeedData[]>(initialFeedData);
@@ -48,7 +48,7 @@ const Notify = () => {
 
   return (
     <>
-      <FeedContent initialFeedData={initialFeedData} feedData={feedList} type="noti" />
+      <FeedContent feedData={feedList} type="noti" />
     </>
   );
 };
