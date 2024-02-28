@@ -309,9 +309,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(messageRank));
         }
         else if ("follow".equals(action)){
+            log.info("received action: {}", action);
             JSONObject followMessage = followService.followRequest(userId, targetNickname);
-//            log.info("핸들러 userid: {}", userId);
-//            log.info("핸들러 타겟 닉네임: {}", targetNickname);
+            log.info("핸들러 userid: {}", userId);
+            log.info("핸들러 타겟 닉네임: {}", targetNickname);
 
             String messageWithType = "follow: " + followMessage;
             session.sendMessage(new TextMessage(messageWithType));
