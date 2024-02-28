@@ -37,7 +37,7 @@ interface StudyPageData {
   }[];
   myRanking: {
     rankingDate: string;
-    rankingTinme: number;
+    rankingTime: number;
   };
   badge: { badgeName: string }[];
 }
@@ -72,6 +72,7 @@ export default function Study(props: NicknamePropsType) {
     <>
       <div className=" ml-[50px]">
         <StudyUser userData={studyPageData.user} />
+        <div className="my-6">Todo</div>
         <div className="flex ">
           <div className="mr-10 ">
             <StudyTable tableData={studyPageData.studyTable} />
