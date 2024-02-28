@@ -48,7 +48,7 @@ export default function Study(props: NicknamePropsType) {
     user: { nickname: 'tNickname', email: 'tEmail@dot.com', folling: 0, follower: 0 },
     studyTable: [],
     todo: [],
-    myRanking: { rankingDate: '', rankingTinme: 0 },
+    myRanking: { rankingDate: '', rankingTime: 0 },
     badge: [],
   });
 
