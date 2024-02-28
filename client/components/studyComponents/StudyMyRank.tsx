@@ -31,7 +31,7 @@ const StudyMyRank = (props: StudyMyRankProps) => {
         <div className="w-[200px]">
           <CircularProgressbar
             value={percentage}
-            text={`12/${clientRanking}시간`}
+            text={`${clientRanking}/12시간`}
             styles={{ text: { fontSize: '14px' } }}
           />
         </div>
