@@ -23,6 +23,7 @@ public class AllStudyInfoDTO {
         private String email;
         private Long followerId;
         private Long followingId;
+        private String userimage;
     }
 
     @Data
