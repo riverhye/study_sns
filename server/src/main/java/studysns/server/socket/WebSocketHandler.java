@@ -229,7 +229,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private String userId;
     private String studyContent;
-
     private String targetNickname;
 
     private String feedId;
@@ -258,7 +257,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         studyContent = jsonMap.get("studyContent");
 
         targetNickname = jsonMap.get("targetNickname");
-        targetNickname = "user_ad98ba4c";
 
 //        nickname = jsonMap.get("nickname");
 
@@ -309,10 +307,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(messageRank));
         }
         else if ("follow".equals(action)){
+            long userIdLong = Long.parseLong(userId);
+
             log.info("received action: {}", action);
-            JSONObject followMessage = followService.followRequest(userId, targetNickname);
-            log.info("핸들러 userid: {}", userId);
+            log.info("핸들러 userid: {}", userIdLong);
             log.info("핸들러 타겟 닉네임: {}", targetNickname);
+            JSONObject followMessage = followService.followRequest(userIdLong, targetNickname);
 
             String messageWithType = "follow: " + followMessage;
             session.sendMessage(new TextMessage(messageWithType));
@@ -322,7 +322,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             log.info("received action: {}", action);
 
             String feedId = jsonMap.get("feedId");
-//            String feedId = "2";
 
             String likeData = likeService.likeFeed(userId, feedId);
 
@@ -335,8 +334,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         else if ("unlike".equals(action)) {
             log.info("received action: {}", action);
 
-                        String feedId = jsonMap.get("feedId");
-//            String feedId = "2";
+            String feedId = jsonMap.get("feedId");
 
             String unlikeData = likeService.unlikeFeed(userId, feedId);
 

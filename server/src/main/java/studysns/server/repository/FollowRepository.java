@@ -3,6 +3,7 @@ package studysns.server.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import studysns.server.entity.FollowEntity;
+import studysns.server.entity.UserEntity;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
 
     Long countByUserUserId(Long userId);
 
+    boolean existsByUserAndUserFollow(UserEntity user, UserEntity userFollow);
 
 
 }

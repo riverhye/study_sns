@@ -124,37 +124,34 @@ public class FollowService {
         return userInfos;
     }
 
-    public JSONObject followRequest(String userId, String targetNickname) {
+    public JSONObject followRequest(Long userId, String targetNickname) {
         String message;
-        Long userIdLong = Long.parseLong(userId);
+        String nickname = targetNickname;
 
-        Optional<FollowEntity> userOptional = followRepository.findById(userIdLong);
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("사용자를 찾을 수 없습니다");
         }
 
-        FollowEntity followEntity = userOptional.get();
+        UserEntity tokenUser = userOptional.get();
+        log.info("현재 토큰의 유저 ID: {}", tokenUser.getUserId());
 
-        Optional<UserEntity> userOptional2 = userRepository.findById(userIdLong);
-        if (userOptional2.isEmpty()) {
-            throw new EntityNotFoundException("User not found");
-        }
-
-        UserEntity userEntity = userOptional2.get();
-
-        UserEntity TokenUser = userRepository.findById(userIdLong)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        log.info("현재 토큰의 유저 ID: {}", TokenUser.getUserId());
-
-        UserEntity targetUser = userRepository.findByNickname(targetNickname);
+        UserEntity targetUser = userRepository.findByNickname(nickname);
         if (targetUser == null) {
-            throw new RuntimeException("Target user not found");
+            throw new RuntimeException("대상 사용자를 찾을 수 없습니다");
         }
         log.info("내가 팔로우 한 유저의 ID: {}", targetUser.getUserId());
 
+        if (followRepository.existsByUserAndUserFollow(targetUser, tokenUser)) {
+            message = "이미 해당 유저를 팔로우하고 있습니다.";
+            JSONObject responseData = new JSONObject();
+            responseData.put("message", message);
+            return responseData;
+        }
+
         FollowEntity follow = FollowEntity.builder()
-                .user(targetUser) // 팔로우 요청을 한 유저 (현재 토큰의 유저)
-                .userFollow(TokenUser)// 내가 팔로우 한 유저
+                .user(targetUser)
+                .userFollow(tokenUser)
                 .followTime(LocalDateTime.now())
                 .build();
 
@@ -162,16 +159,19 @@ public class FollowService {
         message = targetNickname + " 님을 팔로우 했습니다.";
 
         JSONObject additionalData = new JSONObject();
-        additionalData.put("feedId", followEntity.getFollowerId());
-        additionalData.put("profileImage", userEntity.getProfileImage());
+        additionalData.put("followId", follow.getFollowerId());
+        additionalData.put("profileImage", tokenUser.getProfileImage());
         additionalData.put("date", LocalDateTime.now().toString());
         additionalData.put("nickname", targetNickname);
         additionalData.put("message", message);
 
-
-
         return additionalData;
     }
+
+
+
+
+
 
 
 }
