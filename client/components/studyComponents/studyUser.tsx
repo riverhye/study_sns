@@ -64,8 +64,8 @@ const StudyUser = (props: StudyUserProps) => {
           <div className=" text-lg">{userData?.nickname}</div>
           <div className="text-sm">{userData?.email}</div>
           <div className="flex">
-            <div className="mr-2">팔로잉{userData?.followerId} </div>
-            <div>팔로워{userData?.followingId}</div>{' '}
+            <div className="mr-2">팔로잉{userData?.followingId} </div>
+            <div>팔로워{userData?.followerId}</div>{' '}
             <div>
               {}
               <button
