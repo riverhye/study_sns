@@ -1,11 +1,11 @@
 'use client';
 
-
-import { useState } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const EditProfile = () => {
+  const router = useRouter();
   const placeHolderNickname: string = localStorage.getItem("nickname") ?? '';
   const [profileImage, setProfileImage] = useState<string>(localStorage.getItem("profileImage") ?? '');
   const [email, setEmail] = useState('');
@@ -18,43 +18,9 @@ const EditProfile = () => {
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
   const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
-  const router = useRouter();
 
-  // 비밀번호 형식 확인
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPasswordValue = e.target.value;
-    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}$/;
-    const isValidPassword = passwordRegex.test(newPasswordValue);
-    setValidPassword(isValidPassword);
-    setNewPassword(newPasswordValue);
-  };
 
-  // 닉네임 변경/중복
-  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newNickname = e.target.value;
-    const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,10}$/;
-    const isNicknameValid = nicknameRegex.test(newNickname);
-    if (newNickname === 'existingNickname') {
-      setNicknameAvailable(false);
-    } else {
-      setNicknameAvailable(true);
-    }
-    setIsNicknameValid(isNicknameValid);
-    setNickname(newNickname);
-  };
-  
-  // 새 비밀번호 확인
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const confirmPasswordValue = e.target.value;
-    setConfirmNewPassword(confirmPasswordValue);
-    if (confirmPasswordValue === newPassword) {
-      setPasswordMatch(true);
-    } else {
-      setPasswordMatch(false);
-    }
-  };
-
-  // 이미지 수정
+  // 이미지 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageFile = e.target.files ? e.target.files[0] : null;
     if (imageFile) {
@@ -62,7 +28,7 @@ const EditProfile = () => {
       formData.append('image', imageFile);
       
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/{userId}`, formData, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -77,7 +43,47 @@ const EditProfile = () => {
       console.error('No file selected');
     }
   };
+
+  // 닉네임 변경/중복
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newNickname = e.target.value;
+    const nicknameRegex = /^[a-zA-Z0-9가-힣_]{2,15}$/;
+    const isNicknameValid = nicknameRegex.test(newNickname);
+    if (newNickname === 'existingNickname') {
+      setNicknameAvailable(false);
+    } else {
+      setNicknameAvailable(true);
+    }
+    setIsNicknameValid(isNicknameValid);
+    setNickname(newNickname);
+  };
+
   
+  // 비밀번호 형식 확인
+  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPasswordValue = e.target.value;
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}$/;
+    const isValidPassword = passwordRegex.test(newPasswordValue);
+    setValidPassword(isValidPassword);
+    setNewPassword(newPasswordValue);
+  };
+
+// 기존 비밀번호 확인
+const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const currentPasswordValue = e.target.value;
+  setCurrentPassword(currentPasswordValue);
+};
+
+// 새 비밀번호 확인
+const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const confirmPasswordValue = e.target.value;
+  setConfirmNewPassword(confirmPasswordValue);
+  if (confirmPasswordValue === newPassword) {
+    setPasswordMatch(true); // 새 비밀번호가 일치하는 경우 true로 설정
+  } else {
+    setPasswordMatch(false); // 새 비밀번호가 일치하지 않는 경우 false로 설정
+  }
+};
   // 회원정보 수정
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,19 +92,19 @@ const EditProfile = () => {
         console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
         return;
       }
-
+    
       if (newPassword !== confirmNewPassword) {
         console.error('새 비밀번호가 일치하지 않습니다.');
         setPasswordMatch(false);
         return;
       }
-
-      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/{userId}`, {
+    
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/`, {
         nickname: nickname,
         currentPassword: currentPassword,
         newPassword: newPassword
       });
-
+    
       console.log('정보 수정이 완료되었습니다.');
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -108,23 +114,24 @@ const EditProfile = () => {
 
   // 탈퇴하기
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까?');
+    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
     if (confirmDelete) {
       try {
-        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/delete/${user_id}`);
+        const res = await axios.delete(`${process.env.NEXT_PUBLIC_URL}/user/delete`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        });
         console.log('회원 탈퇴가 완료되었습니다.');
-  
-        // 탈퇴 후 로그아웃 처리
-        localStorage.removeItem("nickname"); 
-        localStorage.removeItem("user_id"); 
-        setUserid(''); 
-        router.push('/'); 
-
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('nickname');
+      
       } catch (error) {
         console.error('회원 탈퇴 실패:', error);
       }
     }
   };
+
   return (
     <>
       <section>
@@ -149,7 +156,7 @@ const EditProfile = () => {
                     onChange={handleNicknameChange}
                   />
                   {!nickname && (<span className="text-blue-600">닉네임을 입력해주세요.</span>)}
-                  {nickname && !isNicknameValid && (<span className="text-red-600">2~10자의 한글, 영문, 숫자만 사용할 수 있습니다.</span>)}
+                  {nickname && !isNicknameValid && (<span className="text-red-600">2~15자의 한글, 영문, 숫자만 사용할 수 있습니다.</span>)}
                   {nickname && !nicknameAvailable && (<span className="text-red-600">이미 사용 중인 닉네임입니다.</span>)}
                   {nickname && isNicknameValid && nicknameAvailable && (<span className="text-blue-600">사용 가능한 닉네임입니다.</span>)}
                 </div>
@@ -173,7 +180,7 @@ const EditProfile = () => {
                     type="password"
                     placeholder="New Password"
                     value={newPassword}
-                    onChange={handlePasswordChange}
+                    onChange={handlePassword}
                   />
                   {!newPassword && (<span className="text-blue-600">새 비밀번호를 입력해주세요.</span>)}
                   {newPassword && !validPassword && (<span className="text-red-600">비밀번호 형식이 올바르지 않습니다. (소문자, 대문자, 숫자로 조합된 6~14자리)</span>)}
