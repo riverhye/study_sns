@@ -66,10 +66,18 @@ const EditProfile = () => {
           console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
           return;
         }
+
+        // 로컬 스토리지에서 토큰을 가져옵니다.
+        const token = localStorage.getItem('accessToken');
+
         const res = await axios.patch(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/nickname`, {
-          nickname: nickname
+          nickname: nickname 
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}` // 헤더에 토큰을 포함시킵니다.
+            }
         });
-      
         alert('닉네임 수정이 완료되었습니다.');
         router.push('/home'); 
       } catch (error) {

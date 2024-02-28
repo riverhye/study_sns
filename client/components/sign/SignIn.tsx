@@ -32,6 +32,7 @@ export default function SignIn() {
         const userId = response?.data?.userId
         const token = response?.data?.token; // 응답에서 토큰 추출
         const nickname = response?.data?.nickname; // 응답에서 닉네임 추출
+        const profileImage = response?.data?.profileImage
 
         if (userId) {
           localStorage.setItem('userId', userId); // 토큰을 로컬 스토리지에 저장
@@ -41,6 +42,9 @@ export default function SignIn() {
         }
         if (nickname) {
           localStorage.setItem('nickname', nickname); // 닉네임을 로컬 스토리지에 저장
+        }
+        if (profileImage){
+          localStorage.setItem('profileImage', profileImage);
         }
       })
       .catch(error => {
@@ -58,7 +62,7 @@ export default function SignIn() {
     else {
       // 소셜 로그인 : 소켓 연결
       connectWebSocket();
-      await signIn(type, { redirect: true, callbackUrl: '/home' });
+      await signIn(type, { redirect: true, callbackUrl: '/' });
     }
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
