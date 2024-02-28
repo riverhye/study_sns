@@ -265,17 +265,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if ("play".equals(action)) {
             log.info("received action: {}", action);
             log.info("studyContent received: {}", studyContent);
-            String playMessageWithAdditionalData = feedService.playRequest(userId, studyContent);
+            JSONObject playMessageWithAdditionalData = feedService.playRequest(userId, studyContent);
 
             JSONObject messageObject = new JSONObject();
             messageObject.put("type", "play");
+//            messageObject.put("nickname", playMessageWithAdditionalData);
             messageObject.put("message", playMessageWithAdditionalData);
             session.sendMessage(new TextMessage(messageObject.toString()));
             log.info("message to client: {}", messageObject.toString());
         }
         else if ("stop".equals(action)) {
             log.info("received action: {}", action);
-            String stopMessageWithAdditionalData = feedService.stopRequest(userId, studyContent);
+            JSONObject stopMessageWithAdditionalData = feedService.stopRequest(userId, studyContent);
 
             JSONObject messageObject = new JSONObject();
             messageObject.put("type", "stop");
@@ -308,7 +309,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(messageRank));
         }
         else if ("follow".equals(action)){
-            String followMessage = followService.followRequest(userId, targetNickname);
+            JSONObject followMessage = followService.followRequest(userId, targetNickname);
 //            log.info("핸들러 userid: {}", userId);
 //            log.info("핸들러 타겟 닉네임: {}", targetNickname);
 

@@ -73,7 +73,7 @@ public class FeedService {
 
     }
 
-    public String playRequest(String userIdString, String studyContent) {
+    public JSONObject playRequest(String userIdString, String studyContent) {
         log.info("service userId: {}", userIdString);
         log.info("service studyContent: {}", studyContent);
 
@@ -99,7 +99,9 @@ public class FeedService {
         Long studyId = studyEntity.getStudyId();
 
         List<FeedEntity> userFeeds = feedRepository.findByUserUserId(userId);
-        String message;
+        String message1 = null;
+        String message2 = null;
+                ;
 
         if (!userFeeds.isEmpty()) {
             FeedEntity latestFeed = userFeeds.get(0);
@@ -107,13 +109,13 @@ public class FeedService {
                 latestFeed.setStudyStartPoint(now);
                 latestFeed.setStudyEndPoint(now);
                 log.info("기존의 피드도 있고 studyContent가 있는 경우");
-                message = userEntity.getNickname() + " 님이 다시 " + studyContent + " 공부를 시작했습니다.";
+                message2 = userEntity.getNickname() + " 님이 다시 " + studyContent + " 공부를 시작했습니다.";
             } else {
                 latestFeed.setStudyContent(studyContent);
                 latestFeed.setStudyStartPoint(now);
                 latestFeed.setStudyEndPoint(now);
                 log.info("기존의 피드는 있지만 studyContent가 비어있는 경우");
-                message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다.";
+                message1 = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다.";
             }
             feedRepository.save(latestFeed);
             log.info("FeedEntity play created: {}", latestFeed);
@@ -128,7 +130,7 @@ public class FeedService {
             feedRepository.save(newFeed);
             log.info("New FeedEntity created: {}", newFeed);
             log.info("기존의 피드가 없이 새로 생성 하는 경우.");
-            message = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다.";
+            message1 = userEntity.getNickname() + " 님이 " + studyContent + " 공부를 시작했습니다.";
         }
 
         JSONObject additionalData = new JSONObject();
@@ -136,12 +138,14 @@ public class FeedService {
         additionalData.put("nickname", userEntity.getNickname());
         additionalData.put("profileImage", userEntity.getProfileImage());
         additionalData.put("date", LocalDateTime.now().toString());
+        additionalData.put("pausePlay", message2);
+        additionalData.put("stopPlay", message1);
 
-        return message + additionalData.toString();
+        return additionalData;
     }
 
 
-    public String stopRequest(String userIdString, String studyContent) {
+    public JSONObject stopRequest(String userIdString, String studyContent) {
         LocalDateTime now = LocalDateTime.now();
 
         long userId = Long.parseLong(userIdString);
@@ -187,12 +191,13 @@ public class FeedService {
             additionalData.put("nickname", userEntity.getNickname());
             additionalData.put("profileImage", userEntity.getProfileImage());
             additionalData.put("date", LocalDateTime.now().toString());
+            additionalData.put("message", message);
 
-            return message + additionalData.toString();
+            return additionalData;
 
         } else {
             log.info("No existing feed found for user: {}", userId);
-            return "No existing feed found for user: " + userId;
+            return null;
         }
     }
 
@@ -228,7 +233,7 @@ public class FeedService {
                 log.info("StudyEntity not found for user: {}", userId);
             }
 
-            feedEntity.setStudyStartPoint(null);
+            feedEntity.setStudyStartPoint(now);
             feedEntity.setStudyEndPoint(null);
 
 
