@@ -11,6 +11,7 @@ const EditProfile = () => {
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [user_id, setUserid] = useState('');
+  const [password, setPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -44,7 +45,7 @@ const EditProfile = () => {
     }
   };
 
-  // 닉네임 변경/중복
+  // 닉네임 형식/중복
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newNickname = e.target.value;
     const nicknameRegex = /^[a-zA-Z0-9가-힣_]{2,15}$/;
@@ -171,8 +172,8 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
                     onChange={(e) => setCurrentPassword(e.target.value)}
                   />
                   {!currentPassword && (<span className="text-blue-600">기존 비밀번호를 입력해주세요.</span>)}
-                  {confirmNewPassword && !passwordMatch && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
-                  {confirmNewPassword && confirmNewPassword === newPassword && (<span className="text-blue-600">비밀번호 일치</span>)}
+                  {!currentPassword && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
+                  {password === currentPassword && (<span className="text-blue-600">비밀번호 일치</span>)}
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호</label>
