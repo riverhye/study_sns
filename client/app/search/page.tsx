@@ -48,7 +48,9 @@ const Search = () => {
             key={index}
             className="flex items-center w-[300px] h-[100px] justify-between shadow-md rounded-lg border-gray-300 border-[1.2px] mr-5">
             <div className="flex items-center">
-              <div className="w-[60px] bg-amber-200 rounded-full h-[60px] mr-2 ml-4 ">{userlist.profileImage}</div>
+              {/* <div className="w-[60px] bg-amber-200 rounded-full h-[60px] mr-2 ml-4 "> */}
+                <img src={userlist.profileImage} alt="Profile" className="w-[60px] bg-amber-200 rounded-full h-[60px] mr-2 ml-4 " />
+              {/* </div> */}
               <div>{userlist.nickname}</div>
             </div>
 
