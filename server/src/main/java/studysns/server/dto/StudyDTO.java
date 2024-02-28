@@ -47,4 +47,7 @@ public class StudyDTO {
     public void setStudyDate(LocalDate studyDate) {
         this.studyDate = studyDate;
     }
+
+    private String profileImage;
+
 }

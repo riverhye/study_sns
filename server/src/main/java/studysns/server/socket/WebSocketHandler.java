@@ -293,19 +293,24 @@ public class WebSocketHandler extends TextWebSocketHandler {
         else if ("rank".equals(action)) {
             List<Map<String, Object>> userInfos = followService.rankRequest();
 
-            JSONArray jsonArray = new JSONArray();
+            // JSON 객체로 생성
+            JSONObject response = new JSONObject();
+            JSONArray rankArray = new JSONArray();
             for (Map<String, Object> userInfo : userInfos) {
                 JSONObject userObject = new JSONObject();
                 userObject.put("nickname", userInfo.get("nickname"));
                 userObject.put("todayStudyTime", userInfo.get("todayStudyTime"));
                 userObject.put("profileImage", userInfo.get("profileImage"));
-                jsonArray.add(userObject);
+                rankArray.add(userObject);
             }
+            response.put("rank", rankArray);
 
-            String messageRank = "rank: " + jsonArray.toJSONString();
-            log.info("rank send info: {}", messageRank);
-            session.sendMessage(new TextMessage(messageRank));
+            // 클라이언트로 직렬화된 JSON 문자열 전송
+            String jsonMessage = response.toJSONString();
+            log.info("rank send info: {}", jsonMessage);
+            session.sendMessage(new TextMessage(jsonMessage));
         }
+
         else if ("follow".equals(action)){
             long userIdLong = Long.parseLong(userId);
 

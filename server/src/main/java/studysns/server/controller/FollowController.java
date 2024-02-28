@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import studysns.server.dto.FollowCountDTO;
 import studysns.server.dto.FollowDTO;
+import studysns.server.dto.StudyDTO;
 import studysns.server.service.FollowService;
 
 import java.util.List;
@@ -45,6 +46,20 @@ public class FollowController {
         long userIdLong = Long.parseLong(userIdString);
         List<FollowCountDTO> followInfo = followService.getFollowByUserId(userIdLong);
         return ResponseEntity.ok(followInfo);
+    }
+
+    @GetMapping("/checkfollow/{nickname}")
+    public ResponseEntity<Boolean> checkFollow(@AuthenticationPrincipal String userId, @PathVariable String nickname) {
+        String userIdString = userId;
+        long userIdLong = Long.parseLong(userIdString);
+        boolean isFollowing = followService.checkIfFollowing(userIdLong, nickname);
+        return ResponseEntity.ok(isFollowing);
+    }
+
+    @GetMapping("/rank")
+    public ResponseEntity<List<StudyDTO>> rankOrder() {
+        List<StudyDTO> ranking = followService.orderRank();
+        return ResponseEntity.ok(ranking);
     }
 
 }

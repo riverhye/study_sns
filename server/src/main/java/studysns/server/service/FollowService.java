@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import studysns.server.dto.FollowCountDTO;
 import studysns.server.dto.FollowDTO;
+import studysns.server.dto.StudyDTO;
 import studysns.server.entity.FollowEntity;
 import studysns.server.entity.StudyEntity;
 import studysns.server.entity.UserEntity;
@@ -169,6 +170,45 @@ public class FollowService {
         return additionalData;
     }
 
+    public boolean checkIfFollowing(long myUserId, String targetNickname) {
+        UserEntity targetUser = userRepository.findByNickname(targetNickname);
+        if (targetUser == null) {
+            throw new RuntimeException("대상을 찾을 수 없음");
+        }
+
+        UserEntity myUser = userRepository.findById(myUserId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+        return followRepository.existsByUserAndUserFollow(targetUser, myUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudyDTO> orderRank() {
+        // study 테이블에서 todayStudyTime이 가장 높은 순서대로 상위 10개 튜플을 불러옴
+        List<StudyEntity> topStudies = studyRepository.findTop10ByOrderByTodayStudyTimeDesc();
+
+        List<StudyDTO> ranking = topStudies.stream()
+                .map(studyEntity -> {
+                    UserEntity userEntity = studyEntity.getUser();
+                    String nickname = userEntity.getNickname();
+                    String profileImage = userEntity.getProfileImage();
+                    long todayStudyTime = studyEntity.getTodayStudyTime();
+
+                    StudyDTO studyDTO = StudyDTO.builder()
+                            .studyId(studyEntity.getStudyId())
+                            .userId(userEntity.getUserId())
+                            .todayStudyTime(todayStudyTime)
+                            .studyDate(studyEntity.getStudyDate())
+                            .nickname(nickname)
+                            .profileImage(profileImage) // 프로필 이미지 추가
+                            .build();
+
+                    return studyDTO;
+                })
+                .collect(Collectors.toList());
+
+        return ranking;
+    }
 
 
 
