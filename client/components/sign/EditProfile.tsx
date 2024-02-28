@@ -12,14 +12,13 @@ const EditProfile = () => {
   const [nickname, setNickname] = useState('');
   const [user_id, setUserid] = useState('');
   const [password, setPassword] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [validPassword, setValidPassword] = useState<boolean>(true);
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [nicknameAvailable, setNicknameAvailable] = useState<boolean>(true);
   const [isNicknameValid, setIsNicknameValid] = useState<boolean>(true);
-
+  const [currentPassword, setCurrentPassword] = useState<string>('');
 
   // 이미지 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +28,7 @@ const EditProfile = () => {
       formData.append('image', imageFile);
       
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/`, formData, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/image/{userId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -59,7 +58,6 @@ const EditProfile = () => {
     setNickname(newNickname);
   };
 
-  
   // 비밀번호 형식 확인
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPasswordValue = e.target.value;
@@ -69,22 +67,23 @@ const EditProfile = () => {
     setNewPassword(newPasswordValue);
   };
 
-// 기존 비밀번호 확인
-const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const currentPasswordValue = e.target.value;
-  setCurrentPassword(currentPasswordValue);
-};
+  // 기존 비밀번호 확인
+  const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentPasswordValue = e.target.value;
+    setCurrentPassword(currentPasswordValue);
+  };
 
-// 새 비밀번호 확인
-const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const confirmPasswordValue = e.target.value;
-  setConfirmNewPassword(confirmPasswordValue);
-  if (confirmPasswordValue === newPassword) {
-    setPasswordMatch(true); 
-  } else {
-    setPasswordMatch(false); 
-  }
-};
+  // 새 비밀번호 확인
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const confirmPasswordValue = e.target.value;
+    setConfirmNewPassword(confirmPasswordValue);
+    if (confirmPasswordValue === newPassword) {
+      setPasswordMatch(true); 
+    } else {
+      setPasswordMatch(false); 
+    }
+  };
+
   // 회원정보 수정
   const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -102,7 +101,7 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
     
       const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/`, {
         nickname: nickname,
-        currentPassword: currentPassword,
+        password: password,
         newPassword: newPassword
       });
     
@@ -167,13 +166,13 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
                   <input
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     type="password"
-                    placeholder="Current Password"
+                    placeholder="Password"
                     value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    onChange={handleCurrentPassword}
                   />
                   {!currentPassword && (<span className="text-blue-600">기존 비밀번호를 입력해주세요.</span>)}
-                  {!currentPassword && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
-                  {password === currentPassword && (<span className="text-blue-600">비밀번호 일치</span>)}
+                  {currentPassword && !password && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
+                  {currentPassword && currentPassword === password && (<span className="text-blue-600">비밀번호 일치</span>)}
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호</label>
