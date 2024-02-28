@@ -44,7 +44,6 @@ export interface FeedItemProps {
 export interface FeedContentProps {
   feedData?: UserFeedData[];
   type?: string; // 좋아요 유무
-  initialFeedData: UserFeedData[]; // temp
   handleLike?: (index: number) => void;
 }
 
