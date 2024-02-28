@@ -58,6 +58,26 @@ const EditProfile = () => {
     setNickname(newNickname);
   };
 
+    // 닉네임 수정
+    const handleUpdateNickname = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try {
+        if (!nicknameAvailable) {
+          console.error('비밀번호 형식이 올바르지 않거나 닉네임이 이미 사용 중이거나 비밀번호가 일치하지 않습니다.');
+          return;
+        }
+        const res = await axios.patch(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/nickname`, {
+          nickname: nickname
+        });
+      
+        console.log('닉네임 수정이 완료되었습니다.');
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        console.log('닉네임 수정 실패');
+      }
+    };
+  
+
   // 비밀번호 형식 확인
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPasswordValue = e.target.value;
@@ -67,11 +87,11 @@ const EditProfile = () => {
     setNewPassword(newPasswordValue);
   };
 
-  // // 기존 비밀번호 확인
-  // const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const currentPasswordValue = e.target.value;
-  //   setCurrentPassword(currentPasswordValue);
-  // };
+  // 기존 비밀번호 확인
+  const handleCurrentPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentPasswordValue = e.target.value;
+    setCurrentPassword(currentPasswordValue);
+  };
 
   // 새 비밀번호 확인
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,32 +104,33 @@ const EditProfile = () => {
     }
   };
 
-const handlePasswordUpdate = async () => {
-  try {
-    if (!validPassword || !passwordMatch) {
-      console.error('비밀번호 형식이 올바르지 않거나 비밀번호가 일치하지 않습니다.');
-      return;
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      console.error('새 비밀번호가 일치하지 않습니다.');
-      setPasswordMatch(false);
-      return;
-    }
-
-    const res = await axios.put(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/process/`, {
-      password: password,
-      newPassword: newPassword
-    });
-    alert('비밀번호 수정 성공');
-    console.log('비밀번호 수정이 완료되었습니다.');
-
-  } catch (error) {
-    console.error('Error updating password:', error);
-    console.log('비밀번호 수정 실패');
-  }
-};
-
+    // 비번 수정
+    const handleUpdatePassword = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try {
+        if (!validPassword || !passwordMatch) {
+          console.error('비밀번호 형식이 올바르지 않거나 비밀번호가 일치하지 않습니다.');
+          return;
+        }
+      
+        if (newPassword !== confirmNewPassword) {
+          console.error('새 비밀번호가 일치하지 않습니다.');
+          setPasswordMatch(false);
+          return;
+        }
+      
+        const res = await axios.patch(`${process.env.NEXT_PUBLIC_URL}/user/editprofile/password`, {
+          password: password,
+          newPassword: newPassword
+        });
+      
+        console.log('비밀번호 수정이 완료되었습니다.');
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        console.log('비밀번호 수정 실패');
+      }
+    };
+  
   // 탈퇴하기
   const handleDeleteAccount = async () => {
     const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
@@ -140,8 +161,7 @@ const handlePasswordUpdate = async () => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 정보수정
               </h1>
-              <form className="space-y-4 md:space-y-6" >
-                {/* onSubmit={handleUpdateProfile} */}
+              <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateNickname}>
                 <div>
                   <img src={profileImage} alt="Profile" className="rounded-full w-24 h-24" />
                   <input type="file" accept="image/*" onChange={handleImageUpload} />
@@ -160,11 +180,12 @@ const handlePasswordUpdate = async () => {
                   {nickname && !nicknameAvailable && (<span className="text-red-600">이미 사용 중인 닉네임입니다.</span>)}
                   {nickname && isNicknameValid && nicknameAvailable && (<span className="text-blue-600">사용 가능한 닉네임입니다.</span>)}
                 </div>
-
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                   닉네임 수정하기
                 </button>
-
+              </form>
+              
+              <form className="space-y-4 md:space-y-6" onSubmit={handleUpdatePassword}>
                 {/* <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">기존 비밀번호</label>
                   <input
@@ -178,8 +199,6 @@ const handlePasswordUpdate = async () => {
                   {currentPassword && !password && (<span className="text-red-600">비밀번호가 일치하지 않습니다.</span>)}
                   {currentPassword && currentPassword === password && (<span className="text-blue-600">비밀번호 일치</span>)}
                 </div> */}
-
-
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호</label>
                   <input
@@ -205,17 +224,14 @@ const handlePasswordUpdate = async () => {
                   {confirmNewPassword && !passwordMatch && (<span className="text-red-600">새 비밀번호가 일치하지 않습니다.</span>)}
                   {confirmNewPassword && confirmNewPassword === newPassword && (<span className="text-blue-600">새 비밀번호 일치</span>)}
                 </div>
-                <button type="button" onClick={handlePasswordUpdate} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                   비밀번호 수정하기
                 </button>
-                <br/>
-                <div className="flex justify-end"> 
-                  <button type="button" onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                    탈퇴하기
-                  </button>
-                </div>
-
               </form>
+
+              <button type="button" onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                탈퇴하기
+              </button>
             </div>
           </div>
         </div>
