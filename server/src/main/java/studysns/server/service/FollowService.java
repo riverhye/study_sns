@@ -95,6 +95,7 @@ public class FollowService {
                 .email(user.getEmail())
                 .followingId(follower)
                 .followerId(following)
+                .userimage(user.getProfileImage())  // userimage 추가
                 .build();
         return userFollowInfo;
     }
