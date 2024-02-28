@@ -121,17 +121,68 @@ public class UserController {
         return "GET /editprofile by user id "+ userId;
     }
 
-    @PatchMapping("/editprofile/process")
-    public ResponseEntity<?> editUserProfile(@AuthenticationPrincipal String userId, @RequestBody UserDTO userDTO, @RequestHeader(value="Authorization") String token) {
-        try {
-            token = token.substring(7);
+//    @PatchMapping("/editprofile/process")
+//    public ResponseEntity<?> editUserProfile(@AuthenticationPrincipal String userId, @RequestBody UserDTO userDTO, @RequestHeader(value="Authorization") String token) {
+//        try {
+//            token = token.substring(7);
+//
+//            UserEntity existingUser = userService.findUserById(Long.valueOf(userId));
+//            if (existingUser == null) {
+//                return ResponseEntity.notFound().build();
+//            }
+//
+//            existingUser.setNickname(userDTO.getNickname());
+//            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+//                existingUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+//            }
+//
+//            UserEntity updatedUser = userService.updateUser(existingUser);
+//
+//            UserDTO responseUserDTO = UserDTO.builder()
+//                    .nickname(updatedUser.getNickname())
+//                    .password(null) // 응답에 비밀번호 포함을 피함
+//                    .profileImage(updatedUser.getProfileImage())
+//                    .userId(updatedUser.getUserId())
+//                    .build();
+//
+//            return ResponseEntity.ok().body(responseUserDTO);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
+    @PatchMapping("/editprofile/nickname")
+    public ResponseEntity<?> editUserNickname(@AuthenticationPrincipal String userId, @RequestBody UserDTO userDTO, @RequestHeader(value="Authorization") String token) {
+        try {
             UserEntity existingUser = userService.findUserById(Long.valueOf(userId));
             if (existingUser == null) {
                 return ResponseEntity.notFound().build();
             }
 
             existingUser.setNickname(userDTO.getNickname());
+
+            UserEntity updatedUser = userService.updateUser(existingUser);
+
+            UserDTO responseUserDTO = UserDTO.builder()
+                    .nickname(updatedUser.getNickname())
+                    .profileImage(updatedUser.getProfileImage())
+                    .userId(updatedUser.getUserId())
+                    .build();
+
+            return ResponseEntity.ok().body(responseUserDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/editprofile/password")
+    public ResponseEntity<?> editUserPassword(@AuthenticationPrincipal String userId, @RequestBody UserDTO userDTO, @RequestHeader(value="Authorization") String token) {
+        try {
+            UserEntity existingUser = userService.findUserById(Long.valueOf(userId));
+            if (existingUser == null) {
+                return ResponseEntity.notFound().build();
+            }
+
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 existingUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
@@ -140,7 +191,6 @@ public class UserController {
 
             UserDTO responseUserDTO = UserDTO.builder()
                     .nickname(updatedUser.getNickname())
-                    .password(null) // 응답에 비밀번호 포함을 피함
                     .profileImage(updatedUser.getProfileImage())
                     .userId(updatedUser.getUserId())
                     .build();
@@ -197,7 +247,7 @@ public class UserController {
         try {
             String email = snsDetails.get("email");
             String nickname = snsDetails.get("nickname") + "_" + UUID.randomUUID().toString().substring(0, 4);
-            String profileImage = "https://boringavatars.com/87b091-c4d4ab-e0e0b6-171430-eff0d5/" + nickname;
+            String profileImage = "https://source.boringavatars.com/beam/120/" + nickname;
             UserEntity.LoginType loginType = UserEntity.LoginType.GOOGLE;
 
             UserDTO userDTO = userService.snsLoginOrCreateUser(email, nickname, loginType, profileImage);
