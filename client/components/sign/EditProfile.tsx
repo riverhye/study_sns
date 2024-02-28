@@ -79,9 +79,9 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
   const confirmPasswordValue = e.target.value;
   setConfirmNewPassword(confirmPasswordValue);
   if (confirmPasswordValue === newPassword) {
-    setPasswordMatch(true); // 새 비밀번호가 일치하는 경우 true로 설정
+    setPasswordMatch(true); 
   } else {
-    setPasswordMatch(false); // 새 비밀번호가 일치하지 않는 경우 false로 설정
+    setPasswordMatch(false); 
   }
 };
   // 회원정보 수정
@@ -125,6 +125,7 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
         console.log('회원 탈퇴가 완료되었습니다.');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('nickname');
+        router.push('/'); 
       
       } catch (error) {
         console.error('회원 탈퇴 실패:', error);
