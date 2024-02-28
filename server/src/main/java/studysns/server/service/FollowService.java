@@ -179,8 +179,20 @@ public class FollowService {
         UserEntity myUser = userRepository.findById(myUserId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
-        return followRepository.existsByUserAndUserFollow(targetUser, myUser);
+        String user = String.valueOf(myUserId);
+        String userFollow = String.valueOf(targetUser.getUserId());
+        log.info("나: {}", user);
+        log.info("상대: {}", userFollow);
+
+        // FollowEntity에서 user와 userFollow가 동시에 해당 값인 경우가 있는지 확인
+        boolean isFollowing = followRepository.existsByUserAndUserFollow(myUser, targetUser);
+
+        return isFollowing;
     }
+
+
+
+
 
     @Transactional(readOnly = true)
     public List<StudyDTO> orderRank() {
