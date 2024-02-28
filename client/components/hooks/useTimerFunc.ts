@@ -83,6 +83,13 @@ const useTimerFunc = () => {
       } catch (error) {
         console.error('rank timer', error);
       }
+      socket.onmessage = (evt: IMessageEvent) => {
+        console.log(JSON.parse(evt.data as string));
+
+        // if(nickname === 받아온닉네임) {
+        // setFeedData(evt.data); // feedData에 넣기
+        // }
+      };
     }
 
     // const sendData = async () => {

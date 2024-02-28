@@ -6,37 +6,16 @@ import { useEffect, useRef, useState } from 'react';
 import UpdateFeed from './UpdateFeed';
 import FeedContent from './FeedContent';
 import useTimerFunc from '../hooks/useTimerFunc';
-import NoFeed from './NoFeed';
 import { StateValue } from '@/type/type';
 import { useSelector } from 'react-redux';
 import { useWebSocket } from '../providers/SocketContext';
-import { IMessageEvent } from 'websocket';
 
 const HomeFeed = () => {
   const [value, setValue] = useState<StateValue>({ content: '', error: '' });
   const [valid, setValid] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
-  const initialFeedData: UserFeedData[] = [
-    {
-      action: 'play',
-      message: 'ㅇㅇ님이 운동 공부를 시작했습니다.',
-      date: String(new Date()),
-      feedId: 62,
-      nickname: '테스트',
-      profileImage: null,
-      isLike: true,
-    },
-    {
-      action: 'stop',
-      message: '도레미님이 어떤 공부를 끝냈습니다.',
-      feedId: 65,
-      nickname: '어쩌고',
-      profileImage: null,
-      date: '2024-02-25',
-      isLike: true,
-    },
-  ];
+  const initialFeedData: UserFeedData[] = [];
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
   const { startStudy, pauseStudy, endStudy } = useTimerFunc();
   const { socket } = useWebSocket();
@@ -44,14 +23,6 @@ const HomeFeed = () => {
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
   useEffect(() => {
-    if (socket) {
-      try {
-        socket.onmessage = (evt: IMessageEvent) => {};
-      } catch (error) {
-        console.error('start socket', error);
-      }
-    }
-
     // Temp: 아마 삭제할 axios
     // const getData = async () => {
     //   try {
@@ -63,7 +34,6 @@ const HomeFeed = () => {
     //     console.error('피드 데이터', err);
     //   }
     // };
-
     // getData();
   }, []);
 
@@ -85,55 +55,99 @@ const HomeFeed = () => {
   // };
 
   // [알림] 피드 좋아요
-  let feedId: number = 0; // 해당 피드만
+  let previousLikeStatus: boolean | undefined = undefined;
 
   const handleLike = async (index: number) => {
     try {
       const updatedFeedData = [...feedData];
       updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
-      setFeedData(updatedFeedData);
 
       const newFeedId = updatedFeedData[index].feedId;
 
       if (socket && newFeedId !== undefined) {
         try {
-          // 좋아요 추가
-          if (feedId !== undefined) {
-            if (feedData[index].isLike !== updatedFeedData[index].isLike) {
-              const message: SocketMessage = { action: 'like', feedId };
-              console.log(message);
-              socket.send(message);
-            }
+          // 좋아요 추가 또는 취소
+          const isLikeAction = feedData[index].isLike !== updatedFeedData[index].isLike;
+          if (isLikeAction) {
+            const actionType = updatedFeedData[index].isLike ? 'like' : 'unlike';
+            console.log(actionType);
+
+            const message: SocketMessage = { action: actionType, feedId: newFeedId };
+            console.log(message);
+            socket.send(message);
+
+            // 서버에 전송 후 현재 상태를 이전 상태로 업데이트
+            previousLikeStatus = updatedFeedData[index].isLike;
           }
-
-          // 내 피드인 경우에만 feedData에 넣기 + 알림 아이콘 추가
-          // 내 피드 : nickname과 비교
-          socket.onmessage = (evt: IMessageEvent) => {
-            console.log(JSON.parse(evt.data as string));
-
-            // if(nickname === 받아온닉네임) {
-            // setFeedData(evt.data); // feedData에 넣기
-            // }
-          };
         } catch (error) {
           console.error('start socket', error);
         }
       }
 
-      // const res = await axios.post(
-      //   `${process.env.NEXT_PUBLIC_URL}/like/addlike`,
-      //   {
-      //     feedId: feedData[index].feedId,
-      //     userId,
-      //     isLike: updatedFeedData[index].isLike,
-      //   },
-      //   { headers: { Authorization: `Bearer ${token}` } },
-      // );
+      // setFeedData를 호출하기 전에 좋아요 상태를 업데이트
+      previousLikeStatus = feedData[index].isLike;
+      setFeedData(updatedFeedData);
+
+      // 좋아요 상태가 변경된 경우에만 서버로 전송
+      if (previousLikeStatus !== undefined && previousLikeStatus !== updatedFeedData[index].isLike) {
+        // 서버에 좋아요 추가 또는 취소 요청
+      }
+
       console.log('피드 좋아요 전송');
     } catch (error) {
       console.error('피드 좋아요', error);
     }
   };
+
+  // let feedId: number = 0; // 해당 피드만
+
+  // const handleLike = async (index: number) => {
+  //   try {
+  //     const updatedFeedData = [...feedData];
+  //     updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
+  //     setFeedData(updatedFeedData);
+
+  //     const newFeedId = updatedFeedData[index].feedId;
+
+  //     if (socket && newFeedId !== undefined) {
+  //       try {
+  //         // 좋아요 추가
+  //         if (feedId !== undefined) {
+  //           if (feedData[index].isLike !== updatedFeedData[index].isLike) {
+  //             const message: SocketMessage = { action: 'like', feedId };
+  //             console.log(message);
+  //             socket.send(message);
+  //           }
+  //         }
+
+  //         // 내 피드인 경우에만 feedData에 넣기 + 알림 아이콘 추가
+  //         // 내 피드 : nickname과 비교
+  //         socket.onmessage = (evt: IMessageEvent) => {
+  //           console.log(JSON.parse(evt.data as string));
+
+  //           // if(nickname === 받아온닉네임) {
+  //           // setFeedData(evt.data); // feedData에 넣기
+  //           // }
+  //         };
+  //       } catch (error) {
+  //         console.error('start socket', error);
+  //       }
+  //     }
+
+  //     // const res = await axios.post(
+  //     //   `${process.env.NEXT_PUBLIC_URL}/like/addlike`,
+  //     //   {
+  //     //     feedId: feedData[index].feedId,
+  //     //     userId,
+  //     //     isLike: updatedFeedData[index].isLike,
+  //     //   },
+  //     //   { headers: { Authorization: `Bearer ${token}` } },
+  //     // );
+  //     console.log('피드 좋아요 전송');
+  //   } catch (error) {
+  //     console.error('피드 좋아요', error);
+  //   }
+  // };
 
   // 빈값 아닐 때에만 타이머 시작 (1) 엔터키
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -169,8 +183,10 @@ const HomeFeed = () => {
     try {
       socket.onmessage = evt => {
         try {
+          console.log(evt.data);
           const data = evt.data as string;
           const parsedData = JSON.parse(data);
+          console.log(parsedData);
           const parsedType = parsedData?.type;
 
           if (parsedType === 'play' || parsedType === 'stop') {
@@ -179,10 +195,10 @@ const HomeFeed = () => {
               action: parsedType,
               message: parsedData.message?.pausePlay || parsedData.message.stopPlay || parsedData.message.message,
               nickname: parsedData.message.nickname,
-              profileImage: parsedData.message.nickname,
+              profileImage: process.env.NEXT_PUBLIC_USER_IMG_URL + parsedData.message.nickname,
               date: parsedData.message.date,
             };
-            setFeedData(prevData => [...prevData, newFeedData]);
+            setFeedData(prevData => [newFeedData, ...prevData]);
           }
         } catch (jsonError) {
           console.error('Error parsing JSON:', jsonError);
@@ -221,17 +237,8 @@ const HomeFeed = () => {
         <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
           {value.error}
         </div>
-
-        {feedData ? (
-          <>
-            {/* <UpdateFeed handleUpdateFeed={handleUpdateFeed} /> */}
-            <FeedContent initialFeedData={initialFeedData} feedData={feedData} handleLike={handleLike} />
-          </>
-        ) : (
-          <div className="mt-32">
-            <NoFeed />
-          </div>
-        )}
+        {/* <UpdateFeed handleUpdateFeed={handleUpdateFeed} /> */}
+        <FeedContent feedData={feedData} handleLike={handleLike} />
       </section>
     </>
   );

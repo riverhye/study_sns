@@ -8,6 +8,7 @@ import axios from 'axios';
 import '../../styles/todoStyle.css';
 //아이콘
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { setReduxTrigger } from '@/store/module/trigger';
 //리스트를 만들어서 todo값 담기->map으로 돌려서 표현, 다른날자 누르면 리스트를 대체=>map으로 돌려서 바꿔지는 todo리스트
 //그 리스트를 의존성배열에 걸어두면 될듯(리스트도 타입이 필요하겠네..)
 
@@ -146,6 +147,8 @@ const StudyTodo = (props: StudyTodoProps) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       addTOdoList({ todoContent: todoContent });
+      const trigger = useAppSelector(state => state.trigger.trigger);
+      dispatch(setReduxTrigger(!trigger));
     } catch (error) {
       console.error('Todo 생성 요청이 실패했습니다.', error);
     }
@@ -158,6 +161,8 @@ const StudyTodo = (props: StudyTodoProps) => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${reduxdate}`);
       setTodoList(res.data);
       console.log(res.data);
+      const trigger = useAppSelector(state => state.trigger.trigger);
+      dispatch(setReduxTrigger(!trigger));
     } catch (error) {
       console.error('Todo데이터 가져오기에 실패 했습니다.', error);
     }
