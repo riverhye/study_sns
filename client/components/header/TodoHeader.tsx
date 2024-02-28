@@ -43,7 +43,7 @@ const TodoHeader = () => {
       }
     };
 
-    // getTodo();
+    getTodo();
 
     if (!token) {
       setPrevTodo(initialTodo);
@@ -54,17 +54,16 @@ const TodoHeader = () => {
     const getTodo = async () => {
       try {
         const date = timeStamp();
-        console.log('trrrrrrrrrr');
         const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${date}`);
         dispatch(setReduxTrigger(!trigger));
 
         setPrevTodo(res.data);
       } catch (error) {
-        console.error('Todo데이터 가져오기에 실패 했습니다.', error);
+        console.error('Todo 데이터: ', error);
       }
     };
 
-    // getTodo();
+    getTodo();
   }, [trigger]);
 
   // Todo 배열 비교
