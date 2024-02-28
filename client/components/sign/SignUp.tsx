@@ -31,7 +31,7 @@ const SignUp = () => {
 
     // 이메일 중복 검사
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signupcheck`, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/user/signup/check`, {
         email: newEmail
       });
       if (!res.data.emailAvailable) {

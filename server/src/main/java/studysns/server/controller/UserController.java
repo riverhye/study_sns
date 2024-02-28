@@ -41,7 +41,7 @@ public class UserController {
         return "GET: user";
     }
 
-    @PostMapping("/signupcheck")
+    @PostMapping("/signup/check")
     public ResponseEntity<?> checkEmailAvailability(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         boolean exists = userService.checkEmailExists(email);

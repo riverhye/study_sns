@@ -38,7 +38,7 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(authorize ->  authorize
-                .requestMatchers("/", "/user/signin/process", "/user/signup/**", "/user/signupcheck", "/user/social/login", "/test", "/follow/**", "/feed/**", "/like/**", "/socket/**", "/study/**" ,"/ranking").permitAll() // 권한이 필요하지 않다
+                .requestMatchers("/", "/user/signin/process", "/user/signup/**", "/user/social/login", "/test", "/follow/**", "/feed/**", "/like/**", "/socket/**", "/study/**" ,"/ranking").permitAll() // 권한이 필요하지 않다
                 .anyRequest().authenticated() // 위의 주소 외에는 권한이 필요하다
             );
 
