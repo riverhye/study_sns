@@ -35,4 +35,6 @@ public class FollowEntity {
 
     @Column(name = "followTime")
     private LocalDateTime followTime;
+
+
 }

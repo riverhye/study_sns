@@ -62,4 +62,20 @@ public class UserEntity {
         SNS, GOOGLE
     }
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowEntity> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userFollow", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowEntity> following = new ArrayList<>();
+
+    public void addFollower(FollowEntity follow) {
+        followers.add(follow);
+        follow.setUser(this);
+    }
+
+    public void addFollowing(FollowEntity follow) {
+        following.add(follow);
+        follow.setUserFollow(this);
+    }
+
 }
