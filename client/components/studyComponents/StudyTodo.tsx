@@ -96,6 +96,9 @@ const StudyTodo = (props: StudyTodoProps) => {
           data: { todoId: todoId },
           headers: { Authorization: `Bearer ${token}` },
         });
+        // 삭제된 todo를 제외한 새로운 todoList를 생성
+        const updatedTodoList = todoList.filter(todo => todo.todoId !== todoId);
+        setTodoList(updatedTodoList);
       } catch (error) {
         console.error('todo삭제 실패', error);
       }
