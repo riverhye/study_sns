@@ -22,14 +22,6 @@ const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
           <div className="flex items-center">
             <div className="w-14 h-14 rounded-full border-2 overflow-hidden">
               <img src={feed.profileImage || '/blank-profile.png'} alt="profile" width={300} height={300} />
-              <ImageComponent imageUrl={feed.profileImage} />
-              {/* <Image
-                src={feed.profileImage || '/blank-profile.png'}
-                // src={feed.profileImage ? `/${feed.profileImage}` : '/blank-profile.png'}
-                alt="profile"
-                priority={false}
-                fill={true}
-              /> */}
             </div>
             <div className="ml-2 cursor-default">{feed.nickname}</div>
           </div>

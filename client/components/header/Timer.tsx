@@ -12,12 +12,13 @@ const Timer = () => {
   const { startStudy, pauseStudy, endStudy } = useTimerFunc();
   const { StartIcon, PauseIcon, StopIcon } = HeaderIcons;
   const nickname = useAppSelector(state => state.sign.nickname);
+  const image = localStorage.getItem('profileImage');
 
   return (
     <>
       <div className="flex items-center">
         <div className="w-20 h-20 rounded-full overflow-hidden object-fill md:w-14 md:h-14">
-          <img src="https://source.boringavatars.com/beam/120/user_4ae8a619" alt="profile" width={300} height={300} />'
+          <img src={image || ''} alt="profile" width={300} height={300} />'
         </div>
         <div className="flex flex-col justify-center ml-2">
           <span className="text-white text-sm ml-2 cursor-default">{nickname}</span>
