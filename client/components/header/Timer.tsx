@@ -30,20 +30,20 @@ const Timer = () => {
           {/* 공부 상태에 따라 타이머 버튼 보이기 */}
           {studyStatus === 'start' && (
             <>
-              <div className="mb-1 ml-1 hover:scale-125 cursor-pointer">
+              <div className="mb-1 ml-1 cursor-pointer">
                 <PauseIcon onClick={pauseStudy} />
               </div>
-              <div className="ml-1 hover:scale-125 cursor-pointer">
+              <div className="ml-1 cursor-pointer">
                 <StopIcon onClick={() => endStudy(true)} />
               </div>
             </>
           )}
           {studyStatus === 'pause' && (
             <>
-              <div className="mb-1 ml-1 hover:scale-125 transition cursor-pointer">
+              <div className="mb-1 ml-1 transition cursor-pointer">
                 <StartIcon onClick={() => startStudy('')} />
               </div>
-              <div className="ml-1 hover:scale-125 cursor-pointer">
+              <div className="ml-1 cursor-pointer">
                 <StopIcon onClick={() => endStudy(true)} />
               </div>
             </>

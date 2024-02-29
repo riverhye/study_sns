@@ -53,7 +53,7 @@ const StudyUser = (props: StudyUserProps) => {
         <div>
           <div>
             <img
-              src={userData.userimage}
+              src={`${process.env.NEXT_PUBLIC_USER_IMG_URL}${userData.userimage}`}
               alt="Profile"
               className="w-[100px] bg-amber-200 rounded-full h-[100px] mr-7  "
             />
