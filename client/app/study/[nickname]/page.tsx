@@ -16,6 +16,7 @@ import StudyTodo from '@/components/studyComponents/StudyTodo';
 import StudyMyRank from '@/components/studyComponents/StudyMyRank';
 
 // 컴포넌트 : 유저 , 타이머 , 달력 , todo, 랭킹(시간, 업적)
+//
 
 //props 타입
 import { NicknamePropsType } from '../../../type/type';
