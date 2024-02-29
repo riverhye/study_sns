@@ -127,12 +127,7 @@ const HeaderTop: React.FC = () => {
                       <div className="has-tooltip relative">
                         <Link href={`/study/${follower.nickname}`}>
                           <div className="border-x-strong-yellow border-y-subtle-yellow border-4 rounded-full w-20 h-20 overflow-hidden">
-                            <img
-                              src={`${process.env.NEXT_PUBLIC_USER_IMG_URL}/user_4ae8a619`}
-                              alt="profile"
-                              width={300}
-                              height={300}
-                            />
+                            <img src={follower.profileImage || ''} alt="profile" width={300} height={300} />
                           </div>
                         </Link>
                         <div className=" absolute top-4 tooltip text-sm rounded shadow-lg p-1 w-24 bg-white text-main-blue mt-3 text-center cursor-default">
