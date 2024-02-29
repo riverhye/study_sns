@@ -179,7 +179,7 @@ const EditProfile = () => {
               <form className="space-y-4 md:space-y-6" onSubmit={handleUpdateNickname}>
                 <div>
                   <img src={profileImage} alt="Profile" className="rounded-full w-24 h-24" />
-                  <input type="file" accept="image/*" onChange={handleImageUpload} />
+                  {/* <input type="file" accept="image/*" onChange={handleImageUpload} /> */}
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
