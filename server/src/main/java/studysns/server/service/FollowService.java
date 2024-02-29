@@ -171,12 +171,12 @@ public class FollowService {
     }
 
     public boolean checkIfFollowing(long myUserId, String targetNickname) {
-        UserEntity targetUser = userRepository.findByNickname(targetNickname);
-        if (targetUser == null) {
+        UserEntity myUser = userRepository.findByNickname(targetNickname);
+        if (myUser == null) {
             throw new RuntimeException("대상을 찾을 수 없음");
         }
 
-        UserEntity myUser = userRepository.findById(myUserId)
+        UserEntity targetUser = userRepository.findById(myUserId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
         String user = String.valueOf(myUserId);
