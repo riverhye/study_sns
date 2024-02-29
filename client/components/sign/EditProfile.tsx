@@ -184,7 +184,7 @@ const EditProfile = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">닉네임</label>
                   <input
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     type="text"
                     placeholder={placeHolderNickname}
                     value={nickname}
@@ -199,9 +199,15 @@ const EditProfile = () => {
                     <span className="text-blue-600">사용 가능한 닉네임입니다.</span>
                   )}
                 </div>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  닉네임 수정하기
+                <div className="w-full flex justify-end">
+                <button 
+                  type="submit" 
+                  className="ml-4 bg-primary-600 bg-main-blue hover:bg-blue-300 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center text-white">
+
+                  닉네임 수정
                 </button>
+
+</div>
               </form>
 
               <form className="space-y-4 md:space-y-6" onSubmit={handleUpdatePassword}>
@@ -221,7 +227,7 @@ const EditProfile = () => {
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">새 비밀번호</label>
                   <input
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     type="password"
                     placeholder="New Password"
                     value={newPassword}
@@ -239,7 +245,7 @@ const EditProfile = () => {
                     새 비밀번호 확인
                   </label>
                   <input
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-60 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     type="password"
                     placeholder="Confirm New Password"
                     value={confirmNewPassword}
@@ -253,15 +259,19 @@ const EditProfile = () => {
                     <span className="text-blue-600">새 비밀번호 일치</span>
                   )}
                 </div>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  비밀번호 수정하기
+                <div className="w-full flex justify-end">
+                <button 
+                  type="submit" 
+                  className="ml-4 bg-primary-600 bg-main-blue hover:bg-blue-300 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center text-white">
+                  비밀번호 수정
                 </button>
+</div>
               </form>
 
               <button
                 type="button"
                 onClick={handleDeleteAccount}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                className="ml-4 bg-primary-600 bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center text-white">
                 탈퇴하기
               </button>
             </div>
