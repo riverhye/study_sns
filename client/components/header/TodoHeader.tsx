@@ -43,7 +43,7 @@ const TodoHeader = () => {
       }
     };
 
-    // getTodo();
+    getTodo();
 
     if (!token) {
       setPrevTodo(initialTodo);
@@ -55,7 +55,7 @@ const TodoHeader = () => {
       try {
         const date = timeStamp();
         const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${date}`);
-        dispatch(setReduxTrigger(!trigger));
+        // dispatch(setReduxTrigger(!trigger));
 
         setPrevTodo(res.data);
       } catch (error) {
