@@ -42,6 +42,9 @@ interface StudyPageData {
   };
   badge: { badgeName: string }[];
 }
+interface forresI {
+  data: boolean;
+}
 export default function Study(props: NicknamePropsType) {
   const nickname = props.params.nickname;
   const token = localStorage.getItem('accessToken');
@@ -52,7 +55,7 @@ export default function Study(props: NicknamePropsType) {
     myRanking: { rankingDate: '', rankingTime: 0 },
     badge: [],
   });
-  let folloeres;
+  let isfollow;
   //url(=유저닉네임)이 바뀔때마다 새로 요청
   useEffect(() => {
     //api요청: 페이지 렌더됐을경우
@@ -65,10 +68,11 @@ export default function Study(props: NicknamePropsType) {
         console.error('스터디페이지 데이터 가져오기 실패:', error);
       }
       try {
-        folloeres = await axios.get(`${process.env.NEXT_PUBLIC_URL}/follow/checkfollow/${nickname}`, {
+        const forres: forresI = await axios.get(`${process.env.NEXT_PUBLIC_URL}/follow/checkfollow/${nickname}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log('팔로우여부', folloeres);
+        isfollow = forres.data;
+        console.log(isfollow);
       } catch (error) {
         console.log('팔로우여부에러', error);
       }
@@ -81,7 +85,7 @@ export default function Study(props: NicknamePropsType) {
   return (
     <>
       <div className=" ml-[50px]">
-        <StudyUser userData={studyPageData.user} />
+        <StudyUser userData={studyPageData.user} isfollowp={isfollow} />
         <div className="my-6">Todo</div>
         <div className="flex ">
           <div className="mr-10 ">
