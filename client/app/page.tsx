@@ -4,6 +4,7 @@ import HomeFeed from '@/components/feed/HomeFeed';
 import SignIn from '@/components/sign/SignIn';
 import { useAppSelector } from '@/store/hooks';
 import { Metadata } from 'next';
+import { useSession } from 'next-auth/react';
 
 // export const metadata: Metadata = {
 //   title: {
@@ -13,8 +14,10 @@ import { Metadata } from 'next';
 // };
 
 const HomePage = () => {
+  const { data } = useSession();
   const token = useAppSelector(state => state.sign.token);
-  return <>{token ? <HomeFeed /> : <SignIn />}</>;
+  const socialToken = data?.user;
+  return <>{token || socialToken ? <HomeFeed /> : <SignIn />}</>;
 };
 
 export default HomePage;
