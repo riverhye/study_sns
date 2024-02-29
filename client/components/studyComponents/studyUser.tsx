@@ -10,6 +10,7 @@ interface StudyUserProps {
     followingId: number;
     followerId: number;
   };
+  isfollowp: boolean | undefined;
 }
 interface axiosData {
   followId: string;
@@ -17,7 +18,7 @@ interface axiosData {
 const StudyUser = (props: StudyUserProps) => {
   //소켓연결
   const { socket } = useWebSocket();
-
+  const isfollow = props.isfollowp;
   const userData = props.userData;
   const token = localStorage.getItem('accessToken'); //토큰
   async function pollowController() {
@@ -53,7 +54,7 @@ const StudyUser = (props: StudyUserProps) => {
         <div>
           <div>
             <img
-              src={`${process.env.NEXT_PUBLIC_USER_IMG_URL}${userData.userimage}`}
+              src={userData.userimage}
               alt="Profile"
               className="w-[100px] bg-amber-200 rounded-full h-[100px] mr-7  "
             />
@@ -67,16 +68,13 @@ const StudyUser = (props: StudyUserProps) => {
             <div className="mr-2">팔로잉{userData?.followingId} </div>
             <div>팔로워{userData?.followerId}</div>{' '}
             <div>
-              {}
-              <button
-                onClick={pollowController}
-                className="w-20 h-[30px] ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
-                팔로우
-              </button>
-              {/* 이미 팔로우한 사람이면 언팔로우가 뜨게 해야함 (내페이지면 아무것도 안보이게)
-              아 이거 안했다.....
-                !트리거를(useState) 하나 만들어서 팔로했는지 안했는지 알아봐야함
-              */}
+              {!isfollow && (
+                <button
+                  onClick={pollowController}
+                  className="w-20 h-[30px] ml-3 rounded-md bg-strong-yellow active:filter-none shadow-md transform active:scale-75 transition-transform">
+                  팔로우
+                </button>
+              )}
             </div>
           </div>
         </div>
