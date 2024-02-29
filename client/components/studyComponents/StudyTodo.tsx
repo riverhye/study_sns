@@ -83,6 +83,8 @@ const StudyTodo = (props: StudyTodoProps) => {
     );
   }, [todoList]);
 
+  const trigger = useAppSelector(state => state.trigger.trigger);
+
   //호버시에 삭제 뜨는 함수
   async function deleteIcon(todoId: number | undefined) {
     //유저가 일치 한다면
@@ -96,6 +98,7 @@ const StudyTodo = (props: StudyTodoProps) => {
           data: { todoId: todoId },
           headers: { Authorization: `Bearer ${token}` },
         });
+        dispatch(setReduxTrigger((prevTrigger: boolean) => !prevTrigger));
         // 삭제된 todo를 제외한 새로운 todoList를 생성
         const updatedTodoList = todoList.filter(todo => todo.todoId !== todoId);
         setTodoList(updatedTodoList);
@@ -107,8 +110,6 @@ const StudyTodo = (props: StudyTodoProps) => {
       console.log('삭제 버튼 클릭');
     }
   }
-
-  const trigger = useAppSelector(state => state.trigger.trigger);
 
   //todo 생성
   async function todoController() {
@@ -165,8 +166,6 @@ const StudyTodo = (props: StudyTodoProps) => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${reduxdate}`);
       setTodoList(res.data);
       console.log(res.data);
-      const trigger = useAppSelector(state => state.trigger.trigger);
-      // dispatch(setReduxTrigger(!trigger));
     } catch (error) {
       console.error('Todo데이터 가져오기에 실패 했습니다.', error);
     }

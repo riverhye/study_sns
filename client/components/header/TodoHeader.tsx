@@ -39,6 +39,7 @@ const TodoHeader = () => {
         if (!compareArrays(res.data, prevTodo)) {
           setPrevTodo(res.data);
         }
+        // dispatch(setReduxTrigger(!trigger));
       } catch (error) {
         console.error('Todo데이터 가져오기에 실패 했습니다.', error);
       }
