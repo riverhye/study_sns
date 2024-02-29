@@ -43,7 +43,7 @@ const TodoHeader = () => {
       }
     };
 
-    getTodo();
+    // getTodo();
 
     if (!token) {
       setPrevTodo(initialTodo);
