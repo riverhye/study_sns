@@ -8,10 +8,10 @@ const handler = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     }),
-    KakaoProvider({
-      clientId: process.env.KAKAO_CLIENT_ID || '',
-      clientSecret: process.env.KAKAO_CLIENT_SECRET || '',
-    }),
+    // KakaoProvider({
+    //   clientId: process.env.KAKAO_CLIENT_ID || '',
+    //   clientSecret: process.env.KAKAO_CLIENT_SECRET || '',
+    // }),
   ],
   callbacks: {
     async jwt({ token, user }) {
