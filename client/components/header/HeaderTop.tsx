@@ -121,8 +121,8 @@ const HeaderTop: React.FC = () => {
           {token && (
             <>
               {followerList.map((follower, idx) => (
-                <React.Fragment key={follower.nickname + 'a'}>
-                  <SwiperSlide key={follower.nickname + 't'}>
+                <React.Fragment key={follower.nickname + idx}>
+                  <SwiperSlide key={follower.nickname + idx}>
                     <div className="flex flex-col items-center mx-4">
                       <div className="has-tooltip relative">
                         <Link href={`/study/${follower.nickname}`}>

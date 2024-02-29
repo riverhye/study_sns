@@ -63,6 +63,8 @@ const TodoHeader = () => {
       }
     };
 
+    console.log(trigger);
+
     getTodo();
   }, [trigger]);
 
