@@ -105,6 +105,8 @@ const StudyTodo = (props: StudyTodoProps) => {
     }
   }
 
+  const trigger = useAppSelector(state => state.trigger.trigger);
+
   //todo 생성
   async function todoController() {
     if (todoList.length >= 6) {
@@ -147,7 +149,6 @@ const StudyTodo = (props: StudyTodoProps) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       addTOdoList({ todoContent: todoContent });
-      const trigger = useAppSelector(state => state.trigger.trigger);
       dispatch(setReduxTrigger(!trigger));
     } catch (error) {
       console.error('Todo 생성 요청이 실패했습니다.', error);
@@ -162,7 +163,7 @@ const StudyTodo = (props: StudyTodoProps) => {
       setTodoList(res.data);
       console.log(res.data);
       const trigger = useAppSelector(state => state.trigger.trigger);
-      dispatch(setReduxTrigger(!trigger));
+      // dispatch(setReduxTrigger(!trigger));
     } catch (error) {
       console.error('Todo데이터 가져오기에 실패 했습니다.', error);
     }

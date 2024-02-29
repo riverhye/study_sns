@@ -30,6 +30,7 @@ const TodoHeader = () => {
   const token = useAppSelector(state => state.sign.token);
   const dispatch = useDispatch();
 
+  // 로그인 했을 때 가져오기
   useEffect(() => {
     const getTodo = async () => {
       try {
@@ -50,20 +51,21 @@ const TodoHeader = () => {
     }
   }, [token]);
 
+  // post 할 때마다 가져오기
   useEffect(() => {
     const getTodo = async () => {
       try {
         const date = timeStamp();
         const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${date}`);
-        // dispatch(setReduxTrigger(!trigger));
+        if (!compareArrays(res.data, prevTodo)) {
+          dispatch(setReduxTrigger(!trigger));
+        }
 
         setPrevTodo(res.data);
       } catch (error) {
         console.error('Todo 데이터: ', error);
       }
     };
-
-    console.log(trigger);
 
     getTodo();
   }, [trigger]);
