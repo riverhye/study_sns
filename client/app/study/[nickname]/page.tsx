@@ -44,7 +44,7 @@ interface StudyPageData {
 }
 export default function Study(props: NicknamePropsType) {
   const nickname = props.params.nickname;
-
+  const token = localStorage.getItem('accessToken');
   const [studyPageData, setStudyPageData] = useState<StudyPageData>({
     user: { nickname: 'tNickname', email: 'tEmail@dot.com', followingId: 0, followerId: 0, userimage: '' },
     studyTable: [],
@@ -52,7 +52,7 @@ export default function Study(props: NicknamePropsType) {
     myRanking: { rankingDate: '', rankingTime: 0 },
     badge: [],
   });
-
+  let folloeres;
   //url(=유저닉네임)이 바뀔때마다 새로 요청
   useEffect(() => {
     //api요청: 페이지 렌더됐을경우
@@ -63,6 +63,14 @@ export default function Study(props: NicknamePropsType) {
         console.log('유저데이터', res.data);
       } catch (error) {
         console.error('스터디페이지 데이터 가져오기 실패:', error);
+      }
+      try {
+        folloeres = await axios.get(`${process.env.NEXT_PUBLIC_URL}/follow/checkfollow/${nickname}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('팔로우여부', folloeres);
+      } catch (error) {
+        console.log('팔로우여부에러', error);
       }
     }
 
