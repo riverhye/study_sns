@@ -84,16 +84,16 @@ const StudyTodo = (props: StudyTodoProps) => {
   }, [todoList]);
 
   //호버시에 삭제 뜨는 함수
-  async function deleteIcon(todoid: number | undefined) {
+  async function deleteIcon(todoId: number | undefined) {
     //유저가 일치 한다면
     if (myNickname === decodeURIComponent(nickname)) {
       //호버했을때 보여진다음 삭제 axios요청
       //pop해서 새로운 배열 등록
       //!어떻게 요소를 분간할 것인가?
-      console.log('요청들어감', todoid);
+      console.log('요청들어감', todoId);
       try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_URL}/study/deletetodo`, {
-          data: { todoId: todoid },
+        await axios.delete(`${process.env.NEXT_PUBLIC_URL}/study/deletetodo/${todoId}`, {
+          data: { todoId: todoId },
           headers: { Authorization: `Bearer ${token}` },
         });
       } catch (error) {

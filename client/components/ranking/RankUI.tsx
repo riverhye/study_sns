@@ -6,7 +6,7 @@ interface props {
     profileImage: string;
     nickname: string;
     studyDate: string;
-    todoayStudyTime: number;
+    todayStudyTime: number;
   };
   index: number;
 }
@@ -24,12 +24,13 @@ const RankUI = (props: props) => {
             alt="Profile"
             className="w-[60px] bg-amber-200 rounded-full h-[60px] mr-3  "
           />
-          <div className="mr-3">임시(db연결되면 지워야함):닉네임{contents.nickname}</div>
+          <div className="mr-3">{contents.nickname}</div>
         </div>
-
-        <div className="mr-3">임시(db연결되면 지워야함):2시간 12분{contents.todoayStudyTime}</div>
-        {/* 나중에 분을 시간으로 변환하는 작업 해줘야함 */}
-        <div className="mr-3">임시(db연결되면 지워야함):2024-3-12{contents.studyDate}</div>
+        <div className="flex ">
+          <div className="mr-3 font-semibold">{contents.todayStudyTime}분</div>
+          {/* 나중에 분을 시간으로 변환하는 작업 해줘야함 */}
+          <div className="mx-3">{contents.studyDate}</div>
+        </div>
       </div>
     </>
   );

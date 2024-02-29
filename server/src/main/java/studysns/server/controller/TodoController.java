@@ -44,8 +44,8 @@ public class TodoController {
     }
 
     @DeleteMapping("/deletetodo/{todoId}")
-    public ResponseEntity<String> deleteTodo(@PathVariable long todoId) {
-        todoService.deleteTodoById(todoId);
+    public ResponseEntity<String> deleteTodo(@AuthenticationPrincipal String userId, @PathVariable int todoId) {
+        todoService.deleteTodoById(Long.valueOf(todoId));
         return ResponseEntity.ok("Todo 삭제 성공");
     }
-}
+    }

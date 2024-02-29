@@ -2,24 +2,26 @@
 import RankUI from '@/components/ranking/RankUI';
 import axios from 'axios';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface RankingData {
   profileImage: string;
   nickname: string;
   studyDate: string;
-  todoayStudyTime: number;
+  todayStudyTime: number;
 }
 const Ranking = () => {
-  const [rankingList, getRankingList] = useState<RankingData[]>([
-    { profileImage: '', nickname: 'test', studyDate: '', todoayStudyTime: 150 },
-    { profileImage: '', nickname: '', studyDate: '', todoayStudyTime: 150 },
-  ]);
+  const [rankingList, getRankingList] = useState<RankingData[]>([]);
   async function getRnaking() {
     const res: RankingData[] = (await axios.get(`${process.env.NEXT_PUBLIC_URL}/ranking`)).data;
 
     getRankingList(res);
+    console.log(res);
   }
+
+  useEffect(() => {
+    getRnaking();
+  }, []);
   return (
     <div className="flex  w-full justify-center flex-col align-middle">
       {rankingList.map((list, index) => (
