@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { IMessageEvent, w3cwebsocket } from 'websocket';
+import { w3cwebsocket } from 'websocket';
 
 interface WebSocketContextProps {
   socket: w3cwebsocket | null;
@@ -23,25 +23,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     newSocket.onopen = () => {
       console.log('WebSocket Client Connected');
       setSocket(newSocket);
-      // if (socket) {
-      //   try {
-      //     const play = { action: 'play', studyContent: 'ddd' };
-
-      //     socket.send(JSON.stringify(play));
-      //     console.log('play send');
-
-      //     socket.onmessage = evt => {
-      //       console.log(1111111111111);
-      //       // console.log( JSON.parse(evt.data))
-      //       console.log('play data: ', evt.data);
-      //       if (evt.data.slice(10, 13) === 'play') {
-      //         // const res = JSON.parse(evt.data);
-      //       }
-      //     };
-      //   } catch (error) {
-      //     console.error('start socket', error);
-      //   }
-      // }
     };
 
     newSocket.onerror = (e: any) => {
