@@ -14,6 +14,7 @@ import { useAppSelector } from '@/store/hooks';
 import { format } from 'date-fns';
 
 const HeaderTop: React.FC = () => {
+  const token = useAppSelector(state => state.sign.token);
   const [followerList, setFollowerList] = useState<FollowerRank[]>([]);
   const nickname = useAppSelector(state => state.sign.nickname);
 
@@ -36,10 +37,11 @@ const HeaderTop: React.FC = () => {
       }
     };
 
-    getData();
+    if (token) {
+      getData();
+    }
   }, []);
-
-  const token = useAppSelector(state => state.sign.token);
+  console.log(followerList.length);
 
   // 공부 시간 분 단위 -> hh:mm 단위로 가공
   const formatStudyTime = (minutes: number) => {
@@ -50,7 +52,7 @@ const HeaderTop: React.FC = () => {
   };
 
   return (
-    <div className="mt-5 w-auto">
+    <div className={`mt-5 ${followerList.length !== 0 ? 'w-auto' : 'w-[1550px]'}`}>
       <Swiper
         modules={[Navigation]}
         spaceBetween={50}
