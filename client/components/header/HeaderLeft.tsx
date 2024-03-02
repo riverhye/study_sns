@@ -2,15 +2,15 @@
 
 import Link from 'next/link';
 import Category from './Category';
-import HeaderIcons from '@/public/images/HeaderIcons';
+import HeaderIcons from '@/components/_icons/HeaderIcons';
 import Timer from './Timer';
 import TodoHeader from './TodoHeader';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Logout from '../sign/Logout';
 import { useAppSelector } from '@/store/hooks';
 import { useDispatch } from 'react-redux';
 import { resetReduxToken } from '@/store/module/sign';
-import { resetReduxTrigger, setReduxTrigger } from '@/store/module/trigger';
+import { resetReduxTrigger } from '@/store/module/trigger';
 
 const HeaderLeft = () => {
   const token = localStorage.getItem('accessToken');
@@ -31,7 +31,7 @@ const HeaderLeft = () => {
 
   return (
     <>
-      <div className="flex flex-col h-auto w-1/4 px-4 bg-main-blue p-0">
+      <div className="flex flex-col h-auto w-1/6 px-4 bg-main-blue p-0">
         <Category />
         {getToken && (
           <>

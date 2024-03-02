@@ -18,13 +18,6 @@ function HomeIcon({ color }: IconProps) {
 
 function SearchIcon({ color }: IconProps) {
   return (
-    // <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 24 24">
-    //   <path
-    //     fill={color} // this
-    //     stroke="white"
-    //     strokeWidth={1.3}
-    //     d="m21 21l-4.343-4.343m0 0A8 8 0 1 0 5.343 5.343a8 8 0 0 0 11.314 11.314"></path>
-    // </svg>
     <svg xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem" viewBox="0 0 24 24">
       <path
         fill={color}

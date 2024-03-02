@@ -1,17 +1,8 @@
 import HeaderLeft from '@/components/header/HeaderLeft';
 import HeaderTop from '@/components/header/HeaderTop';
 import AuthProvider from '@/components/providers/AuthProvider';
-import HomeComponent from '@/components/sign/HomeComponent';
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: {
-    default: 'Home',
-    template: '%s | SNS',
-  },
-};
-
-const HomePage = () => {
+export default async function UserLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <header className="flex font-['SansRegular']">
@@ -19,14 +10,10 @@ const HomePage = () => {
           <HeaderLeft />
           <div className="flex flex-col overflow-y-auto">
             <HeaderTop />
-            <div className="p-4 mt-10 h-full w-full">
-              <HomeComponent />
-            </div>
+            <div className="p-4 mt-10 h-full">{children}</div>
           </div>
         </AuthProvider>
       </header>
     </>
   );
-};
-
-export default HomePage;
+}

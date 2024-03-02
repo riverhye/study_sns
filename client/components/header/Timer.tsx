@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { TimerState } from '@/type/type';
 import Image from 'next/image';
 import useTimerFunc from '../hooks/useTimerFunc';
-import HeaderIcons from '@/public/images/HeaderIcons';
+import HeaderIcons from '@/components/_icons/HeaderIcons';
 import { useAppSelector } from '@/store/hooks';
 
 const Timer = () => {

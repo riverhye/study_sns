@@ -5,7 +5,7 @@ import { setReduxDate } from '@/store/module/date';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { timeStamp } from './timeStamp';
 import axios from 'axios';
-import '../../styles/todoStyle.css';
+import '@/styles/todoStyle.css';
 //아이콘
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { setReduxTrigger } from '@/store/module/trigger';
@@ -98,10 +98,10 @@ const StudyTodo = (props: StudyTodoProps) => {
           data: { todoId: todoId },
           headers: { Authorization: `Bearer ${token}` },
         });
-        dispatch(setReduxTrigger((prevTrigger: boolean) => !prevTrigger));
         // 삭제된 todo를 제외한 새로운 todoList를 생성
         const updatedTodoList = todoList.filter(todo => todo.todoId !== todoId);
         setTodoList(updatedTodoList);
+        dispatch(setReduxTrigger((prevTrigger: boolean) => !prevTrigger));
       } catch (error) {
         console.error('todo삭제 실패', error);
       }

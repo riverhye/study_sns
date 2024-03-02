@@ -1,9 +1,7 @@
 import React, { ReactNode } from 'react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import Image from 'next/image';
-import { FeedItemProps, UserFeedData } from '@/type/type';
-import ImageComponent from '@/public/images/BasicUserProfile';
+import { FeedItemProps } from '@/type/type';
 
 const FeedItem: React.FC<FeedItemProps> = ({ feed, children }) => {
   const dateDistance = (date: string): ReactNode => {

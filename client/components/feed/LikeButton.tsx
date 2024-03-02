@@ -1,9 +1,5 @@
 import React from 'react';
-
-interface LikeButtonProps {
-  isLike: boolean;
-  onClick: () => void;
-}
+import { LikeButtonProps } from '@/type/type';
 
 const LikeButton: React.FC<LikeButtonProps> = ({ isLike, onClick }) => {
   return (
@@ -22,5 +18,4 @@ const LikeButton: React.FC<LikeButtonProps> = ({ isLike, onClick }) => {
     </div>
   );
 };
-
 export default LikeButton;

@@ -53,6 +53,12 @@ export interface StateValue {
   error: string;
 }
 
+// [홈] 좋아요 버튼
+export interface LikeButtonProps {
+  isLike: boolean;
+  onClick: () => void;
+}
+
 // [Nav-Left] 카테고리
 export interface Categories {
   href: string;
