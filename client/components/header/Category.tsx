@@ -1,4 +1,4 @@
-import Icons from '@/public/images/HeaderIcons';
+import Icons from '@/components/_icons/HeaderIcons';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Categories } from '@/type/type';

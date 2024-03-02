@@ -1,9 +1,7 @@
 'use client';
 
-import axios from 'axios';
 import { UserFeedData, TimerState, SocketMessage } from '@/type/type';
 import { useEffect, useRef, useState } from 'react';
-import UpdateFeed from './UpdateFeed';
 import FeedContent from './FeedContent';
 import useTimerFunc from '../hooks/useTimerFunc';
 import { StateValue } from '@/type/type';
@@ -17,13 +15,11 @@ const HomeFeed = () => {
   const { studyStatus } = useSelector((state: { timer: TimerState }) => state.timer);
   const initialFeedData: UserFeedData[] = [];
   const [feedData, setFeedData] = useState<UserFeedData[]>(initialFeedData);
-  const { startStudy, pauseStudy, endStudy } = useTimerFunc();
+  const { startStudy } = useTimerFunc();
   const { socket } = useWebSocket();
-  const [type, setType] = useState<string>('');
 
   // 접속 시 팔로워들의 공부 시작/끝, 나를 새 팔로우, 나를 좋아요 한 가져오기
   useEffect(() => {
-    // Temp: 아마 삭제할 axios
     // const getData = async () => {
     //   try {
     //     const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/feed`, {
@@ -36,23 +32,6 @@ const HomeFeed = () => {
     // };
     // getData();
   }, []);
-
-  // 피드 새로고침
-  // const handleUpdateFeed = async () => {
-  //   //   try {
-  //   //     // Add: userId
-  //   //     const res = await axios.get<UserFeedData[]>(`${process.env.NEXT_PUBLIC_URL}/getfeed/userId`, {
-  //   //       headers: { Authorization: `Bearer ${token}` },
-  //   //     });
-  //   //     // 내림차순 정렬
-  //   //     const sortedFeedData = res.data.slice().sort((a, b) => {
-  //   //       return b.date.getTime() - a.date.getTime();
-  //   //     });
-  //   //     setFeedData(sortedFeedData);
-  //   //   } catch (error) {
-  //   //     console.error('새 피드', error);
-  //   //   }
-  // };
 
   // [알림] 피드 좋아요
   let previousLikeStatus: boolean | undefined = undefined;
@@ -99,56 +78,6 @@ const HomeFeed = () => {
     }
   };
 
-  // let feedId: number = 0; // 해당 피드만
-
-  // const handleLike = async (index: number) => {
-  //   try {
-  //     const updatedFeedData = [...feedData];
-  //     updatedFeedData[index].isLike = !updatedFeedData[index].isLike;
-  //     setFeedData(updatedFeedData);
-
-  //     const newFeedId = updatedFeedData[index].feedId;
-
-  //     if (socket && newFeedId !== undefined) {
-  //       try {
-  //         // 좋아요 추가
-  //         if (feedId !== undefined) {
-  //           if (feedData[index].isLike !== updatedFeedData[index].isLike) {
-  //             const message: SocketMessage = { action: 'like', feedId };
-  //             console.log(message);
-  //             socket.send(message);
-  //           }
-  //         }
-
-  //         // 내 피드인 경우에만 feedData에 넣기 + 알림 아이콘 추가
-  //         // 내 피드 : nickname과 비교
-  //         socket.onmessage = (evt: IMessageEvent) => {
-  //           console.log(JSON.parse(evt.data as string));
-
-  //           // if(nickname === 받아온닉네임) {
-  //           // setFeedData(evt.data); // feedData에 넣기
-  //           // }
-  //         };
-  //       } catch (error) {
-  //         console.error('start socket', error);
-  //       }
-  //     }
-
-  //     // const res = await axios.post(
-  //     //   `${process.env.NEXT_PUBLIC_URL}/like/addlike`,
-  //     //   {
-  //     //     feedId: feedData[index].feedId,
-  //     //     userId,
-  //     //     isLike: updatedFeedData[index].isLike,
-  //     //   },
-  //     //   { headers: { Authorization: `Bearer ${token}` } },
-  //     // );
-  //     console.log('피드 좋아요 전송');
-  //   } catch (error) {
-  //     console.error('피드 좋아요', error);
-  //   }
-  // };
-
   // 빈값 아닐 때에만 타이머 시작 (1) 엔터키
   const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -190,7 +119,6 @@ const HomeFeed = () => {
           const parsedType = parsedData?.type;
 
           if (parsedType === 'play' || parsedType === 'stop') {
-            // setType(parsedType);
             const newFeedData: UserFeedData = {
               action: parsedType,
               message: parsedData.message?.pausePlay || parsedData.message.stopPlay || parsedData.message.message,
@@ -237,7 +165,6 @@ const HomeFeed = () => {
         <div role="alert" className="text-red-400 text-xs mt-4 flex justify-center h-10">
           {value.error}
         </div>
-        {/* <UpdateFeed handleUpdateFeed={handleUpdateFeed} /> */}
         <FeedContent feedData={feedData} handleLike={handleLike} />
       </section>
     </>

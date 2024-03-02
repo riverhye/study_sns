@@ -18,7 +18,7 @@ interface axiosData {
 const StudyUser = (props: StudyUserProps) => {
   //소켓연결
   const { socket } = useWebSocket();
-  const isfollow = props.isfollowp;
+  const isfollow = props.isfollowp || true;
   const userData = props.userData;
   const token = localStorage.getItem('accessToken'); //토큰
   async function pollowController() {
@@ -68,6 +68,8 @@ const StudyUser = (props: StudyUserProps) => {
             <div className="mr-2">팔로잉{userData?.followingId} </div>
             <div>팔로워{userData?.followerId}</div>{' '}
             <div>
+              {/* 팔로우가 false이거나 내 계정이 아니거나 */}
+              {/* 내 계정이 아니다.. url의 닉네임과 redux의 닉네임이 다르다 */}
               {!isfollow && (
                 <button
                   onClick={pollowController}

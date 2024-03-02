@@ -3,7 +3,6 @@
 import { Inter } from 'next/font/google';
 
 import '@/styles/tailwind.css';
-import '@/styles/global.css';
 import AuthProvider from '@/components/providers/AuthProvider';
 import HeaderLeft from '@/components/header/HeaderLeft';
 import HeaderTop from '@/components/header/HeaderTop';
@@ -19,8 +18,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={inter.className}>
         {/* <SocketProvider /> */}
         <WebSocketProvider>
-          <header className="flex font-['SansRegular']">
-            <StoreProvider>
+          <StoreProvider>
+            {/* <header className="flex font-['SansRegular']">
               <HeaderLeft />
               <div className="flex flex-col overflow-y-auto">
                 <HeaderTop />
@@ -28,8 +27,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <AuthProvider>{children}</AuthProvider>
                 </div>
               </div>
-            </StoreProvider>
-          </header>
+          </header> */}
+            {children}
+          </StoreProvider>
         </WebSocketProvider>
       </body>
     </html>

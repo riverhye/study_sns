@@ -3,7 +3,6 @@
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { useWebSocket } from '../providers/SocketContext';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -23,6 +22,7 @@ const HeaderTop: React.FC = () => {
     const getData = async () => {
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/follow/rank`);
+        console.log(res.data);
         const followers: FollowerRank[] = res.data;
         const filteredFollowers = followers.filter(follower => follower.nickname !== nickname);
         const followerArr = filteredFollowers.map(follower => ({
@@ -30,7 +30,7 @@ const HeaderTop: React.FC = () => {
           profileImage: follower.profileImage,
           todayStudyTime: follower.todayStudyTime,
         }));
-        setFollowerList(prevFollowerList => [...followerArr, ...prevFollowerList]);
+        setFollowerList(followerArr);
       } catch (error) {
         console.error('Error fetching follower data:', error);
       }
@@ -39,61 +39,23 @@ const HeaderTop: React.FC = () => {
     getData();
   }, []);
 
-  //   if (socket) {
-  //     try {
-  //       // nickname이 나랑 동일한 거 제외한 배열 반환 filter
-  //       //
-  //       // const intervalId = setInterval(() => {
-  //       const rank = { action: 'rank' };
-  //       socket.send(JSON.stringify(rank));
-  //       console.log('send data');
-  //       // }, 3000);
-
-  //       socket.onmessage = evt => {
-  //         try {
-  //           console.log(evt.data);
-  //           const data = evt.data as string;
-  //           const parsedData = JSON.parse(data);
-  //           console.log(parsedData);
-
-  //           if (Array.isArray(parsedData)) {
-  //             const transformedData: FollowerRank[] = parsedData.map((data: any) => ({
-  //               nickname: data.nickname || '',
-  //               profileImage: data.profileImage || null,
-  //               todayStudyTime: data.todayStudyTime || 0,
-  //             }));
-  //             transformedData.sort((a, b) => b.todayStudyTime - a.todayStudyTime);
-  //             console.log('가공', transformedData);
-  //             setFollowerList(transformedData);
-  //           }
-  //         } catch (error) {
-  //           console.error('Error parsing JSON:', error);
-  //         }
-  //       };
-
-  //       // return () => clearInterval(intervalId);
-  //       // socket.onmessage = evt => {
-  //       //   console.log(evt);
-  //       // };
-  //     } catch (error) {
-  //       console.error('err', error);
-  //     }
-  //   }
   const token = useAppSelector(state => state.sign.token);
 
+  // 공부 시간 분 단위 -> hh:mm 단위로 가공
   const formatStudyTime = (minutes: number) => {
-    const studyDate = new Date(0); // Initialize a date object with the epoch time
-    studyDate.setMinutes(minutes); // Set the minutes to the date object
+    const studyDate = new Date(0);
+    studyDate.setMinutes(minutes);
 
-    return format(studyDate, 'HH:mm'); // Format the date object to 'hh:mm'
+    return format(studyDate, 'HH:mm');
   };
 
   return (
-    <div className="mt-5 w-[1400px]">
+    <div className="mt-5 w-auto">
       <Swiper
         modules={[Navigation]}
-        spaceBetween={0}
-        slidesPerView={10}
+        spaceBetween={50}
+        slidesPerView={5}
+        slidesPerGroup={5}
         navigation
         breakpoints={{
           320: {
