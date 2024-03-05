@@ -5,7 +5,7 @@ import { Categories } from '@/type/type';
 
 const Category = () => {
   const { HomeIcon, SearchIcon, StudyIcon, RankIcon, LikeIcon } = Icons;
-  const [selectedCategory, setSelectedCategory] = useState<number>(0);
+  const [selectedCategory, setSelectedCategory] = useState<number>();
   const token = localStorage.getItem('accessToken');
   const nickname = localStorage.getItem('nickname');
 
@@ -45,7 +45,7 @@ const Category = () => {
           )}
           <li
             className={`flex items-center rounded-md py-2 mx-0 ${item.text !== '랭킹' && 'mb-1'} ${selectedCategory === categoryIdx && 'font-bold'} text-lg hover:font-bold hover:bg-opacity-20 hover:bg-slate-50 transition ease-in-out delay-50 `}
-            onClick={() => handleClick(categoryIdx)}>
+            onClick={e => handleClick(categoryIdx)}>
             <div className="inline-flex pl-3 box-content">{item.svgComponent}</div>
             <span className="text-white ml-5 text-lg">{item.text}</span>
           </li>

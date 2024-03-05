@@ -16,19 +16,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* <SocketProvider /> */}
         <WebSocketProvider>
           <StoreProvider>
-            {/* <header className="flex font-['SansRegular']">
+            <header className="flex font-['SansRegular']">
               <HeaderLeft />
-              <div className="flex flex-col overflow-y-auto">
+              <div className="flex flex-col w-[85%]">
                 <HeaderTop />
-                <div className="p-4 mt-10 h-full">
-                  <AuthProvider>{children}</AuthProvider>
-                </div>
+                <div className="p-4 mt-10 h-full">{children}</div>
               </div>
-          </header> */}
-            {children}
+            </header>
           </StoreProvider>
         </WebSocketProvider>
       </body>
