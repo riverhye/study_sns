@@ -2,8 +2,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { timeStamp } from '../studyComponents/timeStamp';
 import { useAppSelector } from '@/store/hooks';
-import { useDispatch } from 'react-redux';
-import { setReduxTrigger } from '@/store/module/trigger';
 
 export interface TodoContent {
   todoId: number;
@@ -28,7 +26,6 @@ const TodoHeader = () => {
   const nickname = localStorage.getItem('nickname');
   const trigger = useAppSelector(state => state.trigger.trigger);
   const token = useAppSelector(state => state.sign.token);
-  const dispatch = useDispatch();
 
   // 로그인 했을 때 가져오기
   useEffect(() => {
@@ -39,7 +36,6 @@ const TodoHeader = () => {
         if (!compareArrays(res.data, prevTodo)) {
           setPrevTodo(res.data);
         }
-        // dispatch(setReduxTrigger(!trigger));
       } catch (error) {
         console.error('Todo데이터 가져오기에 실패 했습니다.', error);
       }
@@ -58,9 +54,6 @@ const TodoHeader = () => {
       try {
         const date = timeStamp();
         const res = await axios.get(`${process.env.NEXT_PUBLIC_URL}/study/gettodo/${nickname}/${date}`);
-        if (!compareArrays(res.data, prevTodo)) {
-          dispatch(setReduxTrigger(!trigger));
-        }
 
         setPrevTodo(res.data);
       } catch (error) {
