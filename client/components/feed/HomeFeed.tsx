@@ -140,7 +140,7 @@ const HomeFeed = () => {
   return (
     <>
       <section>
-        <div className="flex justify-center h-12 w-full mt-10">
+        <div className="flex justify-center h-12 mt-10">
           {!valid && (
             <>
               <input

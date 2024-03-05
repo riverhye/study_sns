@@ -27,7 +27,7 @@ const SearchComponent = () => {
   // }, [searchNickname]);
   return (
     <>
-      <div className="flex justify-center h-12 w-full mt-10">
+      <div className="flex justify-center h-12 mt-10">
         <input
           type="text"
           className=" w-1/3 h-[40px] outline-none indent-3 focus:outline-none placeholder:text-zinc-500 focus:bg-subtle-blue rounded-md transition-all border-[1.5px] border-subtle-blue shadow"
