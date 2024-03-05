@@ -52,7 +52,7 @@ const TodoHeader = () => {
     }
   }, [token]);
 
-  // post 할 때마다 가져오기
+  // post, delete 할 때마다 가져오기
   useEffect(() => {
     const getTodo = async () => {
       try {
