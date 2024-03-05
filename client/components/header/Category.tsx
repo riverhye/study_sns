@@ -45,7 +45,7 @@ const Category = () => {
           )}
           <li
             className={`flex items-center rounded-md py-2 mx-0 ${item.text !== '랭킹' && 'mb-1'} ${selectedCategory === categoryIdx && 'font-bold'} text-lg hover:font-bold hover:bg-opacity-20 hover:bg-slate-50 transition ease-in-out delay-50 `}
-            onClick={e => handleClick(categoryIdx)}>
+            onClick={() => handleClick(categoryIdx)}>
             <div className="inline-flex pl-3 box-content">{item.svgComponent}</div>
             <span className="text-white ml-5 text-lg">{item.text}</span>
           </li>
