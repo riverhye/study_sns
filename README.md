@@ -93,21 +93,21 @@
 <img width="800" alt="검색" src="https://github.com/riverhye/study_sns/assets/77149171/2caa4061-3098-4fd6-a0cc-550afe40c5c9">
 
 - 검색 키워드를 포함하고 있는 사용자를 불러옴
-- 사용자 클릭시 내공부페이지로 이동
+- 사용자 클릭 시 내 공부 페이지로 이동
 
 ## [랭킹]
 <img width="800" alt="랭킹" src="https://github.com/riverhye/study_sns/assets/77149171/7ec8ee5a-6091-41d1-96ea-f76597820ac8">
 
-- 전체사용자중 상위 20명의 정보 표시
+- 전체 사용자 중 상위 20명의 정보 표시
 
 
 ## [내 공부]
 <img width="800" alt="내공부" src="https://github.com/riverhye/study_sns/assets/77149171/6f587aff-f8e8-4b42-9675-c4e0cb089be9">
 
-- 유저정보 표시
+- 이용자 정보 표시
 - 팔로우 기능
-- 달력을 클릭시 해당날짜의 todo리스트 불러오기, todo작성
-- 유저의 공부랭킹 표시
+- 달력을 클릭 시 해당 날짜의 todo리스트 불러오기, todo작성
+- 사용자의 공부 랭킹 표시
 
 ## [회원정보 수정]
 <img width="800" alt="정보수정" src="https://github.com/riverhye/study_sns/assets/77149171/18066f72-2c09-4e9a-aeaa-4f3d83f79f6f">
