@@ -9,7 +9,7 @@
 |---|---|---|---|---|---|
 |![종빈](https://github.com/sanppi/talent_market/assets/77149171/953c7199-7fd8-4e02-ae19-a277896a8f7a)|![길식](https://github.com/sanppi/talent_market/assets/77149171/5f1d9421-1685-4299-8dc0-d15fe31dba82)|![윤혜](https://github.com/sanppi/talent_market/assets/77149171/d7b7b5ee-336b-49f2-ad10-a516797a2b60)|![지원](https://github.com/sanppi/talent_market/assets/77149171/c45f495e-373f-4f86-9d3b-63f0df3b3cf2)|![연주](https://github.com/sanppi/talent_market/assets/77149171/3247e800-50f4-45ba-a9ff-dbaeb5e9db6e)
 |[@kjb990202](https://github.com/kjb990202)|[@KrillM](https://github.com/KrillM)|[@riverhye](https://github.com/riverhye)|[@zyam1](https://github.com/zyam1)|[@blee94](https://github.com/blee94)|[@J-Yeonju](https://github.com/J-Yeonju)
-|종빈 내용|회원가입, 로그인, 회원정보 수정, Spring Security, JWT Token, 검색|Websocket / 슬라이드 / To Do 리스트 헤더 연동|지원 내용|병진 내용|로그인, 회원가입, 회원정보 수정|
+|종빈 내용|회원가입, 로그인, 회원정보 수정, Spring Security, JWT Token, 검색|Websocket / 슬라이드 / To Do 리스트 헤더 연동|지원 내용|Websocket|로그인, 회원가입, 회원정보 수정|
 
 - Notion으로 일별 회고 작성 및 트러블 슈팅
 
