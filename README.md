@@ -109,7 +109,7 @@
 ## [회원정보 수정]
 <img width="800" alt="정보수정" src="https://github.com/riverhye/study_sns/assets/77149171/18066f72-2c09-4e9a-aeaa-4f3d83f79f6f">
 
-- 내용
+- 존재하는 닉네임이 있을 경우 회원정보 수정 불가
 
 
 # 시연 영상
