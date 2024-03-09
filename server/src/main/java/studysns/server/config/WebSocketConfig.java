@@ -19,6 +19,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/socket").setAllowedOrigins("*"); // 배포시에는 와일카드 제거.
+        registry.addHandler(webSocketHandler, "/socket"); //.setAllowedOrigins("*");
     }
 }
