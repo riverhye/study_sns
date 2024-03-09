@@ -1,6 +1,7 @@
 # 공부 알림 SNS
 타임라인 기반 공부 SNS
 - 개발 기간 : 2024-02-13 ~ 2024-02-29 (약 2주)
+- 6인 팀 프로젝트 : 프론트 엔드 3명, 백엔드 3명
 <br />
 
 ## 팀 구성
@@ -8,9 +9,10 @@
 |---|---|---|---|---|---|
 |![종빈](https://github.com/sanppi/talent_market/assets/77149171/953c7199-7fd8-4e02-ae19-a277896a8f7a)|![길식](https://github.com/sanppi/talent_market/assets/77149171/5f1d9421-1685-4299-8dc0-d15fe31dba82)|![윤혜](https://github.com/sanppi/talent_market/assets/77149171/d7b7b5ee-336b-49f2-ad10-a516797a2b60)|![지원](https://github.com/sanppi/talent_market/assets/77149171/c45f495e-373f-4f86-9d3b-63f0df3b3cf2)|![연주](https://github.com/sanppi/talent_market/assets/77149171/3247e800-50f4-45ba-a9ff-dbaeb5e9db6e)
 |[@kjb990202](https://github.com/kjb990202)|[@KrillM](https://github.com/KrillM)|[@riverhye](https://github.com/riverhye)|[@zyam1](https://github.com/zyam1)|[@blee94](https://github.com/blee94)|[@J-Yeonju](https://github.com/J-Yeonju)
-|종빈 내용|길식 내용|Websocket, 헤더, 메인|지원 내용|병진 내용|로그인, 회원가입, 회원정보 수정|
+|종빈 내용|길식 내용|Websocket / 슬라이드 / To Do 리스트 헤더 연동|지원 내용|병진 내용|로그인, 회원가입, 회원정보 수정|
 
 - Notion으로 일별 회고 작성 및 트러블 슈팅
+
 <br />
 
 ## 개발환경
@@ -22,70 +24,93 @@
 
 ### Collaborate & Tools
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"><img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">
+
 <br />
 
 ## 개발 포인트
-### 1. 사용자에게 편리한 UI/UX 고려
-- useRef로 채팅방의 스크롤바를 최하단으로 고정하여 항상 최신 메시지가 보이게 설정
-- 버튼 클릭이 많은 UI는 화면 상 클릭 유무를 확실하게 표시
-- 모바일 접속자를 고려하여 반응형 구현
+### 1. 컴포넌트 모듈화
+- 사전 회의를 통해 공통 부분이 있는 컴포넌트를 하나로 작성해 코드 재사용성을 높이고자 했습니다.
+- 스톱워치를 다른 컴포넌트에서도 재사용할 수 있게 커스텀훅으로 만들었습니다. (useTimer, useTimerFunc)
 
-### 2. 컴포넌트화
-- 재사용 할 함수나 html은 커스텀 훅이나 컴포넌트로 생성 (useToggle, ModalBasic)
-- SASS의 중첩 구조, 믹스인 등을 활용해 중복 작성 방지
+### 2. 새 기술 사용
+**2-1. SSR 프레임워크 Next.js**
+- 지난 프로젝트에서 **초기 렌더링 속도**가 느린 리액트의 한계를 느껴 리액트 기반의 SSR 프레임워크인 Next.js를 사용했습니다.
+- **메타데이터를 활용해 SEO를 고려**했습니다.
+- 14 버전에서 제공하는 Loading UI를 사용해 페이지 로딩 시간이 길 경우를 대비했습니다.
+
+**2-2. 유틸리티 CSS tailwind**
+- 유틸리티 퍼스트 CSS 프레임워크인 tailwind를 사용하여 **목적에 맞는 코드 작성에 집중**했습니다.
+- 공통 설정을 config 파일에 추가하여 **일관된 스타일링**을 유지하려고 했습니다.
+
+### 3. 웹소켓 : 실시간 알림
+- 단순 알림 기능 구현이 목표라서 상대적으로 가벼운 Websocket API을 사용했습니다.
+- Websocket API는 헤더에 값을 담을 수 없어서 **쿼리스트링으로 토큰을 전달해 로그인 시 소켓을 오픈**했습니다.
+- **쿼리스트링으로 JWT 토큰값 전달**하고, **JSON 형식으로 역직렬화/직렬화**하여 데이터를 송수신했습니다.
+
+<br />
 
 ## ERD
-![erd](https://github.com/sanppi/talent_market/assets/77149171/712fdc3d-3136-4aad-b757-0a9526d1dfaf)
+<img width="1000" alt="erd" src="https://github.com/riverhye/study_sns/assets/77149171/7693d94a-4e83-4a2f-8cea-b8b3368cd0f0">
+
+<br />
+<br />
 
 # 화면 구조도 및 기능
-## 💎 메인페이지
-![메인](https://github.com/sanppi/talent_market/assets/77149171/6e541236-d4fc-454c-bc05-1c65cd4712a1)
+##  [헤더]
+<img width="800" alt="타이머 시작" src="https://github.com/riverhye/study_sns/assets/77149171/d4653113-9b7b-4199-898b-d73e1ae0b986">
+<img width="800" alt="닉네임 hover" src="https://github.com/riverhye/study_sns/assets/77149171/93d7c8af-4ea5-42f6-a788-1f85b7daf786">
 
-## 💎 상세페이지
-![상세](https://github.com/sanppi/talent_market/assets/77149171/f1abb9da-c081-4e7b-8e93-6a396560e675)
+**[Left]**
+- 카테고리 클릭 시 UX를 고려하여 해당하는 아이콘의 색이 채워짐
+- ‘내 공부’에서 Todo 생성/삭제하면 To Do 리스트에도 실시간 반영
+- 공부 내용 입력 후 START 클릭 시 타이머 동작
+    - 타이머 시작 or 정지 → 웹소켓으로 실시간 통신 내용이 메인에 표시
+- 톱니바퀴 아이콘 hover 시 정보 수정/로그아웃 페이지 이동
 
-- 게시글 정보(조회수, 찜 횟수)
+**[Top]**
+- hover 시 누적 공부 시간이 높은 순으로 유저 10명 슬라이더(`Swiper.js`)로 표시
+
+## [로그인]
+<img width="800" alt="홈(로그인x)" src="https://github.com/riverhye/study_sns/assets/77149171/20404a6d-b855-4606-8c69-263408735aaf">
+
+- 내용
+
+## [회원가입]
+<img width="800" alt="회원가입" src="https://github.com/riverhye/study_sns/assets/77149171/c91973f3-fccc-450e-823c-e0fc34b2f9d9">
+
+- 내용
   
-## 💎 리뷰
-<img src="https://github.com/sanppi/talent_market/assets/109943460/250681f7-86f5-456f-b0c5-8c1de35aa4ce" width="400">
-<img src="https://github.com/sanppi/talent_market/assets/109943460/52787f39-59e6-4df8-9fad-69657126ff86" width="400">
+## [메인]
+<img width="800" alt="홈(피드x)" src="https://github.com/riverhye/study_sns/assets/77149171/a084cebc-77c9-4026-bba1-31a910b700d0">
+<img width="800" alt="타이머 끝" src="https://github.com/riverhye/study_sns/assets/77149171/c9f719bb-e7ef-4162-aef4-7bb3893ce832">
 
-- 구매 확정한 구매자가 상품 후기를 작성할 수 있도록 구성
+- 자신의 공부 상태(시작, 끝)를 모아볼 수 있는 공간
+- 현재 시각을 기준으로 작성일 표시
+- 스톱워치 상태(시작, 일시정지, 끝)에 따라 아이콘을 다르게 적용
 
-## 💎 판매글 작성
-![판매글](https://github.com/sanppi/talent_market/assets/77149171/e04d58a6-0419-41d3-8b5f-69eeb42281a8)
+## [검색]
+<img width="800" alt="검색" src="https://github.com/riverhye/study_sns/assets/77149171/2caa4061-3098-4fd6-a0cc-550afe40c5c9">
 
-## 💎 회원가입
-![signup](https://github.com/sanppi/talent_market/assets/77149171/e30af7f8-5a7c-4762-a295-7bf2e5850179)
+- 내용
 
-- 이이디/닉네임 중복 확인
-- 유효성 검사
-- 유효성 검사 통과 후 버튼 활성화
 
-## 💎 로그인
-![signin](https://github.com/sanppi/talent_market/assets/77149171/ee267882-bffc-4133-ac09-5853a07b7bcb)
-- 빈값일 시 버튼 비활성화
+## [랭킹]
+<img width="800" alt="랭킹" src="https://github.com/riverhye/study_sns/assets/77149171/7ec8ee5a-6091-41d1-96ea-f76597820ac8">
 
-## 💎 마이페이지
-![mypage](https://github.com/sanppi/talent_market/assets/77149171/14a7053f-2b49-449c-8431-cff51608a372)
-- 찜 목록, 판매글 목록, 내 리뷰, 채팅 목록 확인
+- 내용
 
-## 💎 회원정보 수정/탈퇴
-![update](https://github.com/sanppi/talent_market/assets/77149171/c51a8612-19cb-4a36-be16-df57c32e0f42)
-- 닉네임, 이메일, 비밀번호, 결제정보 각각 변경
-- 회원 탈퇴
 
-## 💎 채팅
-![chat1](https://github.com/sanppi/talent_market/assets/77149171/2e7e21d2-5975-4340-8bb1-d30786bf561e)
-![chat2](https://github.com/sanppi/talent_market/assets/77149171/f5dd84f7-bb94-4284-8478-a0b90baad2f7)
+## [내 공부]
+<img width="800" alt="내공부" src="https://github.com/riverhye/study_sns/assets/77149171/6f587aff-f8e8-4b42-9675-c4e0cb089be9">
 
-- 판매자와 구매자 간 1:1 채팅방
+- 내용
 
-## 💎 반응형
-![image](https://github.com/sanppi/talent_market/assets/77149171/06f85d68-3491-491c-b8ac-f5f2c8478811)
-![image](https://github.com/sanppi/talent_market/assets/77149171/323d1da9-2d5e-40ae-a332-8f3c64592be0)
-![image](https://github.com/sanppi/talent_market/assets/77149171/ceb036b4-0fd4-4939-a2d3-47f9200f0783)
+## [회원정보 수정]
+<img width="800" alt="정보수정" src="https://github.com/riverhye/study_sns/assets/77149171/18066f72-2c09-4e9a-aeaa-4f3d83f79f6f">
+
+- 내용
+
 
 # 시연 영상
-[시연](https://github.com/sanppi/talent_market/assets/77149171/7af7ab1f-8561-48c7-b3dd-fb864bb3ea6f)
+https://github.com/riverhye/study_sns/assets/77149171/8d1281d2-20c2-438e-aab2-b1ff8246397f
 
