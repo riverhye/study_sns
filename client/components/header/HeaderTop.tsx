@@ -52,7 +52,7 @@ const HeaderTop: React.FC = () => {
   };
 
   return (
-    <div className={`mt-5 ${followerList.length !== 0 ? 'w-auto' : 'w-[1550px]'}`}>
+    <div className={`mt-5 w-auto`}>
       <Swiper
         modules={[Navigation]}
         spaceBetween={50}

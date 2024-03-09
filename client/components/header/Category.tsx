@@ -5,7 +5,7 @@ import { Categories } from '@/type/type';
 
 const Category = () => {
   const { HomeIcon, SearchIcon, StudyIcon, RankIcon, LikeIcon } = Icons;
-  const [selectedCategory, setSelectedCategory] = useState<number>(0);
+  const [selectedCategory, setSelectedCategory] = useState<number>();
   const token = localStorage.getItem('accessToken');
   const nickname = localStorage.getItem('nickname');
 
